@@ -77,15 +77,13 @@ function TwoFactorSetupStep({
                             <div className="z-10 flex h-full w-full items-center justify-center p-5">
                                 {qrCodeSvg ? (
                                     <div
-                                        className="aspect-square w-full rounded-lg bg-white p-2 [&_svg]:size-full"
+                                        className={`aspect-square w-full rounded-lg bg-white p-2 [&_svg]:size-full ${
+                                            resolvedAppearance === 'dark'
+                                                ? 'invert brightness-[1.5]'
+                                                : ''
+                                        }`}
                                         dangerouslySetInnerHTML={{
                                             __html: qrCodeSvg,
-                                        }}
-                                        style={{
-                                            filter:
-                                                resolvedAppearance === 'dark'
-                                                    ? 'invert(1) brightness(1.5)'
-                                                    : undefined,
                                         }}
                                     />
                                 ) : (
@@ -120,10 +118,15 @@ function TwoFactorSetupStep({
                                         type="text"
                                         readOnly
                                         value={manualSetupKey}
+                                        aria-label="Two-factor setup key"
+                                        title="Two-factor setup key"
                                         className="h-full w-full bg-background p-3 text-foreground outline-none"
                                     />
                                     <button
+                                        type="button"
                                         onClick={() => copy(manualSetupKey)}
+                                        aria-label="Copy two-factor setup key"
+                                        title="Copy two-factor setup key"
                                         className="border-l border-border px-3 hover:bg-muted"
                                     >
                                         <IconComponent className="w-4" />
