@@ -21,8 +21,8 @@ class SecurityController extends Controller implements HasMiddleware
     {
         return Features::canManageTwoFactorAuthentication()
             && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword')
-                ? [new Middleware('password.confirm', only: ['edit'])]
-                : [];
+            ? [new Middleware('password.confirm', only: ['edit'])]
+            : [];
     }
 
     /**
@@ -35,6 +35,10 @@ class SecurityController extends Controller implements HasMiddleware
         ];
 
         if (Features::canManageTwoFactorAuthentication()) {
+            $twoFactorRequest = new TwoFactorAuthenticationRequest();
+            $twoFactorRequest->setUserResolver(fn() => $request->user());
+            $twoFactorRequest->ensureStateIsValid();
+
             $request->ensureStateIsValid();
 
             $props['twoFactorEnabled'] = $request->user()->hasEnabledTwoFactorAuthentication();
