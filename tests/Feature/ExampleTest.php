@@ -14,7 +14,10 @@ class ExampleTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('home'));
+        $response = $this
+            ->actingAs($user)
+            ->withSession(['auth.password_confirmed_at' => time()])
+            ->get(route('dashboard'));
 
         $response->assertOk();
     }
