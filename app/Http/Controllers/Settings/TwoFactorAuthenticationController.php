@@ -27,6 +27,10 @@ class TwoFactorAuthenticationController extends Controller implements HasMiddlew
      */
     public function show(TwoFactorAuthenticationRequest $request): Response
     {
+        if (! Features::canManageTwoFactorAuthentication()) {
+            abort(403);
+        }
+
         $request->ensureStateIsValid();
 
         return Inertia::render('settings/two-factor', [
