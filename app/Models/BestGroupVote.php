@@ -8,9 +8,9 @@ class BestGroupVote extends Model
 {
     protected $guarded = [];
 
-    public function mission()
+    public function material()
     {
-        return $this->belongsTo(Mission::class);
+        return $this->belongsTo(Material::class);
     }
 
     public function voterGroup()

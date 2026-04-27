@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Classroom;
-use App\Models\Mission;
+use App\Models\Material;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
@@ -20,7 +19,7 @@ class AdminDashboardController extends Controller
             'totalStudents' => User::where('role', 'student')->count(),
             'totalTeachers' => User::where('role', 'teacher')->count(),
             'totalClassrooms' => Classroom::count(),
-            'totalMissions' => Mission::count(),
+            'totalMaterials' => Material::count(),
         ];
 
         $latestUsers = User::select('id', 'name', 'email', 'role', 'avatar', 'created_at')

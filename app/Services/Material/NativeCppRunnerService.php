@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Mission;
+namespace App\Services\Material;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -12,7 +12,7 @@ class NativeCppRunnerService
     public function __construct()
     {
         $this->workDir = storage_path('app/cpp_sandbox');
-        if (!File::exists($this->workDir)) {
+        if (! File::exists($this->workDir)) {
             File::makeDirectory($this->workDir, 0755, true);
         }
     }
@@ -50,6 +50,7 @@ class NativeCppRunnerService
 
         if ($compileReturnCode !== 0) {
             $this->cleanup($sessionId);
+
             return [
                 'status' => 'Compilation Error',
                 'compile_output' => implode("\n", $compileOutput),

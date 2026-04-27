@@ -1,29 +1,29 @@
 <?php
 
-namespace App\Services\Mission;
+namespace App\Services\Material;
 
 use App\Models\BestGroupVote;
 use Illuminate\Support\Facades\DB;
 
 class VoteService
 {
-    public function hasVoted(int $groupId, int $missionId): bool
+    public function hasVoted(int $groupId, int $materialId): bool
     {
         return BestGroupVote::where('voter_group_id', $groupId)
-            ->where('mission_id', $missionId)
+            ->where('material_id', $materialId)
             ->exists();
     }
 
-    public function getGroupVote(int $groupId, int $missionId): ?int
+    public function getGroupVote(int $groupId, int $materialId): ?int
     {
         $vote = BestGroupVote::where('voter_group_id', $groupId)
-            ->where('mission_id', $missionId)
+            ->where('material_id', $materialId)
             ->first();
 
         return $vote?->voted_group_id;
     }
 
-    public function submitVote(int $missionId, int $voterGroupId, int $votedGroupId, int $voterUserId): void
+    public function submitVote(int $materialId, int $voterGroupId, int $votedGroupId, int $voterUserId): void
     {
         if ($voterGroupId === $votedGroupId) {
             throw new \Exception('Tidak dapat memilih kelompok sendiri');
@@ -31,7 +31,7 @@ class VoteService
 
         BestGroupVote::updateOrCreate(
             [
-                'mission_id' => $missionId,
+                'material_id' => $materialId,
                 'voter_group_id' => $voterGroupId,
             ],
             [
@@ -40,43 +40,45 @@ class VoteService
             ]
         );
     }
-    public function getVotableGroups(int $missionId, int $excludeGroupId)
+
+    public function getVotableGroups(int $materialId, int $excludeGroupId)
     {
-        $classroomId = DB::table('missions')
-            ->where('id', $missionId)
+        $classroomId = DB::table('materials')
+            ->where('id', $materialId)
             ->value('classroom_id');
 
         return DB::table('submissions')
             ->join('groups', 'submissions.group_id', '=', 'groups.id')
-            ->join('group_progress', function ($join) use ($missionId) {
+            ->join('group_progress', function ($join) use ($materialId) {
                 $join->on('groups.id', '=', 'group_progress.group_id')
-                    ->where('group_progress.mission_id', '=', $missionId);
+                    ->where('group_progress.material_id', '=', $materialId);
             })
-            ->join('missions', 'group_progress.mission_id', '=', 'missions.id')
-            ->where('submissions.mission_id', $missionId)
+            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
+            ->where('submissions.material_id', $materialId)
             ->where('submissions.is_final', true)
             ->where('groups.id', '!=', $excludeGroupId)
-            ->where('missions.classroom_id', $classroomId)
+            ->where('materials.classroom_id', $classroomId)
             ->where('groups.classroom_id', $classroomId)
             ->select('groups.id', 'groups.name', 'groups.group_code')
             ->distinct()
             ->get();
     }
-    public function getVoteResults(int $missionId)
+
+    public function getVoteResults(int $materialId)
     {
-        $classroomId = DB::table('missions')
-            ->where('id', $missionId)
+        $classroomId = DB::table('materials')
+            ->where('id', $materialId)
             ->value('classroom_id');
 
         return DB::table('best_group_votes')
             ->join('groups', 'best_group_votes.voted_group_id', '=', 'groups.id')
-            ->join('group_progress', function ($join) use ($missionId) {
+            ->join('group_progress', function ($join) use ($materialId) {
                 $join->on('groups.id', '=', 'group_progress.group_id')
-                    ->where('group_progress.mission_id', '=', $missionId);
+                    ->where('group_progress.material_id', '=', $materialId);
             })
-            ->join('missions', 'group_progress.mission_id', '=', 'missions.id')
-            ->where('best_group_votes.mission_id', $missionId)
-            ->where('missions.classroom_id', $classroomId)
+            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
+            ->where('best_group_votes.material_id', $materialId)
+            ->where('materials.classroom_id', $classroomId)
             ->where('groups.classroom_id', $classroomId)
             ->select(
                 'groups.id as group_id',
@@ -89,17 +91,17 @@ class VoteService
             ->get();
     }
 
-    public function areAllGroupsSubmitted(int $missionId): bool
+    public function areAllGroupsSubmitted(int $materialId): bool
     {
-        $classroomId = DB::table('missions')
-            ->where('id', $missionId)
+        $classroomId = DB::table('materials')
+            ->where('id', $materialId)
             ->value('classroom_id');
 
         $totalGroups = DB::table('groups')
             ->join('group_progress', 'groups.id', '=', 'group_progress.group_id')
-            ->join('missions', 'group_progress.mission_id', '=', 'missions.id')
-            ->where('group_progress.mission_id', $missionId)
-            ->where('missions.classroom_id', $classroomId)
+            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
+            ->where('group_progress.material_id', $materialId)
+            ->where('materials.classroom_id', $classroomId)
             ->where('groups.classroom_id', $classroomId)
             ->distinct('groups.id')
             ->count();
@@ -110,14 +112,14 @@ class VoteService
 
         $submittedGroups = DB::table('submissions')
             ->join('groups', 'submissions.group_id', '=', 'groups.id')
-            ->join('group_progress', function ($join) use ($missionId) {
+            ->join('group_progress', function ($join) use ($materialId) {
                 $join->on('groups.id', '=', 'group_progress.group_id')
-                    ->where('group_progress.mission_id', '=', $missionId);
+                    ->where('group_progress.material_id', '=', $materialId);
             })
-            ->join('missions', 'group_progress.mission_id', '=', 'missions.id')
-            ->where('submissions.mission_id', $missionId)
+            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
+            ->where('submissions.material_id', $materialId)
             ->where('submissions.is_final', true)
-            ->where('missions.classroom_id', $classroomId)
+            ->where('materials.classroom_id', $classroomId)
             ->where('groups.classroom_id', $classroomId)
             ->distinct('groups.id')
             ->count();

@@ -11,11 +11,11 @@ class TeacherGroupManagementService
     /**
      * Update groups and their members
      */
-    public function updateGroups(int $missionId, array $groupsData): array
+    public function updateGroups(int $materialId, array $groupsData): array
     {
-        Log::info('Updating groups', ['mission_id' => $missionId, 'groups' => $groupsData]);
+        Log::info('Updating groups', ['material_id' => $materialId, 'groups' => $groupsData]);
 
-        $classroomId = DB::table('missions')->where('id', $missionId)->value('classroom_id');
+        $classroomId = DB::table('materials')->where('id', $materialId)->value('classroom_id');
 
         $submittedGroupIds = collect($groupsData)->pluck('group_id')->filter(function ($id) {
             return is_numeric($id) && $id < 9999999999;
@@ -23,26 +23,26 @@ class TeacherGroupManagementService
 
         $existingGroups = DB::table('groups')
             ->join('group_progress', 'groups.id', '=', 'group_progress.group_id')
-            ->where('group_progress.mission_id', $missionId)
+            ->where('group_progress.material_id', $materialId)
             ->where('groups.classroom_id', $classroomId)
             ->pluck('groups.id')
             ->toArray();
 
         $groupsToDelete = array_diff($existingGroups, $submittedGroupIds);
 
-        if (!empty($groupsToDelete)) {
+        if (! empty($groupsToDelete)) {
             Log::info('Deleting groups not in payload', ['groups_to_delete' => $groupsToDelete]);
 
             DB::table('group_members')->whereIn('group_id', $groupsToDelete)->delete();
 
             DB::table('group_progress')
                 ->whereIn('group_id', $groupsToDelete)
-                ->where('mission_id', $missionId)
+                ->where('material_id', $materialId)
                 ->delete();
 
             DB::table('submissions')
                 ->whereIn('group_id', $groupsToDelete)
-                ->where('mission_id', $missionId)
+                ->where('material_id', $materialId)
                 ->delete();
 
             DB::table('groups')
@@ -90,15 +90,15 @@ class TeacherGroupManagementService
 
             $existingProgress = DB::table('group_progress')
                 ->where('group_id', $groupId)
-                ->where('mission_id', $missionId)
+                ->where('material_id', $materialId)
                 ->first();
 
             $incomingCollabUrl = $groupData['collab_url'] ?? null;
 
-            if (!$existingProgress) {
+            if (! $existingProgress) {
                 DB::table('group_progress')->insert([
                     'group_id' => $groupId,
-                    'mission_id' => $missionId,
+                    'material_id' => $materialId,
                     'current_step' => 2,
                     'status' => 'in_progress',
                     'collab_url' => $incomingCollabUrl,
@@ -136,7 +136,7 @@ class TeacherGroupManagementService
                     'updated_at' => now(),
                 ];
             }
-            if (!empty($inserts)) {
+            if (! empty($inserts)) {
                 DB::table('group_members')->insert($inserts);
             }
         }
@@ -150,7 +150,7 @@ class TeacherGroupManagementService
     private function generateUniqueGroupCode(int $classroomId): string
     {
         do {
-            $code = 'CLS' . $classroomId . '-' . strtoupper(Str::random(2));
+            $code = 'CLS'.$classroomId.'-'.strtoupper(Str::random(2));
         } while (DB::table('groups')->where('group_code', $code)->exists());
 
         return $code;
@@ -197,7 +197,6 @@ class TeacherGroupManagementService
             if ($leaders > 1) {
                 $errors["groups.{$index}"] = "Kelompok {$group['group_name']} hanya boleh memiliki 1 Leader";
             }
-
 
             if (count($group['members']) < 3) {
                 $errors["groups.{$index}"] = "Kelompok {$group['group_name']} harus memiliki minimal 3 anggota";

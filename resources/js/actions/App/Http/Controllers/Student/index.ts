@@ -1,9 +1,12 @@
-import DashboardController from './DashboardController'
-import MissionController from './MissionController'
+import DashboardController from './DashboardController';
+import MaterialController from './MaterialController';
 
 const Student = {
-    DashboardController: Object.assign(DashboardController, DashboardController),
-    MissionController: Object.assign(MissionController, MissionController),
-}
+    DashboardController: Object.assign(
+        DashboardController,
+        DashboardController,
+    ),
+    MaterialController: Object.assign(MaterialController, MaterialController),
+};
 
-export default Student
+export default Student;

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('group_progress', function (Blueprint $table) {
             $table->id();
             $table->foreignId('group_id')->constrained('groups')->onDelete('cascade');
-            $table->foreignId('mission_id')->constrained('missions')->onDelete('cascade');
+            $table->foreignId('material_id')->constrained('materials')->onDelete('cascade');
 
             $table->integer('current_step')->default(0);
             $table->enum('status', ['locked', 'in_progress', 'completed'])->default('locked');

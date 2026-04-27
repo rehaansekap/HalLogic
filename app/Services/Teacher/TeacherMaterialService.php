@@ -2,18 +2,18 @@
 
 namespace App\Services\Teacher;
 
-use App\Models\Mission;
+use App\Models\Material;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class TeacherMissionService
+class TeacherMaterialService
 {
     /**
-     * Create a new mission
+     * Create a new material
      */
-    public function createMission(array $data, int $teacherId): Mission
+    public function createMaterial(array $data, int $teacherId): Material
     {
 
         $pdfPath = null;
@@ -21,17 +21,14 @@ class TeacherMissionService
             $pdfPath = $data['material_pdf']->store('materials', 'public');
         }
 
-
         $lkpdPath = null;
         if (isset($data['lkpd_pdf']) && $data['lkpd_pdf'] instanceof UploadedFile) {
             $lkpdPath = $data['lkpd_pdf']->store('lkpd', 'public');
         }
 
-
         $slug = $this->generateUniqueSlug($data['title']);
 
-
-        $mission = Mission::create([
+        $material = Material::create([
             'teacher_id' => $teacherId,
             'classroom_id' => $data['classroom_id'],
             'title' => $data['title'],
@@ -43,32 +40,31 @@ class TeacherMissionService
             'material_pdf' => $pdfPath,
             'lkpd_pdf' => $lkpdPath,
             'simulator_config' => $data['simulator_config'] ?? null,
-            'prerequisite_mission_id' => $data['prerequisite_mission_id'] ?? null,
+            'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
             'finished_at' => $data['finished_at'] ?? null,
         ]);
 
-        return $mission;
+        return $material;
     }
 
     /**
-     * Update an existing mission
+     * Update an existing material
      */
-    public function updateMission(Mission $mission, array $data): Mission
+    public function updateMaterial(Material $material, array $data): Material
     {
 
-        $pdfPath = $mission->material_pdf;
+        $pdfPath = $material->material_pdf;
         if (isset($data['material_pdf']) && $data['material_pdf'] instanceof UploadedFile) {
 
-            if ($mission->material_pdf) {
-                Storage::disk('public')->delete($mission->material_pdf);
+            if ($material->material_pdf) {
+                Storage::disk('public')->delete($material->material_pdf);
             }
 
             $pdfPath = $data['material_pdf']->store('materials', 'public');
         }
 
-
-        $lkpdPath = $mission->lkpd_pdf;
+        $lkpdPath = $material->lkpd_pdf;
         if (isset($data['lkpd_pdf']) && $data['lkpd_pdf'] instanceof UploadedFile) {
             if ($lkpdPath) {
                 Storage::disk('public')->delete($lkpdPath);
@@ -76,14 +72,12 @@ class TeacherMissionService
             $lkpdPath = $data['lkpd_pdf']->store('lkpd', 'public');
         }
 
-
-        $slug = $mission->slug;
-        if ($data['title'] !== $mission->title) {
-            $slug = $this->generateUniqueSlug($data['title'], $mission->id);
+        $slug = $material->slug;
+        if ($data['title'] !== $material->title) {
+            $slug = $this->generateUniqueSlug($data['title'], $material->id);
         }
 
-
-        $mission->update([
+        $material->update([
             'classroom_id' => $data['classroom_id'],
             'title' => $data['title'],
             'slug' => $slug,
@@ -93,62 +87,62 @@ class TeacherMissionService
             'case_narrative' => $data['case_narrative'],
             'material_pdf' => $pdfPath,
             'lkpd_pdf' => $lkpdPath,
-            'prerequisite_mission_id' => $data['prerequisite_mission_id'] ?? null,
+            'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
             'finished_at' => $data['finished_at'] ?? null,
         ]);
 
-        return $mission->fresh();
+        return $material->fresh();
     }
 
     /**
-     * Delete a mission and its associated files
+     * Delete a material and its associated files
      */
-    public function deleteMission(Mission $mission): bool
+    public function deleteMaterial(Material $material): bool
     {
-        if ($mission->material_pdf) {
-            Storage::disk('public')->delete($mission->material_pdf);
+        if ($material->material_pdf) {
+            Storage::disk('public')->delete($material->material_pdf);
         }
 
-        if ($mission->lkpd_pdf) {
-            Storage::disk('public')->delete($mission->lkpd_pdf);
+        if ($material->lkpd_pdf) {
+            Storage::disk('public')->delete($material->lkpd_pdf);
         }
 
         DB::table('grades')
-            ->whereIn('submission_id', function ($query) use ($mission) {
+            ->whereIn('submission_id', function ($query) use ($material) {
                 $query->select('id')
                     ->from('submissions')
-                    ->where('mission_id', $mission->id);
+                    ->where('material_id', $material->id);
             })
             ->delete();
 
         DB::table('feedbacks')
-            ->whereIn('submission_id', function ($query) use ($mission) {
+            ->whereIn('submission_id', function ($query) use ($material) {
                 $query->select('id')
                     ->from('submissions')
-                    ->where('mission_id', $mission->id);
+                    ->where('material_id', $material->id);
             })
             ->delete();
 
         DB::table('likes')
-            ->whereIn('submission_id', function ($query) use ($mission) {
+            ->whereIn('submission_id', function ($query) use ($material) {
                 $query->select('id')
                     ->from('submissions')
-                    ->where('mission_id', $mission->id);
+                    ->where('material_id', $material->id);
             })
             ->delete();
 
-        DB::table('submissions')->where('mission_id', $mission->id)->delete();
-        DB::table('reflections')->where('mission_id', $mission->id)->delete();
-        DB::table('best_group_votes')->where('mission_id', $mission->id)->delete();
-        DB::table('attendances')->where('mission_id', $mission->id)->delete();
+        DB::table('submissions')->where('material_id', $material->id)->delete();
+        DB::table('reflections')->where('material_id', $material->id)->delete();
+        DB::table('best_group_votes')->where('material_id', $material->id)->delete();
+        DB::table('attendances')->where('material_id', $material->id)->delete();
 
         $groupIds = DB::table('group_progress')
-            ->where('mission_id', $mission->id)
+            ->where('material_id', $material->id)
             ->pluck('group_id');
 
         DB::table('group_members')->whereIn('group_id', $groupIds)->delete();
-        DB::table('group_progress')->where('mission_id', $mission->id)->delete();
+        DB::table('group_progress')->where('material_id', $material->id)->delete();
 
         DB::table('groups')
             ->whereIn('id', $groupIds)
@@ -159,36 +153,30 @@ class TeacherMissionService
             })
             ->delete();
 
-        return $mission->delete();
+        return $material->delete();
     }
 
     /**
-     * Get detailed mission data for show page
+     * Get detailed material data for show page
      */
-    public function getMissionDetail(Mission $mission): array
+    public function getMaterialDetail(Material $material): array
     {
         $classroom = DB::table('classrooms')
-            ->where('id', $mission->classroom_id)
+            ->where('id', $material->classroom_id)
             ->select('id', 'name', 'academic_year')
             ->first();
 
+        $students = $this->getClassroomStudents($material->classroom_id);
 
-        $students = $this->getClassroomStudents($mission->classroom_id);
+        $groups = $this->getGroupsForMaterial($material);
 
+        $groupsMonitoring = $this->getGroupsMonitoring($material);
 
-        $groups = $this->getGroupsForMission($mission);
+        $allReflections = $this->getAllReflections($material);
 
+        $voteResults = $this->getVoteResults($material->id);
 
-        $groupsMonitoring = $this->getGroupsMonitoring($mission);
-
-
-        $allReflections = $this->getAllReflections($mission);
-
-
-        $voteResults = $this->getVoteResults($mission->id);
-
-
-        $stats = $this->calculateMissionStats($groupsMonitoring);
+        $stats = $this->calculateMaterialStats($groupsMonitoring);
 
         return [
             'classroom' => $classroom,
@@ -222,14 +210,14 @@ class TeacherMissionService
     }
 
     /**
-     * Get groups for mission (for Group Management tab)
+     * Get groups for material (for Group Management tab)
      */
-    private function getGroupsForMission(Mission $mission): array
+    private function getGroupsForMaterial(Material $material): array
     {
         return DB::table('groups')
             ->join('group_progress', 'groups.id', '=', 'group_progress.group_id')
-            ->where('groups.classroom_id', $mission->classroom_id)
-            ->where('group_progress.mission_id', $mission->id)
+            ->where('groups.classroom_id', $material->classroom_id)
+            ->where('group_progress.material_id', $material->id)
             ->select(
                 'groups.id as group_id',
                 'groups.name as group_name',
@@ -269,18 +257,18 @@ class TeacherMissionService
     /**
      * Get groups with full monitoring data
      */
-    private function getGroupsMonitoring(Mission $mission): array
+    private function getGroupsMonitoring(Material $material): array
     {
         return DB::table('groups')
             ->join('group_progress', 'groups.id', '=', 'group_progress.group_id')
-            ->leftJoin('submissions', function ($join) use ($mission) {
+            ->leftJoin('submissions', function ($join) use ($material) {
                 $join->on('groups.id', '=', 'submissions.group_id')
-                    ->where('submissions.mission_id', '=', $mission->id)
+                    ->where('submissions.material_id', '=', $material->id)
                     ->where('submissions.is_final', '=', true);
             })
             ->leftJoin('grades', 'submissions.id', '=', 'grades.submission_id')
-            ->where('groups.classroom_id', $mission->classroom_id)
-            ->where('group_progress.mission_id', $mission->id)
+            ->where('groups.classroom_id', $material->classroom_id)
+            ->where('group_progress.material_id', $material->id)
             ->select(
                 'groups.id as group_id',
                 'groups.name as group_name',
@@ -295,7 +283,7 @@ class TeacherMissionService
                 'grades.teacher_notes'
             )
             ->get()
-            ->map(function ($group) use ($mission) {
+            ->map(function ($group) use ($material) {
 
                 $members = DB::table('group_members')
                     ->join('users', 'group_members.user_id', '=', 'users.id')
@@ -310,7 +298,6 @@ class TeacherMissionService
                     ->get()
                     ->toArray();
 
-
                 $current = (int) ($group->current_step ?? 1);
                 $allCompleted = ($group->status === 'completed');
 
@@ -324,9 +311,9 @@ class TeacherMissionService
                     if ($current === $step) {
                         return 'in_progress';
                     }
+
                     return 'locked';
                 };
-
 
                 $submission = $group->submission_id ? [
                     'id' => $group->submission_id,
@@ -334,7 +321,6 @@ class TeacherMissionService
                     'code_answer' => $group->code_answer,
                     'submitted_at' => $group->submitted_at,
                 ] : null;
-
 
                 $likesCount = 0;
                 $feedbacks = [];
@@ -352,12 +338,11 @@ class TeacherMissionService
                         ->toArray();
                 }
 
-
                 $reflections = DB::table('reflections')
                     ->join('users', 'reflections.user_id', '=', 'users.id')
                     ->join('group_members', 'users.id', '=', 'group_members.user_id')
                     ->where('group_members.group_id', $group->group_id)
-                    ->where('reflections.mission_id', $mission->id)
+                    ->where('reflections.material_id', $material->id)
                     ->select(
                         'reflections.id',
                         'reflections.user_id',
@@ -402,16 +387,16 @@ class TeacherMissionService
     }
 
     /**
-     * Get all reflections for mission
+     * Get all reflections for material
      */
-    private function getAllReflections(Mission $mission): array
+    private function getAllReflections(Material $material): array
     {
         $sub = DB::raw("(SELECT g.name
         FROM group_members gm
         JOIN group_progress gp ON gm.group_id = gp.group_id
         JOIN groups g ON g.id = gm.group_id
         WHERE gm.user_id = reflections.user_id
-          AND gp.mission_id = {$mission->id}
+          AND gp.material_id = {$material->id}
         LIMIT 1) as group_name");
 
         return DB::table('reflections')
@@ -421,16 +406,16 @@ class TeacherMissionService
                 'reflections.created_at',
                 'reflections.type',
                 'users.name as user_name',
-                'groups.name as group_name'
+                'groups.name as group_name',
             ])
             ->join('users', 'reflections.user_id', '=', 'users.id')
             ->leftJoin('group_members', 'reflections.user_id', '=', 'group_members.user_id')
-            ->leftJoin('group_progress', function ($join) use ($mission) {
+            ->leftJoin('group_progress', function ($join) use ($material) {
                 $join->on('group_members.group_id', '=', 'group_progress.group_id')
-                    ->where('group_progress.mission_id', '=', $mission->id);
+                    ->where('group_progress.material_id', '=', $material->id);
             })
             ->leftJoin('groups', 'group_progress.group_id', '=', 'groups.id')
-            ->where('reflections.mission_id', $mission->id)
+            ->where('reflections.material_id', $material->id)
             ->orderBy('reflections.created_at', 'desc')
             ->distinct()
             ->get()
@@ -440,21 +425,21 @@ class TeacherMissionService
     /**
      * Get vote results for best group
      */
-    private function getVoteResults(int $missionId): array
+    private function getVoteResults(int $materialId): array
     {
-        $classroomId = DB::table('missions')
-            ->where('id', $missionId)
+        $classroomId = DB::table('materials')
+            ->where('id', $materialId)
             ->value('classroom_id');
 
         return DB::table('best_group_votes')
             ->join('groups', 'best_group_votes.voted_group_id', '=', 'groups.id')
-            ->join('group_progress', function ($join) use ($missionId) {
+            ->join('group_progress', function ($join) use ($materialId) {
                 $join->on('groups.id', '=', 'group_progress.group_id')
-                    ->where('group_progress.mission_id', '=', $missionId);
+                    ->where('group_progress.material_id', '=', $materialId);
             })
-            ->join('missions', 'group_progress.mission_id', '=', 'missions.id')
-            ->where('best_group_votes.mission_id', $missionId)
-            ->where('missions.classroom_id', $classroomId)
+            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
+            ->where('best_group_votes.material_id', $materialId)
+            ->where('materials.classroom_id', $classroomId)
             ->select(
                 'groups.id as group_id',
                 'groups.name as group_name',
@@ -468,9 +453,9 @@ class TeacherMissionService
     }
 
     /**
-     * Calculate mission statistics
+     * Calculate material statistics
      */
-    private function calculateMissionStats(array $groupsMonitoring): array
+    private function calculateMaterialStats(array $groupsMonitoring): array
     {
         $totalGroups = count($groupsMonitoring);
         $completedGroups = collect($groupsMonitoring)->where('status', 'completed')->count();
@@ -486,7 +471,7 @@ class TeacherMissionService
     }
 
     /**
-     * Generate unique slug for mission
+     * Generate unique slug for material
      */
     private function generateUniqueSlug(string $title, ?int $excludeId = null): string
     {
@@ -494,7 +479,7 @@ class TeacherMissionService
         $originalSlug = $slug;
         $counter = 1;
 
-        $query = Mission::where('slug', $slug);
+        $query = Material::where('slug', $slug);
 
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);
@@ -503,7 +488,7 @@ class TeacherMissionService
         while ($query->exists()) {
             $slug = $originalSlug . '-' . $counter;
             $counter++;
-            $query = Mission::where('slug', $slug);
+            $query = Material::where('slug', $slug);
             if ($excludeId) {
                 $query->where('id', '!=', $excludeId);
             }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Teacher\Mission;
+namespace App\Http\Requests\Teacher\Material;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreMissionRequest extends FormRequest
+class StoreMaterialRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +29,7 @@ class StoreMissionRequest extends FormRequest
             'material_pdf' => ['nullable', 'file', 'mimes:pdf', 'max:51200'],
             'lkpd_pdf' => ['nullable', 'file', 'mimes:pdf', 'max:51200'],
             'simulator_config' => ['nullable', 'string'],
-            'prerequisite_mission_id' => ['nullable', 'exists:missions,id'],
+            'prerequisite_material_id' => ['nullable', 'exists:materials,id'],
             'started_at' => ['nullable', 'date'],
             'finished_at' => ['nullable', 'date', 'after_or_equal:started_at'],
         ];
@@ -60,7 +60,7 @@ class StoreMissionRequest extends FormRequest
             'lkpd_pdf.file' => 'LKPD harus berupa file',
             'lkpd_pdf.mimes' => 'LKPD harus berformat PDF',
             'lkpd_pdf.max' => 'Ukuran LKPD maksimal 50MB',
-            'prerequisite_mission_id.exists' => 'Misi prasyarat tidak valid',
+            'prerequisite_material_id.exists' => 'Material prasyarat tidak valid',
             'started_at.date' => 'Format tanggal mulai tidak valid',
             'finished_at.date' => 'Format tanggal selesai tidak valid',
             'finished_at.after_or_equal' => 'Tanggal selesai harus setelah tanggal mulai',
@@ -74,7 +74,7 @@ class StoreMissionRequest extends FormRequest
     {
         $this->merge([
             'simulator_config' => $this->simulator_config ?: null,
-            'prerequisite_mission_id' => $this->prerequisite_mission_id ?: null,
+            'prerequisite_material_id' => $this->prerequisite_material_id ?: null,
             'started_at' => $this->started_at ?: null,
             'finished_at' => $this->finished_at ?: null,
         ]);

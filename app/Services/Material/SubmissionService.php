@@ -1,34 +1,33 @@
 <?php
 
-namespace App\Services\Mission;
+namespace App\Services\Material;
 
 use App\Models\Submission;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SubmissionService
 {
     /**
-     * Get gallery submissions for a mission
+     * Get gallery submissions for a material
      */
-    public function getGallerySubmissions(int $missionId, int $userId)
+    public function getGallerySubmissions(int $materialId, int $userId)
     {
-        $missionClassroomId = DB::table('missions')
-            ->where('missions.id', $missionId)
+        $materialClassroomId = DB::table('materials')
+            ->where('materials.id', $materialId)
             ->value('classroom_id');
 
         $submissions = DB::table('submissions')
             ->join('groups', 'submissions.group_id', '=', 'groups.id')
-            ->join('group_progress', function ($join) use ($missionId) {
+            ->join('group_progress', function ($join) use ($materialId) {
                 $join->on('groups.id', '=', 'group_progress.group_id')
-                    ->where('group_progress.mission_id', '=', $missionId);
+                    ->where('group_progress.material_id', '=', $materialId);
             })
-            ->join('missions', 'group_progress.mission_id', '=', 'missions.id')
-            ->where('submissions.mission_id', $missionId)
+            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
+            ->where('submissions.material_id', $materialId)
             ->where('submissions.is_final', true)
-            ->where('missions.classroom_id', $missionClassroomId)
-            ->where('groups.classroom_id', $missionClassroomId)
+            ->where('materials.classroom_id', $materialClassroomId)
+            ->where('groups.classroom_id', $materialClassroomId)
             ->select(
                 'submissions.id',
                 'groups.name as group_name',
@@ -71,10 +70,10 @@ class SubmissionService
     /**
      * Save code attempt from phase 3
      */
-    public function saveCodeAttempt(int $groupId, int $missionId, string $codeAnswer): void
+    public function saveCodeAttempt(int $groupId, int $materialId, string $codeAnswer): void
     {
         Submission::updateOrCreate(
-            ['group_id' => $groupId, 'mission_id' => $missionId],
+            ['group_id' => $groupId, 'material_id' => $materialId],
             ['code_answer' => $codeAnswer]
         );
     }
@@ -84,12 +83,12 @@ class SubmissionService
      */
     public function handleFileUpload(Request $request, int $groupId): ?string
     {
-        if (!$request->hasFile('file_flowchart')) {
+        if (! $request->hasFile('file_flowchart')) {
             return null;
         }
 
         $file = $request->file('file_flowchart');
-        $fileName = time() . '_' . $groupId . '_' . $file->getClientOriginalName();
+        $fileName = time().'_'.$groupId.'_'.$file->getClientOriginalName();
 
         return $file->storeAs('submissions', $fileName, 'public');
     }
@@ -97,10 +96,10 @@ class SubmissionService
     /**
      * Save final submission with file and code
      */
-    public function saveFinalSubmission(int $groupId, int $missionId, ?string $filePath, string $codeFinal): void
+    public function saveFinalSubmission(int $groupId, int $materialId, ?string $filePath, string $codeFinal): void
     {
         Submission::updateOrCreate(
-            ['group_id' => $groupId, 'mission_id' => $missionId],
+            ['group_id' => $groupId, 'material_id' => $materialId],
             [
                 'file_path' => $filePath,
                 'code_answer' => $codeFinal,
@@ -122,6 +121,7 @@ class SubmissionService
 
         if ($existingLike) {
             DB::table('likes')->where('id', $existingLike->id)->delete();
+
             return 'Like dihapus';
         }
 

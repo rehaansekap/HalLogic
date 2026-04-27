@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Mission;
+namespace App\Services\Material;
 
 use Illuminate\Support\Facades\DB;
 
@@ -27,20 +27,20 @@ class GroupService
     }
 
     /**
-     * Get group member data for a user, scoped to a mission
+     * Get group member data for a user, scoped to a material
      */
-    public function getUserGroupMemberForMission(int $userId, int $missionId): ?object
+    public function getUserGroupMemberForMaterial(int $userId, int $materialId): ?object
     {
         return DB::table('group_members')
             ->join('groups', 'group_members.group_id', '=', 'groups.id')
-            ->join('group_progress', function ($join) use ($missionId) {
+            ->join('group_progress', function ($join) use ($materialId) {
                 $join->on('groups.id', '=', 'group_progress.group_id')
-                    ->where('group_progress.mission_id', '=', $missionId);
+                    ->where('group_progress.material_id', '=', $materialId);
             })
-            ->join('missions', 'group_progress.mission_id', '=', 'missions.id')
+            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
             ->where('group_members.user_id', $userId)
-            ->where('missions.id', $missionId)
-            ->whereColumn('groups.classroom_id', 'missions.classroom_id') // extra guard
+            ->where('materials.id', $materialId)
+            ->whereColumn('groups.classroom_id', 'materials.classroom_id') // extra guard
             ->select('group_members.*')
             ->first();
     }
@@ -58,11 +58,12 @@ class GroupService
     }
 
     /**
-     * Check if user is a group leader for a mission
+     * Check if user is a group leader for a material
      */
-    public function isUserLeaderForMission(int $userId, int $missionId): bool
+    public function isUserLeaderForMaterial(int $userId, int $materialId): bool
     {
-        $member = $this->getUserGroupMemberForMission($userId, $missionId);
+        $member = $this->getUserGroupMemberForMaterial($userId, $materialId);
+
         return ($member?->role ?? null) === 'Leader';
     }
 
@@ -98,7 +99,7 @@ class GroupService
     }
 
     /**
-     * Update member role within a specific group (prevents cross-mission bleed)
+     * Update member role within a specific group (prevents cross-material bleed)
      */
     public function updateMemberRoleInGroup(int $userId, int $groupId, string $newRole): void
     {

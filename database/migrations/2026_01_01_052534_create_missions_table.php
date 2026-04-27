@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('missions', function (Blueprint $table) {
+        Schema::create('materials', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');
             $table->integer('difficulty_level')->default(1);
-            $table->foreignId('prerequisite_mission_id')
+            $table->foreignId('prerequisite_material_id')
                 ->nullable()
-                ->constrained('missions')
+                ->constrained('materials')
                 ->onDelete('set null');
             $table->foreignId('teacher_id')
                 ->nullable()
@@ -48,6 +48,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('missions');
+        Schema::dropIfExists('materials');
     }
 };

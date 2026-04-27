@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Mission;
+namespace App\Services\Material;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -13,8 +13,9 @@ class RewardService
     public function awardUserXp(int $userId, int $xpAmount): void
     {
         $user = User::find($userId);
-        if (!$user) {
+        if (! $user) {
             Log::warning("User ID {$userId} not found when awarding XP");
+
             return;
         }
 

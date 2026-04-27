@@ -1,33 +1,33 @@
 <?php
 
-namespace App\Services\Mission;
+namespace App\Services\Material;
 
 use Illuminate\Support\Facades\DB;
 
 class ProgressService
 {
     /**
-     * Get group progress for a specific mission
+     * Get group progress for a specific material
      */
-    public function getGroupProgress(int $groupId, int $missionId)
+    public function getGroupProgress(int $groupId, int $materialId)
     {
         return DB::table('group_progress')
             ->where('group_id', $groupId)
-            ->where('mission_id', $missionId)
+            ->where('material_id', $materialId)
             ->first();
     }
 
     /**
      * Update group progress to a specific step
      */
-    public function updateGroupProgress(int $groupId, int $missionId, int $targetStep): void
+    public function updateGroupProgress(int $groupId, int $materialId, int $targetStep): void
     {
-        $progress = $this->getGroupProgress($groupId, $missionId);
+        $progress = $this->getGroupProgress($groupId, $materialId);
 
-        if (!$progress) {
+        if (! $progress) {
             DB::table('group_progress')->insert([
                 'group_id' => $groupId,
-                'mission_id' => $missionId,
+                'material_id' => $materialId,
                 'current_step' => $targetStep,
                 'status' => 'in_progress',
                 'created_at' => now(),
@@ -43,23 +43,23 @@ class ProgressService
     /**
      * Advance group to next step
      */
-    public function advanceGroupStep(int $groupId, int $missionId, int $currentStep, int $nextStep): void
+    public function advanceGroupStep(int $groupId, int $materialId, int $currentStep, int $nextStep): void
     {
         DB::table('group_progress')
             ->where('group_id', $groupId)
-            ->where('mission_id', $missionId)
+            ->where('material_id', $materialId)
             ->where('current_step', $currentStep)
             ->update(['current_step' => $nextStep]);
     }
 
     /**
-     * Mark group mission as completed (phase 4)
+     * Mark group material as completed (phase 4)
      */
-    public function completeGroupMission(int $groupId, int $missionId): void
+    public function completeGroupMaterial(int $groupId, int $materialId): void
     {
         DB::table('group_progress')
             ->where('group_id', $groupId)
-            ->where('mission_id', $missionId)
+            ->where('material_id', $materialId)
             ->update([
                 'current_step' => 5,
                 'status' => 'in_progress',
@@ -68,13 +68,13 @@ class ProgressService
     }
 
     /**
-     * Mark group mission as completed (final step)
+     * Mark group material as completed (final step)
      */
-    public function markGroupMissionCompleted(int $groupId, int $missionId): void
+    public function markGroupMaterialCompleted(int $groupId, int $materialId): void
     {
         DB::table('group_progress')
             ->where('group_id', $groupId)
-            ->where('mission_id', $missionId)
+            ->where('material_id', $materialId)
             ->update([
                 'status' => 'completed',
                 'updated_at' => now(),
@@ -84,9 +84,9 @@ class ProgressService
     /**
      * Check if user can interact with gallery (like/feedback)
      */
-    public function canInteractWithGallery(int $groupId, int $missionId): bool
+    public function canInteractWithGallery(int $groupId, int $materialId): bool
     {
-        $progress = $this->getGroupProgress($groupId, $missionId);
+        $progress = $this->getGroupProgress($groupId, $materialId);
 
         return $progress && $progress->current_step >= 5;
     }

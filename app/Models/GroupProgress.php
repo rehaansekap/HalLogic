@@ -14,7 +14,7 @@ class GroupProgress extends Model
 
     protected $fillable = [
         'group_id',
-        'mission_id',
+        'material_id',
         'current_step',
         'status',
     ];
@@ -24,8 +24,8 @@ class GroupProgress extends Model
         return $this->belongsTo(Group::class);
     }
 
-    public function mission(): BelongsTo
+    public function material(): BelongsTo
     {
-        return $this->belongsTo(Mission::class);
+        return $this->belongsTo(Material::class);
     }
 }

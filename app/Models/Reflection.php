@@ -11,7 +11,7 @@ class Reflection extends Model
 
     protected $fillable = [
         'user_id',
-        'mission_id',
+        'material_id',
         'content',
         'type',
     ];

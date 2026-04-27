@@ -2,7 +2,7 @@
 
 namespace App\Services\Teacher;
 
-use App\Models\Mission;
+use App\Models\Material;
 use Illuminate\Support\Facades\DB;
 
 class TeacherDashboardService
@@ -12,70 +12,70 @@ class TeacherDashboardService
      */
     public function getDashboardStats(int $teacherId): array
     {
-        $missions = Mission::where('teacher_id', $teacherId)
+        $materials = Material::where('teacher_id', $teacherId)
             ->select('id', 'classroom_id', 'started_at', 'finished_at')
             ->get();
 
-        $missionClassroomIds = $missions->pluck('classroom_id')->filter()->unique()->values()->all();
+        $materialClassroomIds = $materials->pluck('classroom_id')->filter()->unique()->values()->all();
 
         $totalStudents = DB::table('classroom_user')
-            ->whereIn('classroom_id', $missionClassroomIds)
+            ->whereIn('classroom_id', $materialClassroomIds)
             ->distinct('user_id')
             ->count('user_id');
 
-        $activeMissions = $missions->filter(function ($mission) {
-            return $mission->started_at && !$mission->finished_at;
+        $activeMaterials = $materials->filter(function ($material) {
+            return $material->started_at && ! $material->finished_at;
         })->count();
 
-        $pendingReview = $this->calculatePendingReviews($missions->pluck('id')->toArray(), $missionClassroomIds);
+        $pendingReview = $this->calculatePendingReviews($materials->pluck('id')->toArray(), $materialClassroomIds);
 
         return [
-            'totalMissions' => $missions->count(),
+            'totalMaterials' => $materials->count(),
             'totalStudents' => $totalStudents,
-            'activeMissions' => $activeMissions,
+            'activeMaterials' => $activeMaterials,
             'pendingReview' => $pendingReview,
         ];
     }
 
     /**
-     * Get missions with progress data for dashboard
+     * Get materials with progress data for dashboard
      */
-    public function getMissionsWithProgress(int $teacherId): array
+    public function getMaterialsWithProgress(int $teacherId): array
     {
-        $missions = Mission::where('teacher_id', $teacherId)
+        $materials = Material::where('teacher_id', $teacherId)
             ->with(['classroom:id,name'])
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return $missions->map(function ($mission) {
-            $groupStats = $this->getGroupStats($mission->id, $mission->classroom_id);
-            $needsReview = $this->getNeedsReviewCount($mission->id, $mission->classroom_id);
+        return $materials->map(function ($material) {
+            $groupStats = $this->getGroupStats($material->id, $material->classroom_id);
+            $needsReview = $this->getNeedsReviewCount($material->id, $material->classroom_id);
 
             return [
-                'id' => $mission->id,
-                'title' => $mission->title,
-                'description' => $mission->description,
-                'difficulty_level' => $mission->difficulty_level,
-                'slug' => $mission->slug,
-                'classroom_id' => $mission->classroom_id,
-                'classroom_name' => $mission->classroom?->name ?? 'N/A',
+                'id' => $material->id,
+                'title' => $material->title,
+                'description' => $material->description,
+                'difficulty_level' => $material->difficulty_level,
+                'slug' => $material->slug,
+                'classroom_id' => $material->classroom_id,
+                'classroom_name' => $material->classroom?->name ?? 'N/A',
                 'total_groups' => $groupStats['total_groups'],
                 'completed_groups' => $groupStats['completed_groups'],
                 'needs_review' => $needsReview,
-                'started_at' => $mission->started_at,
-                'finished_at' => $mission->finished_at,
+                'started_at' => $material->started_at,
+                'finished_at' => $material->finished_at,
             ];
         })->toArray();
     }
 
     /**
-     * Get group statistics for a mission
+     * Get group statistics for a material
      */
-    private function getGroupStats(int $missionId, int $classroomId): array
+    private function getGroupStats(int $materialId, int $classroomId): array
     {
         $stats = DB::table('group_progress')
             ->join('groups', 'group_progress.group_id', '=', 'groups.id')
-            ->where('group_progress.mission_id', $missionId)
+            ->where('group_progress.material_id', $materialId)
             ->where('groups.classroom_id', $classroomId)
             ->selectRaw('
                 COUNT(*) as total_groups,
@@ -92,12 +92,12 @@ class TeacherDashboardService
     /**
      * Get count of submissions that need review
      */
-    private function getNeedsReviewCount(int $missionId, int $classroomId): int
+    private function getNeedsReviewCount(int $materialId, int $classroomId): int
     {
         return DB::table('submissions')
             ->join('groups', 'submissions.group_id', '=', 'groups.id')
             ->leftJoin('grades', 'submissions.id', '=', 'grades.submission_id')
-            ->where('submissions.mission_id', $missionId)
+            ->where('submissions.material_id', $materialId)
             ->where('groups.classroom_id', $classroomId)
             ->where('submissions.is_final', true)
             ->whereNull('grades.id')
@@ -105,18 +105,18 @@ class TeacherDashboardService
     }
 
     /**
-     * Calculate total pending reviews across all missions
+     * Calculate total pending reviews across all materials
      */
-    private function calculatePendingReviews(array $missionIds, array $classroomIds): int
+    private function calculatePendingReviews(array $materialIds, array $classroomIds): int
     {
-        if (empty($missionIds) || empty($classroomIds)) {
+        if (empty($materialIds) || empty($classroomIds)) {
             return 0;
         }
 
         return DB::table('submissions')
             ->join('groups', 'submissions.group_id', '=', 'groups.id')
             ->leftJoin('grades', 'submissions.id', '=', 'grades.submission_id')
-            ->whereIn('submissions.mission_id', $missionIds)
+            ->whereIn('submissions.material_id', $materialIds)
             ->whereIn('groups.classroom_id', $classroomIds)
             ->where('submissions.is_final', true)
             ->whereNull('grades.id')

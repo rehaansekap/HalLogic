@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Services\Mission;
+namespace App\Services\Material;
 
 use App\Models\Reflection;
 
 class ReflectionService
 {
     /**
-     * Get user's reflection for a mission
+     * Get user's reflection for a material
      */
-    public function getUserReflection(int $userId, int $missionId, string $type = 'initial'): ?string
+    public function getUserReflection(int $userId, int $materialId, string $type = 'initial'): ?string
     {
         return Reflection::where('user_id', $userId)
-            ->where('mission_id', $missionId)
+            ->where('material_id', $materialId)
             ->where('type', $type)
             ->value('content');
     }
@@ -20,10 +20,10 @@ class ReflectionService
     /**
      * Save or update user reflection
      */
-    public function saveReflection(int $userId, int $missionId, string $content): void
+    public function saveReflection(int $userId, int $materialId, string $content): void
     {
         Reflection::updateOrCreate(
-            ['user_id' => $userId, 'mission_id' => $missionId, 'type' => 'initial'],
+            ['user_id' => $userId, 'material_id' => $materialId, 'type' => 'initial'],
             ['content' => $content]
         );
     }
@@ -31,11 +31,11 @@ class ReflectionService
     /**
      * Save final reflection
      */
-    public function saveFinalReflection(int $userId, int $missionId, string $content): void
+    public function saveFinalReflection(int $userId, int $materialId, string $content): void
     {
         Reflection::create([
             'user_id' => $userId,
-            'mission_id' => $missionId,
+            'material_id' => $materialId,
             'type' => 'final',
             'content' => $content,
         ]);

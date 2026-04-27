@@ -3,31 +3,32 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Student\Mission\SavePhase3Request;
-use App\Http\Requests\Student\Mission\StoreReflectionRequest;
-use App\Http\Requests\Student\Mission\SubmitFeedbackRequest;
-use App\Http\Requests\Student\Mission\SubmitFinalReflectionRequest;
-use App\Http\Requests\Student\Mission\SubmitPhase4Request;
-use App\Http\Requests\Student\Mission\SubmitVoteRequest;
-use App\Http\Requests\Student\Mission\UpdateRoleRequest;
-use App\Http\Requests\Student\Mission\RunCodeRequest;
-use App\Models\Mission;
+use App\Http\Requests\Student\Material\RunCodeRequest;
+use App\Http\Requests\Student\Material\SavePhase3Request;
+use App\Http\Requests\Student\Material\StoreReflectionRequest;
+use App\Http\Requests\Student\Material\SubmitFeedbackRequest;
+use App\Http\Requests\Student\Material\SubmitFinalReflectionRequest;
+use App\Http\Requests\Student\Material\SubmitPhase4Request;
+use App\Http\Requests\Student\Material\SubmitVoteRequest;
+use App\Http\Requests\Student\Material\UpdateRoleRequest;
+use App\Models\Material;
+use App\Models\Reflection;
 use App\Models\Submission;
-use App\Services\Mission\FeedbackService;
-use App\Services\Mission\GroupService;
-use App\Services\Mission\MissionLockService;
-use App\Services\Mission\ProgressService;
-use App\Services\Mission\ReflectionService;
-use App\Services\Mission\RewardService;
-use App\Services\Mission\SubmissionService;
-use App\Services\Mission\VoteService;
-use App\Services\Mission\NativeCppRunnerService;
+use App\Services\Material\FeedbackService;
+use App\Services\Material\GroupService;
+use App\Services\Material\MaterialLockService;
+use App\Services\Material\NativeCppRunnerService;
+use App\Services\Material\ProgressService;
+use App\Services\Material\ReflectionService;
+use App\Services\Material\RewardService;
+use App\Services\Material\SubmissionService;
+use App\Services\Material\VoteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
-class MissionController extends Controller
+class MaterialController extends Controller
 {
     public function __construct(
         protected GroupService $groupService,
@@ -36,32 +37,33 @@ class MissionController extends Controller
         protected SubmissionService $submissionService,
         protected FeedbackService $feedbackService,
         protected RewardService $rewardService,
-        protected MissionLockService $lockService,
+        protected MaterialLockService $lockService,
         protected VoteService $voteService,
         protected NativeCppRunnerService $cppRunner,
     ) {}
 
     public function show($slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
-        if ($this->lockService->isMissionLocked($mission, $user)) {
-            $prerequisite = Mission::find($mission->prerequisite_mission_id);
+        if ($this->lockService->isMaterialLocked($material, $user)) {
+            $prerequisite = Material::find($material->prerequisite_material_id);
+
             return redirect()
                 ->route('dashboard')
-                ->with('error', 'Selesaikan misi "' . ($prerequisite?->title ?? 'sebelumnya') . '" terlebih dahulu.');
+                ->with('error', 'Selesaikan material "'.($prerequisite?->title ?? 'sebelumnya').'" terlebih dahulu.');
         }
 
-        $myReflection = $this->reflectionService->getUserReflection($user->id, $mission->id);
-        $initialReflection = $this->reflectionService->getUserReflection($user->id, $mission->id, 'initial');
+        $myReflection = $this->reflectionService->getUserReflection($user->id, $material->id);
+        $initialReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'initial');
 
         $groupMember = $initialReflection
-            ? $this->groupService->getUserGroupMemberForMission($user->id, $mission->id)
+            ? $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id)
             : null;
 
         if ($groupMember) {
-            $progress = $this->progressService->getGroupProgress($groupMember->group_id, $mission->id);
+            $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
             $currentStep = $progress ? (int) $progress->current_step : 1;
             $myGroupMembers = $this->groupService->getGroupMembers($groupMember->group_id);
             $currentUserRole = $groupMember->role;
@@ -73,11 +75,11 @@ class MissionController extends Controller
             $groupStatus = 'locked';
         }
 
-        $finalReflection = $this->reflectionService->getUserReflection($user->id, $mission->id, 'final');
-        $gallerySubmissions = $this->submissionService->getGallerySubmissions($mission->id, $user->id);
+        $finalReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'final');
+        $gallerySubmissions = $this->submissionService->getGallerySubmissions($material->id, $user->id);
 
         if ($initialReflection) {
-            $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
+            $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
         } else {
             $groupMember = null;
         }
@@ -85,14 +87,14 @@ class MissionController extends Controller
         $groupHasSubmitted = false;
         if ($groupMember) {
             $groupHasSubmitted = Submission::where('group_id', $groupMember->group_id)
-                ->where('mission_id', $mission->id)
+                ->where('material_id', $material->id)
                 ->where('is_final', true)
                 ->exists();
         } else {
             $groupStatus = null;
         }
 
-        $allSubmissions = $this->submissionService->getGallerySubmissions($mission->id, $user->id);
+        $allSubmissions = $this->submissionService->getGallerySubmissions($material->id, $user->id);
 
         $myGroupCode = null;
         if ($groupMember) {
@@ -102,13 +104,13 @@ class MissionController extends Controller
 
         $unreviewedSubmissions = [];
         if ($groupMember && $groupMember->role === 'Leader') {
-            $allOtherSubmissions = $allSubmissions->filter(fn($s) => $s['group_code'] !== $myGroupCode);
+            $allOtherSubmissions = $allSubmissions->filter(fn ($s) => $s['group_code'] !== $myGroupCode);
             foreach ($allOtherSubmissions as $sub) {
                 $hasFeedback = DB::table('feedbacks')
                     ->where('submission_id', $sub['id'])
                     ->where('user_id', $user->id)
                     ->exists();
-                if (!$hasFeedback) {
+                if (! $hasFeedback) {
                     $unreviewedSubmissions[] = [
                         'group_name' => $sub['group_name'],
                         'group_code' => $sub['group_code'],
@@ -118,13 +120,13 @@ class MissionController extends Controller
         }
 
         $excludeGroupId = $groupMember?->group_id ?? 0;
-        $votableGroups = $this->voteService->getVotableGroups($mission->id, $excludeGroupId);
+        $votableGroups = $this->voteService->getVotableGroups($material->id, $excludeGroupId);
 
-        $allGroupsSubmitted = $this->voteService->areAllGroupsSubmitted($mission->id);
+        $allGroupsSubmitted = $this->voteService->areAllGroupsSubmitted($material->id);
 
         if ($groupMember && $groupMember->role === 'Leader') {
-            $hasVoted = $this->voteService->hasVoted($groupMember->group_id, $mission->id);
-            $myVote = $this->voteService->getGroupVote($groupMember->group_id, $mission->id);
+            $hasVoted = $this->voteService->hasVoted($groupMember->group_id, $material->id);
+            $myVote = $this->voteService->getGroupVote($groupMember->group_id, $material->id);
         } else {
             $hasVoted = false;
             $myVote = null;
@@ -141,21 +143,21 @@ class MissionController extends Controller
         if ($groupMember) {
             $groupProgress = DB::table('group_progress')
                 ->where('group_id', $groupMember->group_id)
-                ->where('mission_id', $mission->id)
+                ->where('material_id', $material->id)
                 ->select('current_step', 'status', 'collab_url')
                 ->first();
         }
 
         $leaderRequirementsCompleted = false;
         if ($groupMember) {
-            $leaderHasVoted = $this->voteService->hasVoted($groupMember->group_id, $mission->id);
+            $leaderHasVoted = $this->voteService->hasVoted($groupMember->group_id, $material->id);
             $leaderGaveAllFeedback = is_array($unreviewedSubmissions) ? count($unreviewedSubmissions) === 0 : false;
 
             $leaderRequirementsCompleted = $leaderHasVoted && $leaderGaveAllFeedback;
         }
 
-        return Inertia::render('student/mission/index', [
-            'mission' => $mission,
+        return Inertia::render('student/material/index', [
+            'material' => $material,
             'currentStep' => $currentStep,
             'unlockedStep' => $currentStep,
             'groupMembers' => $myGroupMembers,
@@ -167,22 +169,22 @@ class MissionController extends Controller
             'groupStatus' => $groupStatus ?? 'locked',
             'unreviewedSubmissions' => $unreviewedSubmissions,
             'voteData' => $voteData,
-            'collaborationLink' => $groupProgress?->collab_url ?? $mission->collab_url ?? null,
+            'collaborationLink' => $groupProgress?->collab_url ?? $material->collab_url ?? null,
             'leaderRequirementsCompleted' => $leaderRequirementsCompleted,
         ]);
     }
 
     public function submitReflection(StoreReflectionRequest $request, $slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
 
-        DB::transaction(function () use ($request, $mission, $groupMember, $user) {
-            $this->reflectionService->saveReflection($user->id, $mission->id, $request->validated()['reflection']);
+        DB::transaction(function () use ($request, $material, $groupMember, $user) {
+            $this->reflectionService->saveReflection($user->id, $material->id, $request->validated()['reflection']);
 
             if ($groupMember) {
-                $this->progressService->updateGroupProgress($groupMember->group_id, $mission->id, 2);
+                $this->progressService->updateGroupProgress($groupMember->group_id, $material->id, 2);
             }
         });
 
@@ -197,11 +199,11 @@ class MissionController extends Controller
 
     public function submitVote(SubmitVoteRequest $request, $slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
 
-        if (!$groupMember) {
+        if (! $groupMember) {
             return redirect()->back()->with('error', 'Anda belum memiliki kelompok!');
         }
 
@@ -217,17 +219,17 @@ class MissionController extends Controller
 
         $votedGroupClassroom = DB::table('groups')
             ->join('group_progress', 'groups.id', '=', 'group_progress.group_id')
-            ->join('missions', 'group_progress.mission_id', '=', 'missions.id')
+            ->join('materialss as materials', 'group_progress.material_id', '=', 'materials.id')
             ->where('groups.id', $validated['voted_group_id'])
-            ->where('group_progress.mission_id', $mission->id)
-            ->value('missions.classroom_id');
+            ->where('group_progress.material_id', $material->id)
+            ->value('materials.classroom_id');
 
-        if ($votedGroupClassroom !== $mission->classroom_id) {
+        if ($votedGroupClassroom !== $material->classroom_id) {
             return redirect()->back()->with('error', 'Tidak dapat memilih kelompok dari kelas yang berbeda!');
         }
 
         $this->voteService->submitVote(
-            $mission->id,
+            $material->id,
             $groupMember->group_id,
             $validated['voted_group_id'],
             $user->id
@@ -238,16 +240,16 @@ class MissionController extends Controller
 
     public function updateRole(UpdateRoleRequest $request, $slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
-        if (!$this->groupService->isUserLeaderForMission($user->id, $mission->id)) {
+        if (! $this->groupService->isUserLeaderForMaterial($user->id, $material->id)) {
             abort(403, 'Hanya Leader Kelompok yang boleh mengubah peran anggota!');
         }
 
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
-        if (!$groupMember) {
-            return redirect()->back()->with('error', 'Anda belum memiliki kelompok untuk misi ini!');
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
+        if (! $groupMember) {
+            return redirect()->back()->with('error', 'Anda belum memiliki kelompok untuk material ini!');
         }
 
         $validated = $request->validated();
@@ -271,34 +273,34 @@ class MissionController extends Controller
 
     public function completeStep2(Request $request, $slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
-        if (!$groupMember) {
-            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk misi ini!');
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
+        if (! $groupMember) {
+            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk material ini!');
         }
 
-        $this->progressService->advanceGroupStep($groupMember->group_id, $mission->id, 2, 3);
+        $this->progressService->advanceGroupStep($groupMember->group_id, $material->id, 2, 3);
 
         return redirect()->back()->with('success', 'Organisasi selesai! Lanjut ke Penyelidikan.');
     }
 
     public function savePhase3(SavePhase3Request $request, $slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
-        if (!$groupMember) {
-            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk misi ini!');
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
+        if (! $groupMember) {
+            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk material ini!');
         }
 
         $validated = $request->validated();
 
-        DB::transaction(function () use ($validated, $mission, $groupMember) {
-            $this->submissionService->saveCodeAttempt($groupMember->group_id, $mission->id, $validated['code_attempt']);
-            $this->progressService->advanceGroupStep($groupMember->group_id, $mission->id, 3, 4);
+        DB::transaction(function () use ($validated, $material, $groupMember) {
+            $this->submissionService->saveCodeAttempt($groupMember->group_id, $material->id, $validated['code_attempt']);
+            $this->progressService->advanceGroupStep($groupMember->group_id, $material->id, 3, 4);
         });
 
         return redirect()->back()->with('success', 'Eksperimen selesai! Lanjut ke tahap berikutnya.');
@@ -306,12 +308,12 @@ class MissionController extends Controller
 
     public function submitPhase4(SubmitPhase4Request $request, $slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
-        if (!$groupMember) {
-            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk misi ini!');
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
+        if (! $groupMember) {
+            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk material ini!');
         }
 
         if ($groupMember->role !== 'Leader') {
@@ -319,7 +321,7 @@ class MissionController extends Controller
         }
 
         $existing = Submission::where('group_id', $groupMember->group_id)
-            ->where('mission_id', $mission->id)
+            ->where('material_id', $material->id)
             ->where('is_final', true)
             ->first();
 
@@ -329,17 +331,17 @@ class MissionController extends Controller
 
         $validated = $request->validated();
 
-        DB::transaction(function () use ($request, $validated, $mission, $groupMember) {
+        DB::transaction(function () use ($request, $validated, $material, $groupMember) {
             $filePath = $this->submissionService->handleFileUpload($request, $groupMember->group_id);
 
             $this->submissionService->saveFinalSubmission(
                 $groupMember->group_id,
-                $mission->id,
+                $material->id,
                 $filePath,
                 $validated['code_final']
             );
 
-            $this->progressService->completeGroupMission($groupMember->group_id, $mission->id);
+            $this->progressService->completeGroupMaterial($groupMember->group_id, $material->id);
         });
 
         return redirect()->back()->with('success', 'Tugas akhir berhasil dikumpulkan! Misi selesai.');
@@ -349,13 +351,13 @@ class MissionController extends Controller
     {
         $user = Auth::user();
         $submission = Submission::findOrFail($submissionId);
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $submission->mission_id);
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $submission->material_id);
 
-        if (!$groupMember) {
+        if (! $groupMember) {
             return redirect()->back()->with('error', 'Anda belum memiliki kelompok!');
         }
 
-        if (!$this->progressService->canInteractWithGallery($groupMember->group_id, $submission->mission_id)) {
+        if (! $this->progressService->canInteractWithGallery($groupMember->group_id, $submission->material_id)) {
             return redirect()->back()->with('error', 'Anda harus menyelesaikan semua tahap untuk memberikan like!');
         }
 
@@ -368,13 +370,13 @@ class MissionController extends Controller
     {
         $user = Auth::user();
         $submission = Submission::findOrFail($submissionId);
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $submission->mission_id);
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $submission->material_id);
 
-        if (!$groupMember) {
+        if (! $groupMember) {
             return redirect()->back()->with('error', 'Anda belum memiliki kelompok!');
         }
 
-        if (!$this->progressService->canInteractWithGallery($groupMember->group_id, $submission->mission_id)) {
+        if (! $this->progressService->canInteractWithGallery($groupMember->group_id, $submission->material_id)) {
             return redirect()->back()->with('error', 'Anda harus menyelesaikan semua tahap untuk memberikan feedback!');
         }
 
@@ -394,36 +396,36 @@ class MissionController extends Controller
 
     public function submitFinalReflection(SubmitFinalReflectionRequest $request, $slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
-        if (!$groupMember) {
-            return redirect()->back()->with('error', 'Anda belum memiliki kelompok untuk misi ini!');
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
+        if (! $groupMember) {
+            return redirect()->back()->with('error', 'Anda belum memiliki kelompok untuk material ini!');
         }
 
-        $existingReflection = $this->reflectionService->getUserReflection($user->id, $mission->id, 'final');
+        $existingReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'final');
         if ($existingReflection) {
-            return redirect()->back()->with('error', 'Anda sudah mengirim refleksi akhir untuk misi ini.');
+            return redirect()->back()->with('error', 'Anda sudah mengirim refleksi akhir untuk material ini.');
         }
 
         $validated = $request->validated();
 
-        DB::transaction(function () use ($validated, $mission, $groupMember, $user) {
-            $this->reflectionService->saveFinalReflection($user->id, $mission->id, $validated['final_reflection']);
+        DB::transaction(function () use ($validated, $material, $groupMember, $user) {
+            $this->reflectionService->saveFinalReflection($user->id, $material->id, $validated['final_reflection']);
 
             $this->rewardService->awardUserXp($user->id, 100);
 
             $groupMembers = $this->groupService->getGroupMembers($groupMember->group_id);
             $memberIds = $groupMembers->pluck('user_id')->toArray();
 
-            $submittedCount = \App\Models\Reflection::whereIn('user_id', $memberIds)
-                ->where('mission_id', $mission->id)
+            $submittedCount = Reflection::whereIn('user_id', $memberIds)
+                ->where('material_id', $material->id)
                 ->where('type', 'final')
                 ->count();
 
             if ($submittedCount === count($memberIds)) {
-                $this->progressService->markGroupMissionCompleted($groupMember->group_id, $mission->id);
+                $this->progressService->markGroupMaterialCompleted($groupMember->group_id, $material->id);
             }
         });
 
@@ -432,16 +434,16 @@ class MissionController extends Controller
 
     public function runCode(RunCodeRequest $request, $slug)
     {
-        $mission = Mission::where('slug', $slug)->firstOrFail();
+        $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
-        $groupMember = $this->groupService->getUserGroupMemberForMission($user->id, $mission->id);
-        if (!$groupMember) {
-            return response()->json(['error' => 'Anda belum memiliki kelompok untuk misi ini!'], 403);
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
+        if (! $groupMember) {
+            return response()->json(['error' => 'Anda belum memiliki kelompok untuk material ini!'], 403);
         }
 
-        $progress = $this->progressService->getGroupProgress($groupMember->group_id, $mission->id);
-        if (!$progress || (int) $progress->current_step < 3) {
+        $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
+        if (! $progress || (int) $progress->current_step < 3) {
             return response()->json(['error' => 'Tahap ini belum terbuka.'], 403);
         }
 
@@ -452,6 +454,7 @@ class MissionController extends Controller
         }
 
         $result = $this->cppRunner->run($data['code'], $data['stdin'] ?? null);
+
         return response()->json($result);
     }
 }

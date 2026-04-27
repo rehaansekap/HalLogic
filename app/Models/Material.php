@@ -7,16 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Mission extends Model
+class Material extends Model
 {
     use HasFactory;
+
+    protected $table = 'materials';
 
     protected $fillable = [
         'title',
         'slug',
         'description',
         'difficulty_level',
-        'prerequisite_mission_id',
+        'prerequisite_material_id',
         'teacher_id',
         'classroom_id',
         'started_at',
@@ -58,11 +60,11 @@ class Mission extends Model
 
     public function prerequisite()
     {
-        return $this->belongsTo(Mission::class, 'prerequisite_mission_id');
+        return $this->belongsTo(Material::class, 'prerequisite_material_id');
     }
 
-    public function dependentMissions()
+    public function dependentMaterials()
     {
-        return $this->hasMany(Mission::class, 'prerequisite_mission_id');
+        return $this->hasMany(Material::class, 'prerequisite_material_id');
     }
 }

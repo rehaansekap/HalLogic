@@ -24,11 +24,11 @@ class TeacherDashboardController extends Controller
     {
         $user = Auth::user();
 
-        $missions = $this->dashboardService->getMissionsWithProgress($user->id);
+        $materials = $this->dashboardService->getMaterialsWithProgress($user->id);
 
-        $missionClassroomIds = collect($missions)->pluck('classroom_id')->filter()->unique()->values()->all();
+        $materialClassroomIds = collect($materials)->pluck('classroom_id')->filter()->unique()->values()->all();
 
-        $classrooms = Classroom::whereIn('id', $missionClassroomIds)
+        $classrooms = Classroom::whereIn('id', $materialClassroomIds)
             ->select('id', 'name', 'academic_year')
             ->orderBy('name')
             ->get();
@@ -36,7 +36,7 @@ class TeacherDashboardController extends Controller
         $stats = $this->dashboardService->getDashboardStats($user->id);
 
         return Inertia::render('teacher/dashboard/index', [
-            'missions' => $missions,
+            'materials' => $materials,
             'classrooms' => $classrooms,
             'stats' => $stats,
         ]);

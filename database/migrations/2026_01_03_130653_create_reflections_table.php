@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('reflections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('mission_id')->constrained()->onDelete('cascade');
+            $table->foreignId('material_id')->constrained()->onDelete('cascade');
             $table->string('type')->default('initial');
             $table->text('content');
             $table->timestamps();
