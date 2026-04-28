@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMissionController::grade
-* @see app/Http/Controllers/Teacher/TeacherMissionController.php:233
+* @see \App\Http\Controllers\Teacher\TeacherMaterialController::grade
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 export const grade = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -15,8 +15,8 @@ grade.definition = {
 } satisfies RouteDefinition<["post"]>
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMissionController::grade
-* @see app/Http/Controllers/Teacher/TeacherMissionController.php:233
+* @see \App\Http\Controllers\Teacher\TeacherMaterialController::grade
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 grade.url = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -42,8 +42,8 @@ grade.url = (args: { submission: string | number } | [submission: string | numbe
 }
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMissionController::grade
-* @see app/Http/Controllers/Teacher/TeacherMissionController.php:233
+* @see \App\Http\Controllers\Teacher\TeacherMaterialController::grade
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 grade.post = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -52,8 +52,8 @@ grade.post = (args: { submission: string | number } | [submission: string | numb
 })
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMissionController::grade
-* @see app/Http/Controllers/Teacher/TeacherMissionController.php:233
+* @see \App\Http\Controllers\Teacher\TeacherMaterialController::grade
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 const gradeForm = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -62,8 +62,8 @@ const gradeForm = (args: { submission: string | number } | [submission: string |
 })
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMissionController::grade
-* @see app/Http/Controllers/Teacher/TeacherMissionController.php:233
+* @see \App\Http\Controllers\Teacher\TeacherMaterialController::grade
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 gradeForm.post = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

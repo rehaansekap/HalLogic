@@ -59,6 +59,20 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    /* HalLogic Color Palette */
+    --color-palette-limelight: var(--palette-limelight);
+    --color-palette-yellow-green: var(--palette-yellow-green);
+    --color-palette-sunflower: var(--palette-sunflower);
+    --color-palette-green: var(--palette-green);
+    --color-palette-chartreuse: var(--palette-chartreuse);
+    --color-palette-white: var(--palette-white);
+
+    /* Semantic Color Mappings */
+    --color-status-success: var(--palette-green);
+    --color-status-warning: var(--palette-sunflower);
+    --color-status-info: var(--palette-limelight);
+    --color-status-locked: var(--palette-yellow-green);
 }
 
 :root {
@@ -95,8 +109,21 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
+
+    /* HalLogic Color Palette - OKLch Format */
+    --palette-limelight: oklch(0.84 0.2 91);
+    --palette-yellow-green: oklch(0.78 0.15 106);
+    --palette-sunflower: oklch(0.84 0.19 101);
+    --palette-green: oklch(0.42 0.16 142);
+    --palette-chartreuse: oklch(0.85 0.22 100);
+    --palette-white: oklch(1 0 0);
+
+    /* Enforce light mode - disable dark mode detection */
+    color-scheme: light only;
 }
 
+/* Dark mode disabled - enforce light mode only */
+/*
 .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -131,6 +158,7 @@
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
 }
+*/
 
 @layer base {
     * {
@@ -139,5 +167,174 @@
 
     body {
         @apply bg-background text-foreground;
+        color-scheme: light only;
     }
+}
+
+/* Dashboard & Component Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse-soft {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Animation utility classes */
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.4s ease-out forwards;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.4s ease-out forwards;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+}
+
+.animate-pulse-soft {
+    animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-shimmer {
+    animation: shimmer 2s infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-gradient-shift {
+    animation: gradientShift 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+/* Stagger animations */
+.stagger-item-1 {
+    animation: fadeInUp 0.5s ease-out 0.1s forwards;
+    opacity: 0;
+}
+
+.stagger-item-2 {
+    animation: fadeInUp 0.5s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+.stagger-item-3 {
+    animation: fadeInUp 0.5s ease-out 0.3s forwards;
+    opacity: 0;
+}
+
+.stagger-item-4 {
+    animation: fadeInUp 0.5s ease-out 0.4s forwards;
+    opacity: 0;
+}
+
+.stagger-item-5 {
+    animation: fadeInUp 0.5s ease-out 0.5s forwards;
+    opacity: 0;
 }

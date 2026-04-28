@@ -1,8 +1,8 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:77
-* @route '/teacher/mission/create'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
+* @route '/teacher/material/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(options),
@@ -11,13 +11,13 @@ export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 create.definition = {
     methods: ["get","head"],
-    url: '/teacher/mission/create',
+    url: '/teacher/material/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:77
-* @route '/teacher/mission/create'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
+* @route '/teacher/material/create'
 */
 create.url = (options?: RouteQueryOptions) => {
     return create.definition.url + queryParams(options)
@@ -25,8 +25,8 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:77
-* @route '/teacher/mission/create'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
+* @route '/teacher/material/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(options),
@@ -35,8 +35,8 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:77
-* @route '/teacher/mission/create'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
+* @route '/teacher/material/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: create.url(options),
@@ -45,8 +45,8 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:77
-* @route '/teacher/mission/create'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
+* @route '/teacher/material/create'
 */
 const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: create.url(options),
@@ -55,8 +55,8 @@ const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:77
-* @route '/teacher/mission/create'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
+* @route '/teacher/material/create'
 */
 createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: create.url(options),
@@ -65,8 +65,8 @@ createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:77
-* @route '/teacher/mission/create'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
+* @route '/teacher/material/create'
 */
 createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: create.url({
@@ -82,8 +82,8 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:99
-* @route '/teacher/mission'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @route '/teacher/material'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
@@ -92,13 +92,13 @@ export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => (
 
 store.definition = {
     methods: ["post"],
-    url: '/teacher/mission',
+    url: '/teacher/material',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:99
-* @route '/teacher/mission'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @route '/teacher/material'
 */
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
@@ -106,8 +106,8 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:99
-* @route '/teacher/mission'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @route '/teacher/material'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
@@ -116,8 +116,8 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:99
-* @route '/teacher/mission'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @route '/teacher/material'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(options),
@@ -126,8 +126,8 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:99
-* @route '/teacher/mission'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @route '/teacher/material'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(options),
@@ -138,8 +138,8 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:126
-* @route '/teacher/mission/{slug}/edit'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @route '/teacher/material/{slug}/edit'
 */
 export const edit = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
@@ -148,13 +148,13 @@ export const edit = (args: { slug: string | number } | [slug: string | number ] 
 
 edit.definition = {
     methods: ["get","head"],
-    url: '/teacher/mission/{slug}/edit',
+    url: '/teacher/material/{slug}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:126
-* @route '/teacher/mission/{slug}/edit'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @route '/teacher/material/{slug}/edit'
 */
 edit.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -180,8 +180,8 @@ edit.url = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:126
-* @route '/teacher/mission/{slug}/edit'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @route '/teacher/material/{slug}/edit'
 */
 edit.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
@@ -190,8 +190,8 @@ edit.get = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:126
-* @route '/teacher/mission/{slug}/edit'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @route '/teacher/material/{slug}/edit'
 */
 edit.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
@@ -200,8 +200,8 @@ edit.head = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:126
-* @route '/teacher/mission/{slug}/edit'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @route '/teacher/material/{slug}/edit'
 */
 const editForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
@@ -210,8 +210,8 @@ const editForm = (args: { slug: string | number } | [slug: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:126
-* @route '/teacher/mission/{slug}/edit'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @route '/teacher/material/{slug}/edit'
 */
 editForm.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
@@ -220,8 +220,8 @@ editForm.get = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:126
-* @route '/teacher/mission/{slug}/edit'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @route '/teacher/material/{slug}/edit'
 */
 editForm.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, {
@@ -237,78 +237,78 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:172
-* @route '/teacher/mission/{mission}/update'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:171
+* @route '/teacher/material/{material}/update'
 */
-export const update = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const update = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(args, options),
     method: 'post',
 })
 
 update.definition = {
     methods: ["post"],
-    url: '/teacher/mission/{mission}/update',
+    url: '/teacher/material/{material}/update',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:172
-* @route '/teacher/mission/{mission}/update'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:171
+* @route '/teacher/material/{material}/update'
 */
-update.url = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
-        args = { mission: args }
+        args = { material: args }
     }
 
     if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { mission: args.id }
+        args = { material: args.id }
     }
 
     if (Array.isArray(args)) {
         args = {
-            mission: args[0],
+            material: args[0],
         }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        mission: typeof args.mission === 'object'
-        ? args.mission.id
-        : args.mission,
+        material: typeof args.material === 'object'
+        ? args.material.id
+        : args.material,
     }
 
     return update.definition.url
-            .replace('{mission}', parsedArgs.mission.toString())
+            .replace('{material}', parsedArgs.material.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:172
-* @route '/teacher/mission/{mission}/update'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:171
+* @route '/teacher/material/{material}/update'
 */
-update.post = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+update.post = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:172
-* @route '/teacher/mission/{mission}/update'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:171
+* @route '/teacher/material/{material}/update'
 */
-const updateForm = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:172
-* @route '/teacher/mission/{mission}/update'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:171
+* @route '/teacher/material/{material}/update'
 */
-updateForm.post = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.post = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, options),
     method: 'post',
 })
@@ -317,68 +317,68 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:203
-* @route '/teacher/mission/{mission}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:202
+* @route '/teacher/material/{material}'
 */
-export const destroy = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 destroy.definition = {
     methods: ["delete"],
-    url: '/teacher/mission/{mission}',
+    url: '/teacher/material/{material}',
 } satisfies RouteDefinition<["delete"]>
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:203
-* @route '/teacher/mission/{mission}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:202
+* @route '/teacher/material/{material}'
 */
-destroy.url = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
-        args = { mission: args }
+        args = { material: args }
     }
 
     if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { mission: args.id }
+        args = { material: args.id }
     }
 
     if (Array.isArray(args)) {
         args = {
-            mission: args[0],
+            material: args[0],
         }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        mission: typeof args.mission === 'object'
-        ? args.mission.id
-        : args.mission,
+        material: typeof args.material === 'object'
+        ? args.material.id
+        : args.material,
     }
 
     return destroy.definition.url
-            .replace('{mission}', parsedArgs.mission.toString())
+            .replace('{material}', parsedArgs.material.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:203
-* @route '/teacher/mission/{mission}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:202
+* @route '/teacher/material/{material}'
 */
-destroy.delete = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:203
-* @route '/teacher/mission/{mission}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:202
+* @route '/teacher/material/{material}'
 */
-const destroyForm = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -390,10 +390,10 @@ const destroyForm = (args: { mission: string | number | { id: string | number } 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:203
-* @route '/teacher/mission/{mission}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:202
+* @route '/teacher/material/{material}'
 */
-destroyForm.delete = (args: { mission: string | number | { id: string | number } } | [mission: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -407,8 +407,8 @@ destroy.form = destroyForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:43
-* @route '/teacher/mission/{slug}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
+* @route '/teacher/material/{slug}'
 */
 export const show = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
@@ -417,13 +417,13 @@ export const show = (args: { slug: string | number } | [slug: string | number ] 
 
 show.definition = {
     methods: ["get","head"],
-    url: '/teacher/mission/{slug}',
+    url: '/teacher/material/{slug}',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:43
-* @route '/teacher/mission/{slug}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
+* @route '/teacher/material/{slug}'
 */
 show.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -449,8 +449,8 @@ show.url = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:43
-* @route '/teacher/mission/{slug}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
+* @route '/teacher/material/{slug}'
 */
 show.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
@@ -459,8 +459,8 @@ show.get = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:43
-* @route '/teacher/mission/{slug}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
+* @route '/teacher/material/{slug}'
 */
 show.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
@@ -469,8 +469,8 @@ show.head = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:43
-* @route '/teacher/mission/{slug}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
+* @route '/teacher/material/{slug}'
 */
 const showForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
@@ -479,8 +479,8 @@ const showForm = (args: { slug: string | number } | [slug: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:43
-* @route '/teacher/mission/{slug}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
+* @route '/teacher/material/{slug}'
 */
 showForm.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, options),
@@ -489,8 +489,8 @@ showForm.get = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:43
-* @route '/teacher/mission/{slug}'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
+* @route '/teacher/material/{slug}'
 */
 showForm.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: show.url(args, {
@@ -506,72 +506,72 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:266
-* @route '/teacher/mission/{mission}/attendance'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:265
+* @route '/teacher/material/{material}/attendance'
 */
-export const saveAttendance = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const saveAttendance = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: saveAttendance.url(args, options),
     method: 'post',
 })
 
 saveAttendance.definition = {
     methods: ["post"],
-    url: '/teacher/mission/{mission}/attendance',
+    url: '/teacher/material/{material}/attendance',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:266
-* @route '/teacher/mission/{mission}/attendance'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:265
+* @route '/teacher/material/{material}/attendance'
 */
-saveAttendance.url = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions) => {
+saveAttendance.url = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
-        args = { mission: args }
+        args = { material: args }
     }
 
     if (Array.isArray(args)) {
         args = {
-            mission: args[0],
+            material: args[0],
         }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        mission: args.mission,
+        material: args.material,
     }
 
     return saveAttendance.definition.url
-            .replace('{mission}', parsedArgs.mission.toString())
+            .replace('{material}', parsedArgs.material.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:266
-* @route '/teacher/mission/{mission}/attendance'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:265
+* @route '/teacher/material/{material}/attendance'
 */
-saveAttendance.post = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+saveAttendance.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: saveAttendance.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:266
-* @route '/teacher/mission/{mission}/attendance'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:265
+* @route '/teacher/material/{material}/attendance'
 */
-const saveAttendanceForm = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const saveAttendanceForm = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: saveAttendance.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:266
-* @route '/teacher/mission/{mission}/attendance'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:265
+* @route '/teacher/material/{material}/attendance'
 */
-saveAttendanceForm.post = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+saveAttendanceForm.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: saveAttendance.url(args, options),
     method: 'post',
 })
@@ -580,72 +580,72 @@ saveAttendance.form = saveAttendanceForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:296
-* @route '/teacher/mission/{mission}/update-groups'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:295
+* @route '/teacher/material/{material}/update-groups'
 */
-export const updateGroups = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const updateGroups = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: updateGroups.url(args, options),
     method: 'post',
 })
 
 updateGroups.definition = {
     methods: ["post"],
-    url: '/teacher/mission/{mission}/update-groups',
+    url: '/teacher/material/{material}/update-groups',
 } satisfies RouteDefinition<["post"]>
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:296
-* @route '/teacher/mission/{mission}/update-groups'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:295
+* @route '/teacher/material/{material}/update-groups'
 */
-updateGroups.url = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions) => {
+updateGroups.url = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
-        args = { mission: args }
+        args = { material: args }
     }
 
     if (Array.isArray(args)) {
         args = {
-            mission: args[0],
+            material: args[0],
         }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        mission: args.mission,
+        material: args.material,
     }
 
     return updateGroups.definition.url
-            .replace('{mission}', parsedArgs.mission.toString())
+            .replace('{material}', parsedArgs.material.toString())
             .replace(/\/+$/, '') + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:296
-* @route '/teacher/mission/{mission}/update-groups'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:295
+* @route '/teacher/material/{material}/update-groups'
 */
-updateGroups.post = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+updateGroups.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: updateGroups.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:296
-* @route '/teacher/mission/{mission}/update-groups'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:295
+* @route '/teacher/material/{material}/update-groups'
 */
-const updateGroupsForm = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateGroupsForm = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: updateGroups.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:296
-* @route '/teacher/mission/{mission}/update-groups'
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:295
+* @route '/teacher/material/{material}/update-groups'
 */
-updateGroupsForm.post = (args: { mission: string | number } | [mission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateGroupsForm.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: updateGroups.url(args, options),
     method: 'post',
 })
@@ -654,7 +654,7 @@ updateGroups.form = updateGroupsForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:233
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 export const saveGrade = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -669,7 +669,7 @@ saveGrade.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:233
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 saveGrade.url = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -696,7 +696,7 @@ saveGrade.url = (args: { submission: string | number } | [submission: string | n
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:233
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 saveGrade.post = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -706,7 +706,7 @@ saveGrade.post = (args: { submission: string | number } | [submission: string | 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:233
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 const saveGradeForm = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -716,7 +716,7 @@ const saveGradeForm = (args: { submission: string | number } | [submission: stri
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:233
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:232
 * @route '/teacher/submission/{submission}/grade'
 */
 saveGradeForm.post = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -726,6 +726,6 @@ saveGradeForm.post = (args: { submission: string | number } | [submission: strin
 
 saveGrade.form = saveGradeForm
 
-const TeacherMissionController = { create, store, edit, update, destroy, show, saveAttendance, updateGroups, saveGrade }
+const TeacherMaterialController = { create, store, edit, update, destroy, show, saveAttendance, updateGroups, saveGrade }
 
-export default TeacherMissionController
+export default TeacherMaterialController

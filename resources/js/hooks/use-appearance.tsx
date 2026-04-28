@@ -75,16 +75,15 @@ export function initializeTheme(): void {
         return;
     }
 
-    if (!localStorage.getItem('appearance')) {
-        localStorage.setItem('appearance', 'system');
-        setCookie('appearance', 'system');
-    }
+    // Force light mode only - ignore stored preference
+    const forcedAppearance: Appearance = 'light';
+    localStorage.setItem('appearance', forcedAppearance);
+    setCookie('appearance', forcedAppearance);
 
-    currentAppearance = getStoredAppearance();
-    applyTheme(currentAppearance);
+    currentAppearance = forcedAppearance;
+    applyTheme(forcedAppearance);
 
-    // Set up system theme change listener
-    mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+    // Do not set up system theme change listener - keep light mode always
 }
 
 export function useAppearance(): UseAppearanceReturn {

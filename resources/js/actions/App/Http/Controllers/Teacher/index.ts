@@ -1,9 +1,9 @@
 import TeacherDashboardController from './TeacherDashboardController'
-import TeacherMissionController from './TeacherMissionController'
+import TeacherMaterialController from './TeacherMaterialController'
 
 const Teacher = {
     TeacherDashboardController: Object.assign(TeacherDashboardController, TeacherDashboardController),
-    TeacherMissionController: Object.assign(TeacherMissionController, TeacherMissionController),
+    TeacherMaterialController: Object.assign(TeacherMaterialController, TeacherMaterialController),
 }
 
 export default Teacher
