@@ -97,25 +97,8 @@ class TeacherMaterialService
             })
             ->delete();
 
-        DB::table('feedbacks')
-            ->whereIn('submission_id', function ($query) use ($material) {
-                $query->select('id')
-                    ->from('submissions')
-                    ->where('material_id', $material->id);
-            })
-            ->delete();
-
-        DB::table('likes')
-            ->whereIn('submission_id', function ($query) use ($material) {
-                $query->select('id')
-                    ->from('submissions')
-                    ->where('material_id', $material->id);
-            })
-            ->delete();
-
         DB::table('submissions')->where('material_id', $material->id)->delete();
         DB::table('reflections')->where('material_id', $material->id)->delete();
-        DB::table('best_group_votes')->where('material_id', $material->id)->delete();
         DB::table('attendances')->where('material_id', $material->id)->delete();
 
         $groupIds = DB::table('group_progress')
@@ -155,8 +138,6 @@ class TeacherMaterialService
 
         $allReflections = $this->getAllReflections($material);
 
-        $voteResults = $this->getVoteResults($material->id);
-
         $stats = $this->calculateMaterialStats($groupsMonitoring);
 
         return [
@@ -165,7 +146,6 @@ class TeacherMaterialService
             'groups' => $groups,
             'groupsMonitoring' => $groupsMonitoring,
             'allReflections' => $allReflections,
-            'voteResults' => $voteResults,
             'stats' => $stats,
         ];
     }
@@ -301,22 +281,6 @@ class TeacherMaterialService
                     'submitted_at' => $group->submitted_at,
                 ] : null;
 
-                $likesCount = 0;
-                $feedbacks = [];
-                if ($group->submission_id) {
-                    $likesCount = DB::table('likes')->where('submission_id', $group->submission_id)->count();
-
-                    $feedbacks = DB::table('feedbacks')
-                        ->join('users', 'feedbacks.user_id', '=', 'users.id')
-                        ->join('group_members', 'users.id', '=', 'group_members.user_id')
-                        ->join('groups', 'group_members.group_id', '=', 'groups.id')
-                        ->where('feedbacks.submission_id', $group->submission_id)
-                        ->select('feedbacks.id', 'users.name as user_name', 'groups.name as group_name', 'feedbacks.message', 'feedbacks.created_at')
-                        ->orderBy('feedbacks.created_at', 'asc')
-                        ->get()
-                        ->toArray();
-                }
-
                 $reflections = DB::table('reflections')
                     ->join('users', 'reflections.user_id', '=', 'users.id')
                     ->join('group_members', 'users.id', '=', 'group_members.user_id')
@@ -349,8 +313,6 @@ class TeacherMaterialService
                     'submitted_at' => $group->submitted_at ?? null,
                     'step3_status' => $stepStatus(3),
                     'submission' => $submission,
-                    'likes_count' => $likesCount,
-                    'feedbacks' => $feedbacks,
                     'grade' => $group->score !== null ? [
                         'score' => $group->score,
                         'teacher_notes' => $group->teacher_notes,
@@ -393,36 +355,6 @@ class TeacherMaterialService
             ->where('reflections.material_id', $material->id)
             ->orderBy('reflections.created_at', 'desc')
             ->distinct()
-            ->get()
-            ->toArray();
-    }
-
-    /**
-     * Get vote results for best group
-     */
-    private function getVoteResults(int $materialId): array
-    {
-        $classroomId = DB::table('materials')
-            ->where('id', $materialId)
-            ->value('classroom_id');
-
-        return DB::table('best_group_votes')
-            ->join('groups', 'best_group_votes.voted_group_id', '=', 'groups.id')
-            ->join('group_progress', function ($join) use ($materialId) {
-                $join->on('groups.id', '=', 'group_progress.group_id')
-                    ->where('group_progress.material_id', '=', $materialId);
-            })
-            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
-            ->where('best_group_votes.material_id', $materialId)
-            ->where('materials.classroom_id', $classroomId)
-            ->select(
-                'groups.id as group_id',
-                'groups.name as group_name',
-                'groups.group_code',
-                DB::raw('COUNT(best_group_votes.id) as vote_count')
-            )
-            ->groupBy('groups.id', 'groups.name', 'groups.group_code')
-            ->orderByDesc('vote_count')
             ->get()
             ->toArray();
     }

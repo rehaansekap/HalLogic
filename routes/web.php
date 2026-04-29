@@ -28,13 +28,7 @@ Route::middleware(['auth', 'verified', 'student'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/material/{slug}', [MaterialController::class, 'show'])->name('material.show');
     Route::post('/material/{slug}/reflection', [MaterialController::class, 'submitReflection'])->name('material.reflection');
-    Route::post('/material/{slug}/update-role', [MaterialController::class, 'updateRole'])->name('material.update-role');
-    Route::post('/material/{slug}/complete-step-2', [MaterialController::class, 'completeStep2'])->name('material.complete-step-2');
     Route::post('/material/{slug}/save-phase-3', [MaterialController::class, 'savePhase3'])->name('material.save-phase-3');
-    Route::post('/material/{slug}/vote', [MaterialController::class, 'submitVote'])->name('material.vote');
-    Route::post('/submission/{submissionId}/like', [MaterialController::class, 'toggleLike'])->name('material.like');
-    Route::post('/submission/{submissionId}/feedback', [MaterialController::class, 'submitFeedback'])->name('material.feedback');
-    Route::get('/submission/{submissionId}/feedbacks', [MaterialController::class, 'getFeedbacks'])->name('material.get-feedbacks');
     Route::post('/material/{slug}/finish', [MaterialController::class, 'submitFinalReflection'])->name('material.finish');
     Route::post('/material/{slug}/run-code', [MaterialController::class, 'runCode'])->middleware(['auth', 'verified', 'student'])->name('material.run-code');
 });

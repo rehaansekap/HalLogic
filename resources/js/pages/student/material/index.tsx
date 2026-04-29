@@ -26,37 +26,13 @@ interface GroupMember {
     avatar?: string;
 }
 
-interface GallerySubmission {
-    id: number;
-    group_code: string;
-    group_name: string;
-    files: string[];
-    likes_count: number;
-    feedbacks_count: number;
-}
-
-interface VotableGroup {
-    id: number;
-    group_code: string;
-    group_name: string;
-}
-
 interface MaterialPageProps {
     material: Material;
     currentStep: number;
     groupMembers: GroupMember[];
     initialReflection?: string;
     finalReflection?: string;
-    gallerySubmissions: GallerySubmission[];
     groupStatus: 'locked' | 'active' | 'completed' | null;
-    unreviewedSubmissions: Array<{ group_name: string; group_code: string }>;
-    voteData: {
-        has_voted: boolean;
-        my_vote?: number;
-        votable_groups: VotableGroup[];
-        all_groups_submitted: boolean;
-    };
-    leaderRequirementsCompleted: boolean;
     submission?: {
         files: string[] | null;
         submitted_at: string | null;
@@ -69,11 +45,7 @@ export default function MaterialPage({
     groupMembers,
     initialReflection,
     finalReflection,
-    gallerySubmissions,
     groupStatus,
-    unreviewedSubmissions,
-    voteData,
-    leaderRequirementsCompleted,
     submission,
 }: MaterialPageProps) {
     const [pollingActive] = useState(true);
@@ -109,9 +81,6 @@ export default function MaterialPage({
                         'groupMembers',
                         'currentStep',
                         'groupStatus',
-                        'gallerySubmissions',
-                        'voteData',
-                        'unreviewedSubmissions',
                         'submission',
                     ],
                 });
@@ -194,17 +163,7 @@ export default function MaterialPage({
                             {activePhase === 3 && (
                                 <Phase3Evaluation
                                     materialSlug={material.slug}
-                                    currentStep={currentStep}
-                                    gallerySubmissions={gallerySubmissions}
-                                    votableGroups={voteData.votable_groups}
-                                    voteData={voteData}
                                     finalReflection={finalReflection}
-                                    unreviewedSubmissions={
-                                        unreviewedSubmissions
-                                    }
-                                    requirementsCompleted={
-                                        leaderRequirementsCompleted
-                                    }
                                 />
                             )}
 

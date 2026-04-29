@@ -21,14 +21,4 @@ class Submission extends Model
     {
         return $this->belongsTo(Group::class);
     }
-
-    public function likes()
-    {
-        return $this->hasMany(Like::class);
-    }
-
-    public function feedbacks()
-    {
-        return $this->hasMany(Feedback::class);
-    }
 }

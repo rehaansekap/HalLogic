@@ -6,13 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\Material\RunCodeRequest;
 use App\Http\Requests\Student\Material\SavePhase3Request;
 use App\Http\Requests\Student\Material\StoreReflectionRequest;
-use App\Http\Requests\Student\Material\SubmitFeedbackRequest;
 use App\Http\Requests\Student\Material\SubmitFinalReflectionRequest;
-use App\Http\Requests\Student\Material\SubmitVoteRequest;
 use App\Models\Material;
 use App\Models\Reflection;
 use App\Models\Submission;
-use App\Services\Material\FeedbackService;
 use App\Services\Material\GroupService;
 use App\Services\Material\MaterialLockService;
 use App\Services\Material\NativeCRunnerService;
@@ -20,8 +17,6 @@ use App\Services\Material\ProgressService;
 use App\Services\Material\ReflectionService;
 use App\Services\Material\RewardService;
 use App\Services\Material\SubmissionService;
-use App\Services\Material\VoteService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -33,10 +28,8 @@ class MaterialController extends Controller
         protected ProgressService $progressService,
         protected ReflectionService $reflectionService,
         protected SubmissionService $submissionService,
-        protected FeedbackService $feedbackService,
         protected RewardService $rewardService,
         protected MaterialLockService $lockService,
-        protected VoteService $voteService,
         protected NativeCRunnerService $cRunner,
     ) {}
 
@@ -53,7 +46,6 @@ class MaterialController extends Controller
                 ->with('error', 'Selesaikan material "'.($prerequisite?->title ?? 'sebelumnya').'" terlebih dahulu.');
         }
 
-        $myReflection = $this->reflectionService->getUserReflection($user->id, $material->id);
         $initialReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'initial');
 
         $groupMember = $initialReflection
@@ -68,83 +60,10 @@ class MaterialController extends Controller
         } else {
             $currentStep = 1;
             $myGroupMembers = collect();
-            $groupStatus = 'locked';
-        }
-
-        $finalReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'final');
-        $gallerySubmissions = $this->submissionService->getGallerySubmissions($material->id, $user->id);
-
-        if ($initialReflection) {
-            $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
-        } else {
-            $groupMember = null;
-        }
-
-        if (! $groupMember) {
             $groupStatus = null;
         }
 
-        $allSubmissions = $this->submissionService->getGallerySubmissions($material->id, $user->id);
-
-        $myGroupCode = null;
-        if ($groupMember) {
-            $myGroup = DB::table('groups')->where('id', $groupMember->group_id)->first();
-            $myGroupCode = $myGroup?->group_code;
-        }
-
-        $unreviewedSubmissions = [];
-        if ($groupMember) {
-            $allOtherSubmissions = $allSubmissions->filter(fn ($s) => $s['group_code'] !== $myGroupCode);
-            foreach ($allOtherSubmissions as $sub) {
-                $hasFeedback = DB::table('feedbacks')
-                    ->where('submission_id', $sub['id'])
-                    ->where('user_id', $user->id)
-                    ->exists();
-                if (! $hasFeedback) {
-                    $unreviewedSubmissions[] = [
-                        'group_name' => $sub['group_name'],
-                        'group_code' => $sub['group_code'],
-                    ];
-                }
-            }
-        }
-
-        $excludeGroupId = $groupMember?->group_id ?? 0;
-        $votableGroups = $this->voteService->getVotableGroups($material->id, $excludeGroupId);
-
-        $allGroupsSubmitted = $this->voteService->areAllGroupsSubmitted($material->id);
-
-        if ($groupMember) {
-            $hasVoted = $this->voteService->hasVoted($groupMember->group_id, $material->id);
-            $myVote = $this->voteService->getGroupVote($groupMember->group_id, $material->id);
-        } else {
-            $hasVoted = false;
-            $myVote = null;
-        }
-
-        $voteData = [
-            'has_voted' => $hasVoted,
-            'my_vote' => $myVote,
-            'votable_groups' => $votableGroups,
-            'all_groups_submitted' => $allGroupsSubmitted,
-        ];
-
-        $groupProgress = null;
-        if ($groupMember) {
-            $groupProgress = DB::table('group_progress')
-                ->where('group_id', $groupMember->group_id)
-                ->where('material_id', $material->id)
-                ->select('current_step', 'status')
-                ->first();
-        }
-
-        $leaderRequirementsCompleted = false;
-        if ($groupMember) {
-            $hasVotedStatus = $this->voteService->hasVoted($groupMember->group_id, $material->id);
-            $gaveAllFeedback = is_array($unreviewedSubmissions) ? count($unreviewedSubmissions) === 0 : false;
-
-            $leaderRequirementsCompleted = $hasVotedStatus && $gaveAllFeedback;
-        }
+        $finalReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'final');
 
         return Inertia::render('student/material/index', [
             'material' => $material,
@@ -153,11 +72,7 @@ class MaterialController extends Controller
             'groupMembers' => $myGroupMembers,
             'initialReflection' => $initialReflection,
             'finalReflection' => $finalReflection,
-            'gallerySubmissions' => $gallerySubmissions,
-            'groupStatus' => $groupStatus ?? 'locked',
-            'unreviewedSubmissions' => $unreviewedSubmissions,
-            'voteData' => $voteData,
-            'leaderRequirementsCompleted' => $leaderRequirementsCompleted,
+            'groupStatus' => $groupStatus,
             'submission' => Submission::where('group_id', $groupMember?->group_id)
                 ->where('material_id', $material->id)
                 ->first(),
@@ -185,43 +100,6 @@ class MaterialController extends Controller
         }
 
         return redirect()->back()->with('success', 'Refleksi tersimpan! Menunggu pembentukan kelompok oleh Guru.');
-    }
-
-    public function submitVote(SubmitVoteRequest $request, $slug)
-    {
-        $material = Material::where('slug', $slug)->firstOrFail();
-        $user = Auth::user();
-        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
-
-        if (! $groupMember) {
-            return redirect()->back()->with('error', 'Anda belum memiliki kelompok!');
-        }
-
-        $validated = $request->validated();
-
-        if ($validated['voted_group_id'] == $groupMember->group_id) {
-            return redirect()->back()->with('error', 'Tidak dapat memilih kelompok sendiri!');
-        }
-
-        $votedGroupClassroom = DB::table('groups')
-            ->join('group_progress', 'groups.id', '=', 'group_progress.group_id')
-            ->join('materialss as materials', 'group_progress.material_id', '=', 'materials.id')
-            ->where('groups.id', $validated['voted_group_id'])
-            ->where('group_progress.material_id', $material->id)
-            ->value('materials.classroom_id');
-
-        if ($votedGroupClassroom !== $material->classroom_id) {
-            return redirect()->back()->with('error', 'Tidak dapat memilih kelompok dari kelas yang berbeda!');
-        }
-
-        $this->voteService->submitVote(
-            $material->id,
-            $groupMember->group_id,
-            $validated['voted_group_id'],
-            $user->id
-        );
-
-        return redirect()->back()->with('success', 'Vote berhasil disimpan!');
     }
 
     public function savePhase3(SavePhase3Request $request, $slug)
@@ -255,53 +133,6 @@ class MaterialController extends Controller
         });
 
         return redirect()->back()->with('success', 'Berkas berhasil dikirim! Lanjut ke tahap evaluasi.');
-    }
-
-    public function toggleLike(Request $request, $submissionId)
-    {
-        $user = Auth::user();
-        $submission = Submission::findOrFail($submissionId);
-        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $submission->material_id);
-
-        if (! $groupMember) {
-            return redirect()->back()->with('error', 'Anda belum memiliki kelompok!');
-        }
-
-        if (! $this->progressService->canInteractWithGallery($groupMember->group_id, $submission->material_id)) {
-            return redirect()->back()->with('error', 'Anda harus menyelesaikan semua tahap untuk memberikan like!');
-        }
-
-        $message = $this->submissionService->toggleSubmissionLike($submissionId, $user->id);
-
-        return redirect()->back()->with('success', $message);
-    }
-
-    public function submitFeedback(SubmitFeedbackRequest $request, $submissionId)
-    {
-        $user = Auth::user();
-        $submission = Submission::findOrFail($submissionId);
-        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $submission->material_id);
-
-        if (! $groupMember) {
-            return redirect()->back()->with('error', 'Anda belum memiliki kelompok!');
-        }
-
-        if (! $this->progressService->canInteractWithGallery($groupMember->group_id, $submission->material_id)) {
-            return redirect()->back()->with('error', 'Anda harus menyelesaikan semua tahap untuk memberikan feedback!');
-        }
-
-        $validated = $request->validated();
-
-        $this->feedbackService->storeFeedback($submissionId, $user->id, $validated['message']);
-
-        return redirect()->back()->with('success', 'Feedback berhasil dikirim!');
-    }
-
-    public function getFeedbacks($submissionId)
-    {
-        $feedbacks = $this->feedbackService->getFeedbacks($submissionId);
-
-        return response()->json($feedbacks);
     }
 
     public function submitFinalReflection(SubmitFinalReflectionRequest $request, $slug)
