@@ -1,5 +1,4 @@
-import { Head } from '@inertiajs/react';
-import { router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import MaterialHeader from '@/components/custom/material/MaterialHeader';
@@ -22,6 +21,7 @@ interface GroupMember {
     user_id: number;
     name: string;
     username: string;
+    is_leader: boolean;
     avatar?: string;
 }
 
@@ -29,8 +29,7 @@ interface GallerySubmission {
     id: number;
     group_code: string;
     group_name: string;
-    file_url: string;
-    file_name: string;
+    files: string[];
     likes_count: number;
     feedbacks_count: number;
 }
@@ -57,6 +56,10 @@ interface MaterialPageProps {
         all_groups_submitted: boolean;
     };
     leaderRequirementsCompleted: boolean;
+    submission?: {
+        files: string[] | null;
+        submitted_at: string | null;
+    } | null;
 }
 
 export default function MaterialPage({
@@ -70,6 +73,7 @@ export default function MaterialPage({
     unreviewedSubmissions,
     voteData,
     leaderRequirementsCompleted,
+    submission,
 }: MaterialPageProps) {
     const [pollingActive] = useState(true);
     const lastPollTimeRef = useRef<number>(0);
@@ -107,6 +111,7 @@ export default function MaterialPage({
                         'gallerySubmissions',
                         'voteData',
                         'unreviewedSubmissions',
+                        'submission',
                     ],
                 });
                 lastPollTimeRef.current = now;
@@ -242,6 +247,9 @@ export default function MaterialPage({
                             <div className="sticky top-6">
                                 <MaterialSidebar
                                     groupMembers={groupMembers}
+                                    currentStep={currentStep}
+                                    slug={material.slug}
+                                    submission={submission}
                                 />
                             </div>
                         </motion.div>

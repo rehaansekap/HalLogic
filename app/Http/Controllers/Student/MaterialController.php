@@ -158,6 +158,9 @@ class MaterialController extends Controller
             'unreviewedSubmissions' => $unreviewedSubmissions,
             'voteData' => $voteData,
             'leaderRequirementsCompleted' => $leaderRequirementsCompleted,
+            'submission' => Submission::where('group_id', $groupMember?->group_id)
+                ->where('material_id', $material->id)
+                ->first(),
         ]);
     }
 
@@ -221,8 +224,6 @@ class MaterialController extends Controller
         return redirect()->back()->with('success', 'Vote berhasil disimpan!');
     }
 
-
-
     public function savePhase3(SavePhase3Request $request, $slug)
     {
         $material = Material::where('slug', $slug)->firstOrFail();
@@ -233,14 +234,27 @@ class MaterialController extends Controller
             return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk material ini!');
         }
 
-        $validated = $request->validated();
+        if (! $groupMember->is_leader) {
+            return redirect()->back()->with('error', 'Hanya ketua kelompok yang dapat mengirim berkas!');
+        }
 
-        DB::transaction(function () use ($validated, $material, $groupMember) {
-            $this->submissionService->saveCodeAttempt($groupMember->group_id, $material->id, $validated['code_attempt']);
+        $existingSubmission = Submission::where('group_id', $groupMember->group_id)
+            ->where('material_id', $material->id)
+            ->where('is_final', true)
+            ->exists();
+
+        if ($existingSubmission) {
+            return redirect()->back()->with('error', 'Kelompok Anda sudah mengirimkan berkas!');
+        }
+
+        $filePaths = $this->submissionService->handleMultipleFileUploads($request, $groupMember->group_id);
+
+        DB::transaction(function () use ($filePaths, $material, $groupMember) {
+            $this->submissionService->saveInvestigationFiles($groupMember->group_id, $material->id, $filePaths);
             $this->progressService->advanceGroupStep($groupMember->group_id, $material->id, 2, 3);
         });
 
-        return redirect()->back()->with('success', 'Eksperimen selesai! Lanjut ke tahap evaluasi.');
+        return redirect()->back()->with('success', 'Berkas berhasil dikirim! Lanjut ke tahap evaluasi.');
     }
 
     public function toggleLike(Request $request, $submissionId)

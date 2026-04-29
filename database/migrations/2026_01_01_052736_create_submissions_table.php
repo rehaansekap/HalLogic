@@ -16,8 +16,7 @@ return new class extends Migration
             $table->foreignId('group_id')->constrained()->onDelete('cascade');
             $table->foreignId('material_id')->constrained()->onDelete('cascade');
 
-            $table->string('file_path')->nullable();
-            $table->longText('code_answer')->nullable();
+            $table->json('files')->nullable();
 
             $table->boolean('is_final')->default(false);
             $table->timestamp('submitted_at')->nullable();

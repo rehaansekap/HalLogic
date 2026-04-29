@@ -2,15 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Classroom;
-use App\Models\Material;
-use App\Models\Group;
-use App\Models\Submission;
 use App\Models\Grade;
+use App\Models\Group;
+use App\Models\Material;
+use App\Models\Submission;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -68,9 +68,13 @@ class DatabaseSeeder extends Seeder
 
         for ($i = 1; $i <= 50; $i++) {
 
-            if ($i <= 20) $targetClass = $kelasRPL1;
-            elseif ($i <= 35) $targetClass = $kelasRPL2;
-            else $targetClass = $kelasTKJ1;
+            if ($i <= 20) {
+                $targetClass = $kelasRPL1;
+            } elseif ($i <= 35) {
+                $targetClass = $kelasRPL2;
+            } else {
+                $targetClass = $kelasTKJ1;
+            }
 
             $student = User::create([
                 'name' => fake()->name(),
@@ -135,9 +139,9 @@ class DatabaseSeeder extends Seeder
 
         foreach ($chunksRPL1 as $idx => $groupMembers) {
             $group = Group::create([
-                'name' => 'Kelompok Rajin ' . ($idx + 1),
+                'name' => 'Kelompok Rajin '.($idx + 1),
                 'classroom_id' => $kelasRPL1->id,
-                'group_code' => 'RPL1-G' . ($idx + 1),
+                'group_code' => 'RPL1-G'.($idx + 1),
             ]);
 
             foreach ($groupMembers as $key => $member) {
@@ -161,8 +165,7 @@ class DatabaseSeeder extends Seeder
             $sub = Submission::create([
                 'group_id' => $group->id,
                 'material_id' => $material1->id,
-                'file_path' => 'uploads/dummy-flowchart.pdf',
-                'code_answer' => "if (jam <= 1) { bayar = 5000; } else { bayar = 5000 + (jam-1)*3000; }",
+                'files' => ['uploads/dummy-flowchart.pdf'],
                 'is_final' => true,
                 'submitted_at' => now(),
             ]);
@@ -187,9 +190,9 @@ class DatabaseSeeder extends Seeder
 
         foreach ($chunksTKJ as $idx => $groupMembers) {
             $group = Group::create([
-                'name' => 'Kelompok TKJ ' . ($idx + 1),
+                'name' => 'Kelompok TKJ '.($idx + 1),
                 'classroom_id' => $kelasTKJ1->id,
-                'group_code' => 'TKJ-G' . ($idx + 1),
+                'group_code' => 'TKJ-G'.($idx + 1),
             ]);
 
             foreach ($groupMembers as $key => $member) {
@@ -217,8 +220,7 @@ class DatabaseSeeder extends Seeder
                 Submission::create([
                     'group_id' => $group->id,
                     'material_id' => $material1->id,
-                    'file_path' => 'uploads/tugas-tkj.jpg',
-                    'code_answer' => "if (jam > 1) { bayar mahal } else { murah }",
+                    'files' => ['uploads/tugas-tkj.jpg'],
                     'is_final' => true,
                     'submitted_at' => now(),
                 ]);

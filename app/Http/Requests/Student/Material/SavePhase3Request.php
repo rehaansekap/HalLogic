@@ -14,8 +14,8 @@ class SavePhase3Request extends FormRequest
     public function rules(): array
     {
         return [
-            'code_attempt' => ['required', 'string'],
-            'language' => ['required', 'string', 'in:c'],
+            'files' => ['required', 'array', 'min:1'],
+            'files.*' => ['required', 'file', 'mimes:pdf,doc,docx,txt,c', 'max:10240'],
         ];
     }
 

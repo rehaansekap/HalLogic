@@ -1,7 +1,7 @@
 import { LightBulbIcon } from '@heroicons/react/24/outline';
 import { Editor } from '@monaco-editor/react';
 import { motion } from 'framer-motion';
-import { Code2, Copy, Play, Save, Download, Keyboard } from 'lucide-react';
+import { Code2, Copy, Play, Download, Keyboard } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -24,8 +24,6 @@ int main() {
     const [codeOutput, setCodeOutput] = useState('');
     const [stdin, setStdin] = useState('');
     const [isRunning, setIsRunning] = useState(false);
-    const [isSaving, setIsSaving] = useState(false);
-    const [savedState, setSavedState] = useState(false);
 
     const isPhaseActive = currentStep >= 2;
 
@@ -85,39 +83,7 @@ int main() {
         }
     };
 
-    const handleSaveCode = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSaving(true);
 
-        try {
-            const formData = new FormData();
-            formData.append('code_attempt', code);
-            formData.append('language', 'c');
-
-            const response = await fetch(
-                `/material/${materialSlug}/save-phase-3`, // Keep the same route for now to avoid controller change, but we could rename it
-                {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-Token':
-                            document
-                                .querySelector('meta[name="csrf-token"]')
-                                ?.getAttribute('content') || '',
-                    },
-                    body: formData,
-                },
-            );
-
-            if (response.ok) {
-                setSavedState(true);
-                setTimeout(() => setSavedState(false), 3000);
-            }
-        } catch (error) {
-            console.error('Error saving code:', error);
-        } finally {
-            setIsSaving(false);
-        }
-    };
 
     const handleCopyCode = () => {
         navigator.clipboard.writeText(code);
@@ -259,7 +225,7 @@ int main() {
                 <Button
                     onClick={handleRunCode}
                     disabled={isRunning}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-500 py-3 font-semibold text-white transition-all hover:bg-blue-600 disabled:opacity-50"
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 font-semibold text-white transition-all hover:bg-blue-700 disabled:opacity-50"
                 >
                     {isRunning ? (
                         <>
@@ -270,33 +236,6 @@ int main() {
                         <>
                             <Play className="h-5 w-5" />
                             Jalankan Kode
-                        </>
-                    )}
-                </Button>
-
-                <Button
-                    onClick={handleSaveCode}
-                    disabled={isSaving}
-                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 font-semibold transition-all ${
-                        savedState
-                            ? 'bg-(--palette-green) text-white'
-                            : 'bg-(--palette-green) text-white hover:shadow-lg disabled:opacity-50'
-                    }`}
-                >
-                    {isSaving ? (
-                        <>
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                            Menyimpan...
-                        </>
-                    ) : savedState ? (
-                        <>
-                            <Code2 className="h-5 w-5" />
-                            Tersimpan!
-                        </>
-                    ) : (
-                        <>
-                            <Save className="h-5 w-5" />
-                            Simpan & Lanjut Fase 3
                         </>
                     )}
                 </Button>

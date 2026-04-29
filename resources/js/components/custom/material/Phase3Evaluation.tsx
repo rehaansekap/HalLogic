@@ -16,8 +16,7 @@ interface GallerySubmission {
     id: number;
     group_code: string;
     group_name: string;
-    file_url: string;
-    file_name: string;
+    files: string[];
     likes_count: number;
     feedbacks_count: number;
 }
@@ -217,14 +216,22 @@ export default function Phase3Evaluation({
                                     </p>
                                 </div>
                                 <div className="space-y-3 p-4">
-                                    <a
-                                        href={submission.file_url}
-                                        download
-                                        className="flex items-center justify-center gap-2 w-full rounded-lg bg-(--palette-limelight)/20 px-3 py-2 text-center text-sm font-semibold text-foreground transition-colors hover:bg-(--palette-limelight)/30"
-                                    >
-                                        <ArrowDownTrayIcon className="h-4 w-4" />
-                                        Unduh {submission.file_name}
-                                    </a>
+                                    <div className="space-y-2">
+                                        {submission.files && submission.files.map((file, idx) => (
+                                            <a
+                                                key={idx}
+                                                href={`/storage/${file}`}
+                                                download
+                                                className="flex items-center justify-between gap-2 w-full rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition-colors hover:bg-blue-100"
+                                            >
+                                                <div className="flex items-center gap-2 truncate">
+                                                    <ArrowDownTrayIcon className="h-3.5 w-3.5 shrink-0" />
+                                                    <span className="truncate">{file.split('/').pop()}</span>
+                                                </div>
+                                                <span className="shrink-0 text-[10px] opacity-60">Unduh</span>
+                                            </a>
+                                        ))}
+                                    </div>
                                     <div className="flex gap-4 text-xs text-muted-foreground">
                                         <span className="flex items-center gap-1">
                                             <Heart className="h-4 w-4" />

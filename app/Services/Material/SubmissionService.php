@@ -33,8 +33,7 @@ class SubmissionService
                 'groups.name as group_name',
                 'groups.group_code',
                 'groups.id as group_id',
-                'submissions.file_path',
-                'submissions.code_answer',
+                'submissions.files',
                 'submissions.submitted_at',
                 DB::raw('(SELECT COUNT(*) FROM likes WHERE likes.submission_id = submissions.id) as likes_count'),
                 DB::raw('(SELECT COUNT(*) FROM feedbacks WHERE feedbacks.submission_id = submissions.id) as feedbacks_count')
@@ -54,8 +53,7 @@ class SubmissionService
                 'group_name' => $submission->group_name,
                 'group_code' => $submission->group_code,
                 'group_members' => $groupMembers,
-                'file_path' => $submission->file_path,
-                'code_answer' => $submission->code_answer,
+                'files' => is_string($submission->files) ? json_decode($submission->files, true) : $submission->files,
                 'submitted_at' => $submission->submitted_at,
                 'likes_count' => $submission->likes_count,
                 'feedbacks_count' => $submission->feedbacks_count,
@@ -68,41 +66,52 @@ class SubmissionService
     }
 
     /**
-     * Save code attempt from phase 3
+     * Save investigation files from phase 2
      */
-    public function saveCodeAttempt(int $groupId, int $materialId, string $codeAnswer): void
-    {
-        Submission::updateOrCreate(
-            ['group_id' => $groupId, 'material_id' => $materialId],
-            ['code_answer' => $codeAnswer]
-        );
-    }
-
-    /**
-     * Handle file upload and return file path
-     */
-    public function handleFileUpload(Request $request, int $groupId): ?string
-    {
-        if (! $request->hasFile('file_flowchart')) {
-            return null;
-        }
-
-        $file = $request->file('file_flowchart');
-        $fileName = time().'_'.$groupId.'_'.$file->getClientOriginalName();
-
-        return $file->storeAs('submissions', $fileName, 'public');
-    }
-
-    /**
-     * Save final submission with file and code
-     */
-    public function saveFinalSubmission(int $groupId, int $materialId, ?string $filePath, string $codeFinal): void
+    public function saveInvestigationFiles(int $groupId, int $materialId, array $files): void
     {
         Submission::updateOrCreate(
             ['group_id' => $groupId, 'material_id' => $materialId],
             [
-                'file_path' => $filePath,
-                'code_answer' => $codeFinal,
+                'files' => $files,
+                'is_final' => true,
+                'submitted_at' => now(),
+            ]
+        );
+    }
+
+    /**
+     * Handle multiple file uploads and return paths
+     */
+    public function handleMultipleFileUploads(Request $request, int $groupId, string $key = 'files'): array
+    {
+        if (! $request->hasFile($key)) {
+            return [];
+        }
+
+        $files = $request->file($key);
+        if (! is_array($files)) {
+            $files = [$files];
+        }
+
+        $paths = [];
+        foreach ($files as $file) {
+            $fileName = time().'_'.$groupId.'_'.$file->getClientOriginalName();
+            $paths[] = $file->storeAs('submissions', $fileName, 'public');
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Save final submission with files
+     */
+    public function saveFinalSubmission(int $groupId, int $materialId, array $files): void
+    {
+        Submission::updateOrCreate(
+            ['group_id' => $groupId, 'material_id' => $materialId],
+            [
+                'files' => $files,
                 'is_final' => true,
                 'submitted_at' => now(),
             ]
