@@ -1,17 +1,13 @@
 import {
     BeakerIcon,
     InboxIcon,
-    LightBulbIcon,
-    LinkIcon,
     MicrophoneIcon,
     PuzzlePieceIcon,
     QuestionMarkCircleIcon,
-    SparklesIcon,
     TrophyIcon,
-    UserIcon,
 } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
-import { AlertCircle, CheckCircle2, Lock, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 interface GroupMember {
     user_id: number;
@@ -23,10 +19,6 @@ interface GroupMember {
 
 interface MaterialSidebarProps {
     groupMembers: GroupMember[];
-    currentUserRole: string;
-    groupStatus: 'locked' | 'active' | 'completed' | null;
-    collaborationLink?: string | null;
-    currentStep: number;
 }
 
 const roleColorMap: Record<string, string> = {
@@ -47,37 +39,8 @@ const roleIconMap: Record<string, React.ElementType> = {
 
 export default function MaterialSidebar({
     groupMembers,
-    currentUserRole,
-    groupStatus,
-    collaborationLink,
-    currentStep,
 }: MaterialSidebarProps) {
-    const statusConfig = {
-        locked: {
-            icon: Lock,
-            label: 'Terkunci',
-            color: 'text-orange-600',
-            bg: 'bg-gradient-to-br from-orange-100 to-orange-50',
-            border: 'border-orange-300/50',
-        },
-        active: {
-            icon: AlertCircle,
-            label: 'Aktif',
-            color: 'text-[var(--palette-green)]',
-            bg: 'bg-gradient-to-br from-[var(--palette-green)]/10 to-[var(--palette-chartreuse)]/5',
-            border: 'border-[var(--palette-green)]/30',
-        },
-        completed: {
-            icon: CheckCircle2,
-            label: 'Selesai',
-            color: 'text-[var(--palette-limelight)]',
-            bg: 'bg-gradient-to-br from-[var(--palette-limelight)]/10 to-[var(--palette-chartreuse)]/5',
-            border: 'border-[var(--palette-limelight)]/30',
-        },
-    };
 
-    const status = statusConfig[groupStatus || 'locked'];
-    const StatusIcon = status.icon;
 
     return (
         <motion.div
@@ -156,35 +119,6 @@ export default function MaterialSidebar({
                 </div>
             </motion.div>
 
-            {/* Collaboration Link */}
-            {collaborationLink && currentStep > 1 && (
-                <motion.div
-                    className="group relative overflow-hidden rounded-xl border border-[--palette-green]/40 bg-(--palette-green)/8 p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                >
-                    <div className="absolute inset-0 bg-(--palette-green)/5 transition-all duration-300 group-hover:bg-(--palette-green)/8" />
-                    <div className="relative z-10">
-                        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-foreground uppercase">
-                            <LinkIcon className="h-3.5 w-3.5" />
-                            Link Kolaborasi
-                        </h3>
-                        <a
-                            href={collaborationLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex w-full justify-center items-center gap-2 rounded-lg bg-(--palette-green) px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95"
-                        >
-                            <span>Buka Workspace</span>
-                        </a>
-                        <p className="mt-2 flex items-start gap-1 text-[10px] leading-tight font-medium text-muted-foreground">
-                            <SparklesIcon className="h-3 w-3 shrink-0 mt-0.5" />
-                            Akses real-time coding bersama dengan tim Anda
-                        </p>
-                    </div>
-                </motion.div>
-            )}
         </motion.div>
     );
 }

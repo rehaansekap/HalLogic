@@ -5,13 +5,13 @@ namespace App\Services\Material;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class NativeCppRunnerService
+class NativeCRunnerService
 {
     private string $workDir;
 
     public function __construct()
     {
-        $this->workDir = storage_path('app/cpp_sandbox');
+        $this->workDir = storage_path('app/c_sandbox');
         if (! File::exists($this->workDir)) {
             File::makeDirectory($this->workDir, 0755, true);
         }
@@ -20,7 +20,7 @@ class NativeCppRunnerService
     public function run(string $sourceCode, ?string $stdin = null): array
     {
         $sessionId = Str::uuid()->toString();
-        $sourceFile = "{$this->workDir}/{$sessionId}.cpp";
+        $sourceFile = "{$this->workDir}/{$sessionId}.c";
         $binaryFile = "{$this->workDir}/{$sessionId}.out";
         $stdinFile = "{$this->workDir}/{$sessionId}.in";
 
@@ -32,11 +32,11 @@ class NativeCppRunnerService
 
         // Compile (timeout 10s)
         $timeout = '/usr/bin/timeout';
-        $compiler = '/usr/bin/g++';
+        $compiler = '/usr/bin/gcc';
         $env = 'env -i PATH=/usr/bin:/bin';
 
         $compileCmd = sprintf(
-            '%s %s 10 %s -std=c++17 -O2 -Wall %s -o %s 2>&1',
+            '%s %s 10 %s -std=c11 -O2 -Wall %s -o %s 2>&1',
             $env,
             $timeout,
             $compiler,
@@ -108,7 +108,7 @@ class NativeCppRunnerService
 
     private function cleanup(string $sessionId): void
     {
-        @unlink("{$this->workDir}/{$sessionId}.cpp");
+        @unlink("{$this->workDir}/{$sessionId}.c");
         @unlink("{$this->workDir}/{$sessionId}.out");
         @unlink("{$this->workDir}/{$sessionId}.in");
     }

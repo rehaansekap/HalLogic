@@ -27,7 +27,6 @@ class UpdateGroupsRequest extends FormRequest
             'groups.*.members' => ['required', 'array'],
             'groups.*.members.*.user_id' => ['required', 'exists:users,id'],
             'groups.*.members.*.role' => ['required', 'string', 'in:Leader,Problem Analyzer,Algorithm Designer,Presenter'],
-            'groups.*.collab_url' => ['nullable', 'url', 'max:2048'],
         ];
     }
 
@@ -46,7 +45,6 @@ class UpdateGroupsRequest extends FormRequest
             'groups.*.members.*.user_id.exists' => 'Siswa tidak ditemukan',
             'groups.*.members.*.role.required' => 'Role anggota wajib diisi',
             'groups.*.members.*.role.in' => 'Role tidak valid',
-            'groups.*.collab_url.url' => 'Format URL kolaborasi tidak valid',
         ];
     }
 }

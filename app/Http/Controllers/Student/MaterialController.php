@@ -17,7 +17,7 @@ use App\Models\Submission;
 use App\Services\Material\FeedbackService;
 use App\Services\Material\GroupService;
 use App\Services\Material\MaterialLockService;
-use App\Services\Material\NativeCppRunnerService;
+use App\Services\Material\NativeCRunnerService;
 use App\Services\Material\ProgressService;
 use App\Services\Material\ReflectionService;
 use App\Services\Material\RewardService;
@@ -39,7 +39,7 @@ class MaterialController extends Controller
         protected RewardService $rewardService,
         protected MaterialLockService $lockService,
         protected VoteService $voteService,
-        protected NativeCppRunnerService $cppRunner,
+        protected NativeCRunnerService $cRunner,
     ) {}
 
     public function show($slug)
@@ -144,7 +144,7 @@ class MaterialController extends Controller
             $groupProgress = DB::table('group_progress')
                 ->where('group_id', $groupMember->group_id)
                 ->where('material_id', $material->id)
-                ->select('current_step', 'status', 'collab_url')
+                ->select('current_step', 'status')
                 ->first();
         }
 
@@ -169,7 +169,6 @@ class MaterialController extends Controller
             'groupStatus' => $groupStatus ?? 'locked',
             'unreviewedSubmissions' => $unreviewedSubmissions,
             'voteData' => $voteData,
-            'collaborationLink' => $groupProgress?->collab_url ?? $material->collab_url ?? null,
             'leaderRequirementsCompleted' => $leaderRequirementsCompleted,
         ]);
     }
@@ -449,11 +448,11 @@ class MaterialController extends Controller
 
         $data = $request->validated();
 
-        if ($data['language'] !== 'cpp') {
-            return response()->json(['error' => 'Hanya C++ yang didukung untuk saat ini.'], 400);
+        if ($data['language'] !== 'c') {
+            return response()->json(['error' => 'Hanya C yang didukung untuk saat ini.'], 400);
         }
 
-        $result = $this->cppRunner->run($data['code'], $data['stdin'] ?? null);
+        $result = $this->cRunner->run($data['code'], $data['stdin'] ?? null);
 
         return response()->json($result);
     }

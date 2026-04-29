@@ -15,7 +15,7 @@ class SavePhase3Request extends FormRequest
     {
         return [
             'code_attempt' => ['required', 'string'],
-            'language' => ['required', 'string', 'in:cpp'],
+            'language' => ['required', 'string', 'in:c'],
         ];
     }
 

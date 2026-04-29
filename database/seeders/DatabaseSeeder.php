@@ -155,7 +155,6 @@ class DatabaseSeeder extends Seeder
                 'group_id' => $group->id,
                 'material_id' => $material1->id,
                 'current_step' => 5,
-                'collab_url' => 'https://www.figma.com/board/DW8zTBOSQSYixL5sCYU6ph/Temp-Brainstorming?node-id=0-1&t=DmsqM1KGOzhEaz2u-1',
                 'status' => 'completed',
             ]);
 

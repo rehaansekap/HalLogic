@@ -61,7 +61,6 @@ interface MaterialPageProps {
         votable_groups: VotableGroup[];
         all_groups_submitted: boolean;
     };
-    collaborationLink?: string | null;
     leaderRequirementsCompleted: boolean;
 }
 
@@ -77,7 +76,6 @@ export default function MaterialPage({
     groupStatus,
     unreviewedSubmissions,
     voteData,
-    collaborationLink,
     leaderRequirementsCompleted,
 }: MaterialPageProps) {
     const [pollingActive] = useState(true);
@@ -179,6 +177,7 @@ export default function MaterialPage({
                                     hasInitialReflection={!!initialReflection}
                                     initialReflectionText={initialReflection}
                                     groupExists={groupMembers.length > 0}
+                                    videoUrl={material.video_url}
                                 />
                             )}
 
@@ -273,10 +272,6 @@ export default function MaterialPage({
                             <div className="sticky top-6">
                                 <MaterialSidebar
                                     groupMembers={groupMembers}
-                                    currentUserRole={currentUserRole}
-                                    groupStatus={groupStatus}
-                                    collaborationLink={collaborationLink}
-                                    currentStep={currentStep}
                                 />
                             </div>
                         </motion.div>

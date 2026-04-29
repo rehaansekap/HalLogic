@@ -18,7 +18,6 @@ return new class extends Migration
 
             $table->integer('current_step')->default(0);
             $table->enum('status', ['locked', 'in_progress', 'completed'])->default('locked');
-            $table->string('collab_url', 2048)->nullable();
 
             $table->timestamps();
         });

@@ -222,7 +222,6 @@ class TeacherMaterialService
                 'groups.id as group_id',
                 'groups.name as group_name',
                 'groups.group_code',
-                'group_progress.collab_url',
                 'group_progress.current_step',
                 'group_progress.status'
             )
@@ -245,7 +244,6 @@ class TeacherMaterialService
                     'group_id' => $group->group_id,
                     'group_name' => $group->group_name,
                     'group_code' => $group->group_code,
-                    'collab_url' => $group->collab_url,
                     'current_step' => $group->current_step,
                     'status' => $group->status,
                     'members' => $members,

@@ -93,7 +93,6 @@ class TeacherGroupManagementService
                 ->where('material_id', $materialId)
                 ->first();
 
-            $incomingCollabUrl = $groupData['collab_url'] ?? null;
 
             if (! $existingProgress) {
                 DB::table('group_progress')->insert([
@@ -101,7 +100,6 @@ class TeacherGroupManagementService
                     'material_id' => $materialId,
                     'current_step' => 2,
                     'status' => 'in_progress',
-                    'collab_url' => $incomingCollabUrl,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -119,7 +117,6 @@ class TeacherGroupManagementService
                     ->update([
                         'current_step' => $nextStep,
                         'status' => $nextStatus,
-                        'collab_url' => $incomingCollabUrl,
                         'updated_at' => now(),
                     ]);
             }

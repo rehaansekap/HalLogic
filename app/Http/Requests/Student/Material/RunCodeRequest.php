@@ -15,7 +15,7 @@ class RunCodeRequest extends FormRequest
     {
         return [
             'code' => ['required', 'string', 'max:20000'],
-            'language' => ['required', 'string', 'in:cpp'],
+            'language' => ['required', 'string', 'in:c'],
             'stdin' => ['nullable', 'string', 'max:5000'],
         ];
     }
