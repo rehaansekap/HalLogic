@@ -246,12 +246,17 @@ export default function MaterialPage({
                                     Sebelumnya
                                 </button>
                                 <button
-                                    onClick={() => setActivePhase((prev) => Math.min(5, prev + 1))}
-                                    disabled={activePhase === 5}
-                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${activePhase === 5
-                                        ? 'cursor-not-allowed bg-slate-100 text-slate-400'
-                                        : 'bg-[var(--palette-limelight)] text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
-                                        }`}
+                                    onClick={() => {
+                                        if (activePhase < currentStep && activePhase < 5) {
+                                            setActivePhase((prev) => prev + 1);
+                                        }
+                                    }}
+                                    disabled={activePhase >= currentStep || activePhase === 5}
+                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
+                                        activePhase >= currentStep || activePhase === 5
+                                            ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                                            : 'bg-[var(--palette-limelight)] text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
+                                    }`}
                                 >
                                     Selanjutnya
                                 </button>

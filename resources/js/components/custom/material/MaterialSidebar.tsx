@@ -30,15 +30,11 @@ interface MaterialSidebarProps {
 }
 
 const roleColorMap: Record<string, string> = {
-    Leader: 'bg-gradient-to-br from-[var(--palette-sunflower)]/25 to-[var(--palette-yellow-green)]/10 text-[var(--palette-sunflower)] border border-[var(--palette-sunflower)]/40 shadow-md',
-    'Problem Analyzer':
-        'bg-gradient-to-br from-[var(--palette-green)]/25 to-[var(--palette-chartreuse)]/10 text-[var(--palette-green)] border border-[var(--palette-green)]/40 shadow-md',
-    Presenter:
-        'bg-gradient-to-br from-[var(--palette-yellow-green)]/25 to-[var(--palette-limelight)]/10 text-[var(--palette-yellow-green)] border border-[var(--palette-yellow-green)]/40 shadow-md',
-    'Algorithm Designer':
-        'bg-gradient-to-br from-[var(--palette-limelight)]/25 to-[var(--palette-chartreuse)]/10 text-[var(--palette-limelight)] border border-[var(--palette-limelight)]/40 shadow-md',
-    'Belum Ada':
-        'bg-gradient-to-br from-gray-200/25 to-gray-100/10 text-gray-600 border border-gray-300/40 shadow-sm',
+    Leader: 'bg-amber-50 text-amber-600 border border-amber-200 shadow-sm',
+    'Problem Analyzer': 'bg-emerald-50 text-emerald-600 border border-emerald-200 shadow-sm',
+    Presenter: 'bg-lime-50 text-lime-600 border border-lime-200 shadow-sm',
+    'Algorithm Designer': 'bg-green-50 text-green-600 border border-green-200 shadow-sm',
+    'Belum Ada': 'bg-slate-100 text-slate-500 border border-slate-200 shadow-sm',
 };
 
 const roleIconMap: Record<string, React.ElementType> = {
