@@ -17,6 +17,8 @@ interface Phase1OrientationProps {
     hasInitialReflection: boolean;
     initialReflectionText?: string | null;
     groupExists: boolean;
+    videoUrl?: string | null;
+    materialId?: number;
 }
 
 export default function Phase1Orientation({
@@ -24,8 +26,14 @@ export default function Phase1Orientation({
     hasInitialReflection,
     initialReflectionText = '',
     groupExists,
+    videoUrl,
 }: Phase1OrientationProps) {
     const [reflection, setReflection] = useState(initialReflectionText ?? '');
+
+    const embedUrl = videoUrl ? (() => {
+        const match = videoUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+        return match && match[2].length === 11 ? `https://www.youtube.com/embed/${match[2]}` : null;
+    })() : null;
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -51,6 +59,7 @@ export default function Phase1Orientation({
                 initial="hidden"
                 animate="visible"
             >
+
                 <motion.div
                     className="mb-6 flex items-center gap-3"
                     variants={itemVariants}
@@ -69,6 +78,24 @@ export default function Phase1Orientation({
                         </p>
                     </div>
                 </motion.div>
+
+                {/* Video Material for already reflected state */}
+                {embedUrl && (
+                    <motion.div
+                        className="mb-6 overflow-hidden rounded-xl border border-(--palette-limelight)/20"
+                        variants={itemVariants}
+                    >
+                        <div className="relative w-full pt-[56.25%]">
+                            <iframe
+                                className="absolute inset-0 h-full w-full"
+                                src={embedUrl}
+                                title="Video Materi"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                    </motion.div>
+                )}
 
                 <motion.div
                     className="mb-6 rounded-lg border border-(--palette-green)/20 bg-(--palette-green)/10 p-4"
@@ -139,6 +166,24 @@ export default function Phase1Orientation({
                     </p>
                 </div>
             </motion.div>
+
+            {/* Video Material */}
+            {embedUrl && (
+                <motion.div
+                    className="mb-8 overflow-hidden rounded-xl border border-(--palette-limelight)/20"
+                    variants={itemVariants}
+                >
+                    <div className="relative w-full pt-[56.25%]">
+                        <iframe
+                            className="absolute inset-0 h-full w-full"
+                            src={embedUrl}
+                            title="Video Materi"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                    </div>
+                </motion.div>
+            )}
 
             {/* Reflection Form */}
             <Form
