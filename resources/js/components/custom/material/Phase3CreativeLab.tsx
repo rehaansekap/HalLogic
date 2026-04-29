@@ -1,7 +1,8 @@
+import { Editor } from '@monaco-editor/react';
 import { LightBulbIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 import { AlertCircle, Code2, Copy, Play, Save } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 interface Phase3CreativeLabProps {
@@ -27,7 +28,6 @@ int main() {
     const [isRunning, setIsRunning] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [savedState, setSavedState] = useState(false);
-    const codeRef = useRef<HTMLTextAreaElement>(null);
 
     const isPhaseActive = currentStep >= 3;
     const isTechnician =
@@ -54,7 +54,31 @@ int main() {
             });
 
             const data = await response.json();
-            setCodeOutput(data.output || data.error || 'Tidak ada output');
+            
+            let outputResult = '';
+            if (data.status) {
+                outputResult += `[Status: ${data.status}]\n`;
+                if (data.time !== null && data.time !== undefined) {
+                    outputResult += `Execution Time: ${data.time}ms\n`;
+                }
+                outputResult += `----------------------------------------\n\n`;
+            }
+            
+            if (data.compile_output) {
+                outputResult += `[Compilation Output]\n${data.compile_output}\n\n`;
+            }
+            if (data.stderr) {
+                outputResult += `[Error Output]\n${data.stderr}\n\n`;
+            }
+            if (data.stdout) {
+                outputResult += `${data.stdout}\n`;
+            }
+            
+            if (!data.compile_output && !data.stderr && !data.stdout) {
+                outputResult += data.error || 'Tidak ada output dari program.';
+            }
+
+            setCodeOutput(outputResult.trim());
         } catch (error) {
             setCodeOutput(
                 `Error: ${error instanceof Error ? error.message : 'Gagal menjalankan kode'}`,
@@ -99,10 +123,7 @@ int main() {
     };
 
     const handleCopyCode = () => {
-        if (codeRef.current) {
-            codeRef.current.select();
-            document.execCommand('copy');
-        }
+        navigator.clipboard.writeText(code);
     };
 
     const containerVariants = {
@@ -218,18 +239,23 @@ int main() {
                     </motion.button>
                 </div>
 
-                <textarea
-                    ref={codeRef}
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    disabled={!isTechnician}
-                    className={`w-full resize-none p-6 font-mono text-sm focus:outline-none ${
-                        isTechnician
-                            ? 'bg-white text-foreground'
-                            : 'cursor-not-allowed bg-gray-50 text-gray-600'
-                    }`}
-                    placeholder="Tulis kode C++ Anda di sini..."
-                />
+                <div className="h-[500px] w-full border-t border-[var(--palette-limelight)]/20">
+                    <Editor
+                        height="100%"
+                        language="cpp"
+                        theme="vs-dark"
+                        value={code}
+                        onChange={(value) => setCode(value || '')}
+                        options={{
+                            readOnly: !isTechnician,
+                            minimap: { enabled: false },
+                            fontSize: 14,
+                            scrollBeyondLastLine: false,
+                            padding: { top: 16, bottom: 16 },
+                            wordWrap: "on",
+                        }}
+                    />
+                </div>
             </motion.div>
 
             {/* Control Buttons */}
