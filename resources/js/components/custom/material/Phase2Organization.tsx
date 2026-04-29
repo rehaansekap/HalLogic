@@ -1,9 +1,9 @@
 import {
     BeakerIcon,
     CheckCircleIcon,
-    CogIcon,
-    ExclamationTriangleIcon,
+    LightBulbIcon,
     MicrophoneIcon,
+    PuzzlePieceIcon,
     TrophyIcon,
 } from '@heroicons/react/24/outline';
 import { Form } from '@inertiajs/react';
@@ -13,15 +13,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 interface GroupMember {
-    id: number;
     user_id: number;
-    group_id: number;
+    name: string;
     role: string;
-    user?: {
-        id: number;
-        name: string;
-        email: string;
-    };
+    username: string;
+    avatar?: string;
 }
 
 interface Phase2OrganizationProps {
@@ -42,10 +38,10 @@ const roles = [
         color: 'from-[var(--palette-sunflower)]',
     },
     {
-        id: 'Researcher',
-        label: 'Peneliti',
+        id: 'Problem Analyzer',
+        label: 'Analis Masalah',
         Icon: BeakerIcon,
-        description: 'Meneliti kasus, menganalisis masalah, dan ide-ide',
+        description: 'Menganalisis masalah, meneliti kasus, dan ide-ide',
         color: 'from-[var(--palette-green)]',
     },
     {
@@ -56,10 +52,10 @@ const roles = [
         color: 'from-[var(--palette-yellow-green)]',
     },
     {
-        id: 'Technician',
-        label: 'Teknisi',
-        Icon: CogIcon,
-        description: 'Mengelola coding dan eksperimen teknis',
+        id: 'Algorithm Designer',
+        label: 'Desainer Algoritma',
+        Icon: PuzzlePieceIcon,
+        description: 'Merancang algoritma dan solusi teknis',
         color: 'from-[var(--palette-limelight)]',
     },
 ];
@@ -180,148 +176,169 @@ export default function Phase2Organization({
                 ))}
             </motion.div>
 
-            {/* Role Assignment Form */}
+            {/* Role Assignment — Per-member forms */}
             {isLeader ? (
-                <Form
-                    method="post"
-                    action={`/material/${materialSlug}/update-role`}
+                <motion.div
                     className="space-y-6"
-                    onSubmit={() => setIsSubmitting(true)}
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
                 >
-                    {({ processing, wasSuccessful }) => (
-                        <motion.div
-                            className="space-y-6"
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            {/* Member Role Selection */}
-                            <div className="space-y-4">
-                                {groupMembers.map((member) => (
-                                    <motion.div
-                                        key={member.user_id}
-                                        className="rounded-lg border border-(--palette-limelight)/20 p-4"
-                                        variants={itemVariants}
-                                    >
-                                        <div className="mb-3 flex items-center justify-between">
-                                            <div>
-                                                <p className="font-semibold text-foreground">
-                                                    {member.user?.name}
-                                                </p>
-                                                <p className="text-sm text-muted-foreground">
-                                                    {member.user?.email}
-                                                </p>
-                                            </div>
-                                            {member.role === 'Leader' && (
-                                                <Crown className="h-5 w-5 text-(--palette-sunflower)" />
-                                            )}
-                                        </div>
-                                        <select
-                                            name={`role_${member.user_id}`}
-                                            aria-label={`Pilih peran untuk ${member.user?.name}`}
-                                            value={
-                                                selectedRoles[member.user_id] ||
-                                                'Belum Ada'
-                                            }
-                                            onChange={(e) =>
-                                                setSelectedRoles({
-                                                    ...selectedRoles,
-                                                    [member.user_id]:
-                                                        e.target.value,
-                                                })
-                                            }
-                                            className="w-full rounded-lg border border-(--palette-limelight)/20 px-3 py-2 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
-                                        >
-                                            <option value="Belum Ada">
-                                                Belum Ada Peran
-                                            </option>
-                                            {roles.map((role) => (
-                                                <option
-                                                    key={role.id}
-                                                    value={role.id}
-                                                    disabled={
-                                                        Object.values(
-                                                            selectedRoles,
-                                                        ).includes(role.id) &&
-                                                        selectedRoles[
-                                                            member.user_id
-                                                        ] !== role.id
-                                                    }
-                                                >
-                                                    {role.Icon && (
-                                                        <role.Icon className="mr-1 inline-block h-4 w-4" />
-                                                    )}
-                                                    {role.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </motion.div>
-                                ))}
-                            </div>
-
-                            {/* Submit Button */}
+                    {/* Member Role Selection */}
+                    <div className="space-y-4">
+                        {groupMembers.map((member) => (
                             <motion.div
-                                className="flex gap-3 pt-4"
+                                key={member.user_id}
+                                className="rounded-lg border border-(--palette-limelight)/20 p-4"
                                 variants={itemVariants}
                             >
-                                <Button
-                                    type="submit"
-                                    disabled={
-                                        processing ||
-                                        !allRolesAssigned ||
-                                        wasSuccessful
-                                    }
-                                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 font-semibold transition-all ${
-                                        wasSuccessful
-                                            ? 'bg-(--palette-green) text-white'
-                                            : 'bg-(--palette-green) text-white hover:shadow-lg disabled:opacity-50'
-                                    }`}
-                                >
-                                    {processing ? (
-                                        <>
-                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                                            Menyimpan...
-                                        </>
-                                    ) : wasSuccessful ? (
-                                        <>
-                                            <Zap className="h-5 w-5" />
-                                            Tersimpan!
-                                        </>
-                                    ) : (
-                                        <>
-                                            <ArrowRight className="h-5 w-5" />
-                                            Simpan Peran & Lanjut
-                                        </>
+                                <div className="mb-3 flex items-center justify-between">
+                                    <div>
+                                        <p className="font-semibold text-foreground">
+                                            {member.name}
+                                        </p>
+                                        <p className="text-sm text-muted-foreground">
+                                            {member.username}
+                                        </p>
+                                    </div>
+                                    {member.role === 'Leader' && (
+                                        <Crown className="h-5 w-5 text-(--palette-sunflower)" />
                                     )}
-                                </Button>
+                                </div>
+
+                                {member.role === 'Leader' ? (
+                                    <div className="rounded-lg bg-(--palette-sunflower)/10 px-3 py-2 text-sm font-semibold text-(--palette-sunflower)">
+                                        Ketua (tidak bisa diubah)
+                                    </div>
+                                ) : (
+                                    <Form
+                                        method="post"
+                                        action={`/material/${materialSlug}/update-role`}
+                                    >
+                                        {({ processing, wasSuccessful }) => (
+                                            <div className="flex items-center gap-3">
+                                                <input
+                                                    type="hidden"
+                                                    name="target_user_id"
+                                                    value={member.user_id}
+                                                />
+                                                <select
+                                                    name="role"
+                                                    aria-label={`Pilih peran untuk ${member.name}`}
+                                                    value={
+                                                        selectedRoles[member.user_id] ||
+                                                        'Belum Ada'
+                                                    }
+                                                    onChange={(e) =>
+                                                        setSelectedRoles({
+                                                            ...selectedRoles,
+                                                            [member.user_id]:
+                                                                e.target.value,
+                                                        })
+                                                    }
+                                                    className="flex-1 rounded-lg border border-(--palette-limelight)/20 px-3 py-2 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
+                                                >
+                                                    <option value="Belum Ada">
+                                                        Belum Ada Peran
+                                                    </option>
+                                                    {roles
+                                                        .filter((r) => r.id !== 'Leader')
+                                                        .map((role) => (
+                                                            <option
+                                                                key={role.id}
+                                                                value={role.id}
+                                                                disabled={
+                                                                    Object.values(
+                                                                        selectedRoles,
+                                                                    ).includes(role.id) &&
+                                                                    selectedRoles[
+                                                                        member.user_id
+                                                                    ] !== role.id
+                                                                }
+                                                            >
+                                                                {role.label}
+                                                            </option>
+                                                        ))}
+                                                </select>
+                                                <Button
+                                                    type="submit"
+                                                    disabled={
+                                                        processing ||
+                                                        !selectedRoles[member.user_id] ||
+                                                        selectedRoles[member.user_id] === 'Belum Ada' ||
+                                                        wasSuccessful
+                                                    }
+                                                    className="rounded-lg bg-(--palette-green) px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-lg disabled:opacity-50"
+                                                >
+                                                    {processing ? (
+                                                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                                    ) : wasSuccessful ? (
+                                                        <CheckCircleIcon className="h-4 w-4" />
+                                                    ) : (
+                                                        'Simpan'
+                                                    )}
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </Form>
+                                )}
                             </motion.div>
+                        ))}
+                    </div>
 
-                            {!allRolesAssigned && (
-                                <motion.div
-                                    className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4 text-sm text-yellow-700"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                >
-                                    <ExclamationTriangleIcon className="h-4 w-4 shrink-0" />
-                                    Semua anggota harus memiliki peran
-                                    sebelum melanjutkan
-                                </motion.div>
-                            )}
-
-                            {wasSuccessful && (
-                                <motion.div
-                                    className="flex items-center gap-2 rounded-lg border border-(--palette-green)/30 bg-(--palette-green)/10 p-4 text-sm font-semibold text-(--palette-green)"
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                >
-                                    <CheckCircleIcon className="h-4 w-4 shrink-0" />
-                                    Peran kelompok berhasil disimpan! Lanjut
-                                    ke fase berikutnya
-                                </motion.div>
-                            )}
+                    {!allRolesAssigned && (
+                        <motion.div
+                            className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4 text-sm text-yellow-700"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                        >
+                            <LightBulbIcon className="h-4 w-4 shrink-0" />
+                            Tentukan peran untuk semua anggota, lalu simpan
+                            masing-masing peran
                         </motion.div>
                     )}
-                </Form>
+
+                    {allRolesAssigned && (
+                        <Form
+                            method="post"
+                            action={`/material/${materialSlug}/complete-step-2`}
+                        >
+                            {({ processing, wasSuccessful }) => (
+                                <motion.div
+                                    className="flex gap-3 pt-4"
+                                    variants={itemVariants}
+                                >
+                                    <Button
+                                        type="submit"
+                                        disabled={processing || wasSuccessful}
+                                        className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 font-semibold transition-all ${
+                                            wasSuccessful
+                                                ? 'bg-(--palette-green) text-white'
+                                                : 'bg-(--palette-green) text-white hover:shadow-lg disabled:opacity-50'
+                                        }`}
+                                    >
+                                        {processing ? (
+                                            <>
+                                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                                Memproses...
+                                            </>
+                                        ) : wasSuccessful ? (
+                                            <>
+                                                <Zap className="h-5 w-5" />
+                                                Selesai!
+                                            </>
+                                        ) : (
+                                            <>
+                                                <ArrowRight className="h-5 w-5" />
+                                                Selesaikan Organisasi & Lanjut Fase 3
+                                            </>
+                                        )}
+                                    </Button>
+                                </motion.div>
+                            )}
+                        </Form>
+                    )}
+                </motion.div>
             ) : (
                 <motion.div
                     className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-6"

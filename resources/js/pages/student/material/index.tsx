@@ -21,15 +21,11 @@ interface Material {
 }
 
 interface GroupMember {
-    id: number;
     user_id: number;
-    group_id: number;
+    name: string;
     role: string;
-    user?: {
-        id: number;
-        name: string;
-        email: string;
-    };
+    username: string;
+    avatar?: string;
 }
 
 interface GallerySubmission {

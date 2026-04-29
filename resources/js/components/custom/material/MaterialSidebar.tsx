@@ -1,10 +1,10 @@
 import {
-    AcademicCapIcon,
     BeakerIcon,
-    CogIcon,
     InboxIcon,
+    LightBulbIcon,
     LinkIcon,
     MicrophoneIcon,
+    PuzzlePieceIcon,
     QuestionMarkCircleIcon,
     SparklesIcon,
     TrophyIcon,
@@ -14,16 +14,11 @@ import { motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, Lock, Users } from 'lucide-react';
 
 interface GroupMember {
-    id: number;
     user_id: number;
-    group_id: number;
+    name: string;
     role: string;
-    created_at: string;
-    user?: {
-        id: number;
-        name: string;
-        email: string;
-    };
+    username: string;
+    avatar?: string;
 }
 
 interface MaterialSidebarProps {
@@ -36,11 +31,11 @@ interface MaterialSidebarProps {
 
 const roleColorMap: Record<string, string> = {
     Leader: 'bg-gradient-to-br from-[var(--palette-sunflower)]/25 to-[var(--palette-yellow-green)]/10 text-[var(--palette-sunflower)] border border-[var(--palette-sunflower)]/40 shadow-md',
-    Researcher:
+    'Problem Analyzer':
         'bg-gradient-to-br from-[var(--palette-green)]/25 to-[var(--palette-chartreuse)]/10 text-[var(--palette-green)] border border-[var(--palette-green)]/40 shadow-md',
     Presenter:
         'bg-gradient-to-br from-[var(--palette-yellow-green)]/25 to-[var(--palette-limelight)]/10 text-[var(--palette-yellow-green)] border border-[var(--palette-yellow-green)]/40 shadow-md',
-    Technician:
+    'Algorithm Designer':
         'bg-gradient-to-br from-[var(--palette-limelight)]/25 to-[var(--palette-chartreuse)]/10 text-[var(--palette-limelight)] border border-[var(--palette-limelight)]/40 shadow-md',
     'Belum Ada':
         'bg-gradient-to-br from-gray-200/25 to-gray-100/10 text-gray-600 border border-gray-300/40 shadow-sm',
@@ -48,9 +43,9 @@ const roleColorMap: Record<string, string> = {
 
 const roleIconMap: Record<string, React.ElementType> = {
     Leader: TrophyIcon,
-    Researcher: BeakerIcon,
+    'Problem Analyzer': BeakerIcon,
     Presenter: MicrophoneIcon,
-    Technician: CogIcon,
+    'Algorithm Designer': PuzzlePieceIcon,
     'Belum Ada': QuestionMarkCircleIcon,
 };
 
@@ -149,7 +144,7 @@ export default function MaterialSidebar({
                         <div className="space-y-2">
                             {groupMembers.map((member, idx) => (
                                 <motion.div
-                                    key={member.id}
+                                    key={member.user_id}
                                     className="group/member flex items-start justify-between gap-2 rounded-lg border border-slate-200/50 bg-slate-50 p-3 transition-all duration-200 hover:shadow-sm"
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
@@ -157,10 +152,10 @@ export default function MaterialSidebar({
                                 >
                                     <div className="min-w-0 flex-1">
                                         <p className="truncate text-xs font-bold text-foreground">
-                                            {member.user?.name || 'Unknown'}
+                                            {member.name || 'Unknown'}
                                         </p>
                                         <p className="truncate text-[10px] font-medium text-muted-foreground">
-                                            {member.user?.email}
+                                            {member.username}
                                         </p>
                                     </div>
                                     <span

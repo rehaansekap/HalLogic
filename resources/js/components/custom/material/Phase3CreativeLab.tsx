@@ -50,7 +50,7 @@ int main() {
                             .querySelector('meta[name="csrf-token"]')
                             ?.getAttribute('content') || '',
                 },
-                body: JSON.stringify({ code }),
+                body: JSON.stringify({ code, language: 'cpp' }),
             });
 
             const data = await response.json();
@@ -70,7 +70,8 @@ int main() {
 
         try {
             const formData = new FormData();
-            formData.append('code', code);
+            formData.append('code_attempt', code);
+            formData.append('language', 'cpp');
 
             const response = await fetch(
                 `/material/${materialSlug}/save-phase-3`,
