@@ -90,35 +90,6 @@ export default function MaterialSidebar({
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
         >
-            {/* Group Status */}
-            <motion.div
-                className="group relative overflow-hidden rounded-xl border-2 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
-                style={{
-                    borderColor:
-                        status.color.replace('text-', 'var(--palette-') + ')',
-                }}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-            >
-                <div className="absolute inset-0 bg-(--palette-limelight)/5 transition-all duration-300 group-hover:from-[--palette-limelight]/10" />
-                <div className="relative z-10">
-                    <div className="mb-4 flex items-center gap-2">
-                        <div className={`rounded-lg p-1.5 ${status.bg}`}>
-                            <StatusIcon className={`h-4 w-4 ${status.color}`} />
-                        </div>
-                        <h3 className="text-base font-bold text-foreground">
-                            Status Kelompok
-                        </h3>
-                    </div>
-                    <div
-                        className={`${status.bg} ${status.border} border ${status.color} rounded-lg px-4 py-2 text-center text-xs font-bold`}
-                    >
-                        {status.label}
-                    </div>
-                </div>
-            </motion.div>
-
             {/* Group Members */}
             <motion.div
                 className="group relative overflow-hidden rounded-xl border border-[--palette-limelight]/30 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
@@ -155,14 +126,13 @@ export default function MaterialSidebar({
                                             {member.name || 'Unknown'}
                                         </p>
                                         <p className="truncate text-[10px] font-medium text-muted-foreground">
-                                            {member.username}
+                                            {member.role}
                                         </p>
                                     </div>
                                     <span
-                                        className={`rounded-md px-2 py-1 text-center text-[10px] font-bold whitespace-nowrap transition-all duration-200 group-hover/member:shadow-sm ${
-                                            roleColorMap[member.role] ||
+                                        className={`rounded-md px-2 py-1 text-center text-[10px] font-bold whitespace-nowrap transition-all duration-200 group-hover/member:shadow-sm ${roleColorMap[member.role] ||
                                             roleColorMap['Belum Ada']
-                                        }`}
+                                            }`}
                                     >
                                         {(() => {
                                             const RoleIcon =
@@ -171,8 +141,7 @@ export default function MaterialSidebar({
 
                                             return (
                                                 <>
-                                                    <RoleIcon className="mr-1 inline-block h-3 w-3" />
-                                                    {member.role}
+                                                    <RoleIcon className="inline-block h-3 w-3" />
                                                 </>
                                             );
                                         })()}
@@ -187,40 +156,6 @@ export default function MaterialSidebar({
                                 Belum ada anggota kelompok
                             </p>
                         </div>
-                    )}
-
-                    {/* Your Role */}
-                    {currentUserRole && currentUserRole !== 'Belum Ada' && (
-                        <motion.div
-                            className="mt-4 border-t border-slate-200/50 pt-4"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6 }}
-                        >
-                            <p className="mb-2 flex items-center gap-1 text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
-                                <UserIcon className="h-3 w-3" />
-                                Peran Anda:
-                            </p>
-                            <span
-                                className={`inline-block rounded-lg px-3 py-1.5 text-xs font-bold transition-all duration-200 ${
-                                    roleColorMap[currentUserRole] ||
-                                    roleColorMap['Belum Ada']
-                                }`}
-                            >
-                                {(() => {
-                                    const RoleIcon =
-                                        roleIconMap[currentUserRole] ||
-                                        roleIconMap['Belum Ada'];
-
-                                    return (
-                                        <>
-                                            <RoleIcon className="mr-1 inline-block h-3.5 w-3.5" />
-                                            {currentUserRole}
-                                        </>
-                                    );
-                                })()}
-                            </span>
-                        </motion.div>
                     )}
                 </div>
             </motion.div>

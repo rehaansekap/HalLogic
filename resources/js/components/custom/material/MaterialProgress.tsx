@@ -22,7 +22,7 @@ export default function MaterialProgress({
 
     return (
         <motion.div
-            className="mt-2"
+            className="mb-6"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}

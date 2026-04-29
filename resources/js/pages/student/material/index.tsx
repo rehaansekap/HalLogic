@@ -154,14 +154,13 @@ export default function MaterialPage({
                     isLocked={isLocked}
                 />
 
-                <MaterialProgress
-                    currentStep={currentStep}
-                    activePhase={activePhase}
-                    onPhaseChange={setActivePhase}
-                />
-
                 {/* Content */}
-                <div className="container mx-auto max-w-7xl px-4 py-12">
+                <div className="container mx-auto max-w-7xl px-4 pb-12 pt-2">
+                    <MaterialProgress
+                        currentStep={currentStep}
+                        activePhase={activePhase}
+                        onPhaseChange={setActivePhase}
+                    />
 
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                         {/* Main Content */}
