@@ -89,6 +89,23 @@ export default function AdminDashboard({
         );
     }
 
+    // Console Log All Data from props as JSON in one Console Log
+    console.log(
+        'All Data:',
+        JSON.stringify(
+            {
+                totalStudents,
+                totalTeachers,
+                totalClassrooms,
+                totalMaterials,
+                latestUsers,
+                user,
+            },
+            null,
+            2,
+        ),
+    );
+
     return (
         <>
             <Head title="Dashboard - Admin" />
@@ -378,15 +395,14 @@ export default function AdminDashboard({
                                                     </td>
                                                     <td className="px-6 py-4 text-center">
                                                         <Badge
-                                                            className={`capitalize ${
-                                                                user.role ===
+                                                            className={`capitalize ${user.role ===
                                                                 'admin'
-                                                                    ? 'bg-(--palette-sunflower)/20 text-(--palette-sunflower)'
-                                                                    : user.role ===
-                                                                        'teacher'
-                                                                      ? 'bg-(--palette-yellow-green)/20 text-(--palette-yellow-green)'
-                                                                      : 'bg-(--palette-limelight)/20 text-(--palette-limelight)'
-                                                            }`}
+                                                                ? 'bg-(--palette-sunflower)/20 text-(--palette-sunflower)'
+                                                                : user.role ===
+                                                                    'teacher'
+                                                                    ? 'bg-(--palette-yellow-green)/20 text-(--palette-yellow-green)'
+                                                                    : 'bg-(--palette-limelight)/20 text-(--palette-limelight)'
+                                                                }`}
                                                         >
                                                             {user.role}
                                                         </Badge>
@@ -421,7 +437,7 @@ export default function AdminDashboard({
                                                             onClick={() =>
                                                                 setCurrentPage(
                                                                     currentPage -
-                                                                        1,
+                                                                    1,
                                                                 )
                                                             }
                                                             className="cursor-pointer hover:bg-(--palette-limelight)/10"
@@ -436,10 +452,10 @@ export default function AdminDashboard({
                                                     const shouldShow =
                                                         pageNum === 1 ||
                                                         pageNum ===
-                                                            totalPages ||
+                                                        totalPages ||
                                                         Math.abs(
                                                             pageNum -
-                                                                currentPage,
+                                                            currentPage,
                                                         ) <= 1;
 
                                                     if (!shouldShow) {
@@ -460,12 +476,11 @@ export default function AdminDashboard({
                                                                         pageNum,
                                                                     )
                                                                 }
-                                                                className={`cursor-pointer transition-all ${
-                                                                    pageNum ===
+                                                                className={`cursor-pointer transition-all ${pageNum ===
                                                                     currentPage
-                                                                        ? 'bg-(--palette-green) text-white'
-                                                                        : 'hover:bg-(--palette-limelight)/10'
-                                                                }`}
+                                                                    ? 'bg-(--palette-green) text-white'
+                                                                    : 'hover:bg-(--palette-limelight)/10'
+                                                                    }`}
                                                             >
                                                                 {pageNum}
                                                             </PaginationLink>
@@ -479,7 +494,7 @@ export default function AdminDashboard({
                                                             onClick={() =>
                                                                 setCurrentPage(
                                                                     currentPage +
-                                                                        1,
+                                                                    1,
                                                                 )
                                                             }
                                                             className="cursor-pointer hover:bg-(--palette-limelight)/10"

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Classroom;
 use App\Models\Material;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
@@ -15,12 +16,7 @@ class AdminDashboardController extends Controller
      */
     public function index()
     {
-        $stats = [
-            'totalStudents' => User::where('role', 'student')->count(),
-            'totalTeachers' => User::where('role', 'teacher')->count(),
-            'totalClassrooms' => Classroom::count(),
-            'totalMaterials' => Material::count(),
-        ];
+        $authUser = Auth::user();
 
         $latestUsers = User::select('id', 'name', 'email', 'role', 'avatar', 'created_at')
             ->orderBy('created_at', 'desc')
@@ -38,8 +34,12 @@ class AdminDashboardController extends Controller
             });
 
         return Inertia::render('admin/dashboard/index', [
-            'stats' => $stats,
+            'totalStudents' => User::where('role', 'student')->count(),
+            'totalTeachers' => User::where('role', 'teacher')->count(),
+            'totalClassrooms' => Classroom::count(),
+            'totalMaterials' => Material::count(),
             'latestUsers' => $latestUsers,
+            'user' => ['name' => $authUser->name],
         ]);
     }
 }

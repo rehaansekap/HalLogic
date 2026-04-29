@@ -98,6 +98,22 @@ export default function StudentDashboard({
         );
     }
 
+    // Console Log All Data from props as JSON in one Console Log
+    console.log(
+        'All Data:',
+        JSON.stringify(
+            {
+                materials,
+                teachers,
+                userXp,
+                userLevel,
+                user,
+            },
+            null,
+            2,
+        ),
+    );
+
     return (
         <>
             <Head title="Dashboard - Student" />

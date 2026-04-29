@@ -79,11 +79,10 @@ export default function PageHeader({
                                             delay: 0.2,
                                             type: 'spring',
                                         }}
-                                        className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                                            role
-                                                ? roleBgColors[role]
-                                                : 'bg-(--palette-limelight)/20'
-                                        }`}
+                                        className={`flex h-10 w-10 items-center justify-center rounded-lg ${role
+                                            ? roleBgColors[role]
+                                            : 'bg-(--palette-limelight)/20'
+                                            }`}
                                     >
                                         {icon}
                                     </motion.div>
@@ -146,23 +145,6 @@ export default function PageHeader({
                     </div>
                 </div>
             </div>
-
-            {/* User Info */}
-            {userName && (
-                <motion.div
-                    className="flex items-center justify-between px-2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4, duration: 0.5 }}
-                >
-                    <p className="text-sm text-muted-foreground">
-                        Welcome back,{' '}
-                        <span className="font-semibold text-foreground">
-                            {userName}
-                        </span>
-                    </p>
-                </motion.div>
-            )}
         </motion.div>
     );
 }

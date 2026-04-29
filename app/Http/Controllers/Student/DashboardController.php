@@ -47,7 +47,7 @@ class DashboardController extends Controller
                     'id' => $material->id,
                     'title' => $material->title,
                     'description' => $material->description,
-                    'level' => $material->difficulty_level,
+                    'difficulty_level' => $material->difficulty_level,
                     'slug' => $material->slug,
                     'status' => $lockStatus['status'],
                     'locked' => $lockStatus['locked'],
@@ -66,6 +66,7 @@ class DashboardController extends Controller
             'teachers' => $teachers,
             'userXp' => $user->xp,
             'userLevel' => $user->level,
+            'user' => ['name' => $user->name],
         ]);
     }
 }

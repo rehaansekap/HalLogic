@@ -38,7 +38,11 @@ class TeacherDashboardController extends Controller
         return Inertia::render('teacher/dashboard/index', [
             'materials' => $materials,
             'classrooms' => $classrooms,
-            'stats' => $stats,
+            'totalMaterials' => $stats['totalMaterials'],
+            'totalStudents' => $stats['totalStudents'],
+            'activeMaterials' => $stats['activeMaterials'],
+            'pendingReview' => $stats['pendingReview'],
+            'user' => ['name' => $user->name],
         ]);
     }
 }

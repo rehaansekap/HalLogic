@@ -77,7 +77,7 @@ export default function TeacherDashboard({
             const matchesClassroom =
                 !selectedClassroom ||
                 material.classroom_name ===
-                    classrooms.find((c) => c.id === selectedClassroom)?.name;
+                classrooms.find((c) => c.id === selectedClassroom)?.name;
 
             return matchesSearch && matchesClassroom;
         });
@@ -124,6 +124,24 @@ export default function TeacherDashboard({
             </>
         );
     }
+
+    // Console Log All Data from props as JSON in one Console Log
+    console.log(
+        'All Data:',
+        JSON.stringify(
+            {
+                materials,
+                classrooms,
+                totalMaterials,
+                totalStudents,
+                activeMaterials,
+                pendingReview,
+                user,
+            },
+            null,
+            2,
+        ),
+    );
 
     return (
         <>
@@ -320,7 +338,7 @@ export default function TeacherDashboard({
                                                                             delay:
                                                                                 0.35 +
                                                                                 idx *
-                                                                                    0.05 +
+                                                                                0.05 +
                                                                                 0.1,
                                                                             duration: 0.6,
                                                                         }}
@@ -339,12 +357,11 @@ export default function TeacherDashboard({
                                                         </td>
                                                         <td className="px-6 py-4 text-center">
                                                             <span
-                                                                className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
-                                                                    material.needs_review >
+                                                                className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${material.needs_review >
                                                                     0
-                                                                        ? 'bg-(--palette-sunflower)/20 text-(--palette-sunflower)'
-                                                                        : 'bg-(--palette-green)/20 text-(--palette-green)'
-                                                                }`}
+                                                                    ? 'bg-(--palette-sunflower)/20 text-(--palette-sunflower)'
+                                                                    : 'bg-(--palette-green)/20 text-(--palette-green)'
+                                                                    }`}
                                                             >
                                                                 {
                                                                     material.needs_review
