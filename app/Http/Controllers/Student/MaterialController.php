@@ -452,6 +452,10 @@ class MaterialController extends Controller
             return response()->json(['error' => 'Hanya C yang didukung untuk saat ini.'], 400);
         }
 
+        if (empty($data['stdin']) && preg_match('/\b(scanf|gets|fgets|getchar)\b/', $data['code'])) {
+            return response()->json(['error' => 'Kode Anda membutuhkan input (seperti scanf). Silakan isi kolom input program (stdin) terlebih dahulu sebelum menjalankan.'], 400);
+        }
+
         $result = $this->cRunner->run($data['code'], $data['stdin'] ?? null);
 
         return response()->json($result);

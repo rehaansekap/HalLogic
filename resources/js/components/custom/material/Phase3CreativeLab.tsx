@@ -1,7 +1,7 @@
 import { Editor } from '@monaco-editor/react';
 import { LightBulbIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
-import { AlertCircle, Code2, Copy, Play, Save } from 'lucide-react';
+import { AlertCircle, Code2, Copy, Play, Save, Download, Keyboard } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -16,15 +16,15 @@ export default function Phase3CreativeLab({
     currentStep,
     currentUserRole,
 }: Phase3CreativeLabProps) {
-    const [code, setCode] = useState(`#include <iostream>
-using namespace std;
+    const [code, setCode] = useState(`#include <stdio.h>
 
 int main() {
-    cout << "Hello, World!" << endl;
+    printf("Hello, World!\\n");
     return 0;
 }`);
 
     const [codeOutput, setCodeOutput] = useState('');
+    const [stdin, setStdin] = useState('');
     const [isRunning, setIsRunning] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [savedState, setSavedState] = useState(false);
@@ -50,7 +50,7 @@ int main() {
                             .querySelector('meta[name="csrf-token"]')
                             ?.getAttribute('content') || '',
                 },
-                body: JSON.stringify({ code, language: 'cpp' }),
+                body: JSON.stringify({ code, language: 'c', stdin }),
             });
 
             const data = await response.json();
@@ -95,7 +95,7 @@ int main() {
         try {
             const formData = new FormData();
             formData.append('code_attempt', code);
-            formData.append('language', 'cpp');
+            formData.append('language', 'c');
 
             const response = await fetch(
                 `/material/${materialSlug}/save-phase-3`,
@@ -124,6 +124,18 @@ int main() {
 
     const handleCopyCode = () => {
         navigator.clipboard.writeText(code);
+    };
+
+    const handleExportCode = () => {
+        const blob = new Blob([code], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'code_phase3.c';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     };
 
     const containerVariants = {
@@ -188,7 +200,7 @@ int main() {
                             Fase 3: Eksperimen & Koding
                         </h2>
                         <p className="text-muted-foreground">
-                            Tulis dan jalankan kode C++ Anda. Teknisi dapat
+                            Tulis dan jalankan kode C Anda. Teknisi dapat
                             menjalankan dan menyimpan kode, yang akan dibawa ke
                             fase pengumpulan.
                         </p>
@@ -225,24 +237,35 @@ int main() {
                     <div className="flex items-center gap-2">
                         <Code2 className="h-4 w-4 text-(--palette-green)" />
                         <span className="font-semibold text-foreground">
-                            Editor Kode C++
+                            Editor Kode C
                         </span>
                     </div>
-                    <motion.button
-                        onClick={handleCopyCode}
-                        className="flex items-center gap-1 rounded bg-(--palette-limelight)/20 px-2 py-1 text-xs text-foreground transition-colors hover:bg-(--palette-limelight)/30"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        <Copy className="h-3 w-3" />
-                        Salin
-                    </motion.button>
+                    <div className="flex gap-2">
+                        <motion.button
+                            onClick={handleCopyCode}
+                            className="flex items-center gap-1 rounded bg-(--palette-limelight)/20 px-2 py-1 text-xs text-foreground transition-colors hover:bg-(--palette-limelight)/30"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Copy className="h-3 w-3" />
+                            Salin
+                        </motion.button>
+                        <motion.button
+                            onClick={handleExportCode}
+                            className="flex items-center gap-1 rounded bg-(--palette-limelight)/20 px-2 py-1 text-xs text-foreground transition-colors hover:bg-(--palette-limelight)/30"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Download className="h-3 w-3" />
+                            Export
+                        </motion.button>
+                    </div>
                 </div>
 
-                <div className="h-[500px] w-full border-t border-[var(--palette-limelight)]/20">
+                <div className="h-125 w-full border-t border-(--palette-limelight)/20">
                     <Editor
                         height="100%"
-                        language="cpp"
+                        language="c"
                         theme="vs-dark"
                         value={code}
                         onChange={(value) => setCode(value || '')}
@@ -308,6 +331,28 @@ int main() {
                 </motion.div>
             )}
 
+            {/* Standard Input */}
+            <motion.div
+                className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white"
+                variants={itemVariants}
+            >
+                <div className="flex items-center gap-2 border-b border-(--palette-limelight)/20 bg-(--palette-limelight)/10 px-6 py-3">
+                    <Keyboard className="h-4 w-4 text-(--palette-green)" />
+                    <span className="font-semibold text-foreground">
+                        Input Program (stdin)
+                    </span>
+                </div>
+                <div className="p-4">
+                    <textarea
+                        value={stdin}
+                        onChange={(e) => setStdin(e.target.value)}
+                        placeholder="Masukkan input untuk program (opsional)"
+                        className="w-full min-h-[100px] rounded-lg border border-gray-200 p-3 text-sm font-mono focus:border-(--palette-green) focus:outline-none focus:ring-1 focus:ring-(--palette-green)"
+                        disabled={!isTechnician}
+                    />
+                </div>
+            </motion.div>
+
             {/* Code Output */}
             <motion.div
                 className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white"
@@ -343,9 +388,6 @@ int main() {
                         final
                     </li>
                     <li>• Pastikan kode dapat dikompilasi sebelum menyimpan</li>
-                    <li>
-                        • Kolaborasi dengan anggota lain melalui link kolaborasi
-                    </li>
                 </ul>
             </motion.div>
         </motion.div>
