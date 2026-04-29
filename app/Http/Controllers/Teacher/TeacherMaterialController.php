@@ -154,7 +154,6 @@ class TeacherMaterialController extends Controller
                 'video_url' => $material->video_url,
                 'case_narrative' => $material->case_narrative,
                 'material_pdf' => $material->material_pdf,
-                'lkpd_pdf' => $material->lkpd_pdf,
                 'simulator_config' => $material->simulator_config,
                 'prerequisite_material_id' => $material->prerequisite_material_id,
                 'started_at' => $material->started_at,

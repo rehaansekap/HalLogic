@@ -30,8 +30,7 @@ class UpdateMaterialRequest extends FormRequest
             'video_url' => ['required', 'url', 'regex:/youtube\.com|youtu\.be/'],
             'case_narrative' => ['required', 'string', 'max:1000'],
             'material_pdf' => ['nullable', 'file', 'mimes:pdf', 'max:51200'],
-            'lkpd_pdf' => ['nullable', 'file', 'mimes:pdf', 'max:51200'],
-            'simulator_config' => ['nullable', 'string'],
+            'simulator_config' => ['nullable', 'json'],
             'prerequisite_material_id' => ['nullable', 'exists:materials,id'],
             'started_at' => ['nullable', 'date'],
             'finished_at' => ['nullable', 'date', 'after_or_equal:started_at'],
@@ -59,10 +58,7 @@ class UpdateMaterialRequest extends FormRequest
             'case_narrative.max' => 'Narasi maksimal 1000 karakter',
             'material_pdf.file' => 'File harus berupa dokumen',
             'material_pdf.mimes' => 'File harus berformat PDF',
-            'material_pdf.max' => 'Ukuran file maksimal 50MB',
-            'lkpd_pdf.file' => 'LKPD harus berupa file',
-            'lkpd_pdf.mimes' => 'LKPD harus berformat PDF',
-            'lkpd_pdf.max' => 'Ukuran LKPD maksimal 50MB',
+            'material_pdf.max' => 'Ukuran file materi maksimal 50MB',
             'prerequisite_material_id.exists' => 'Material prasyarat tidak valid',
             'started_at.date' => 'Format tanggal mulai tidak valid',
             'finished_at.date' => 'Format tanggal selesai tidak valid',
@@ -77,10 +73,6 @@ class UpdateMaterialRequest extends FormRequest
     {
         if (is_string($this->material_pdf)) {
             $this->request->remove('material_pdf');
-        }
-
-        if (is_string($this->lkpd_pdf)) {
-            $this->request->remove('lkpd_pdf');
         }
 
         $this->merge([

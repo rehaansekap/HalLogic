@@ -15,6 +15,7 @@ interface Material {
     description: string;
     difficulty_level: 'easy' | 'medium' | 'hard';
     video_url?: string;
+    material_pdf?: string;
 }
 
 interface GroupMember {
@@ -250,6 +251,7 @@ export default function MaterialPage({
                                     currentStep={currentStep}
                                     slug={material.slug}
                                     submission={submission}
+                                    materialPdf={material.material_pdf}
                                 />
                             </div>
                         </motion.div>

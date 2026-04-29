@@ -21,11 +21,6 @@ class TeacherMaterialService
             $pdfPath = $data['material_pdf']->store('materials', 'public');
         }
 
-        $lkpdPath = null;
-        if (isset($data['lkpd_pdf']) && $data['lkpd_pdf'] instanceof UploadedFile) {
-            $lkpdPath = $data['lkpd_pdf']->store('lkpd', 'public');
-        }
-
         $slug = $this->generateUniqueSlug($data['title']);
 
         $material = Material::create([
@@ -38,7 +33,6 @@ class TeacherMaterialService
             'video_url' => $data['video_url'],
             'case_narrative' => $data['case_narrative'],
             'material_pdf' => $pdfPath,
-            'lkpd_pdf' => $lkpdPath,
             'simulator_config' => $data['simulator_config'] ?? null,
             'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
@@ -64,14 +58,6 @@ class TeacherMaterialService
             $pdfPath = $data['material_pdf']->store('materials', 'public');
         }
 
-        $lkpdPath = $material->lkpd_pdf;
-        if (isset($data['lkpd_pdf']) && $data['lkpd_pdf'] instanceof UploadedFile) {
-            if ($lkpdPath) {
-                Storage::disk('public')->delete($lkpdPath);
-            }
-            $lkpdPath = $data['lkpd_pdf']->store('lkpd', 'public');
-        }
-
         $slug = $material->slug;
         if ($data['title'] !== $material->title) {
             $slug = $this->generateUniqueSlug($data['title'], $material->id);
@@ -86,7 +72,6 @@ class TeacherMaterialService
             'video_url' => $data['video_url'],
             'case_narrative' => $data['case_narrative'],
             'material_pdf' => $pdfPath,
-            'lkpd_pdf' => $lkpdPath,
             'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
             'finished_at' => $data['finished_at'] ?? null,
@@ -102,10 +87,6 @@ class TeacherMaterialService
     {
         if ($material->material_pdf) {
             Storage::disk('public')->delete($material->material_pdf);
-        }
-
-        if ($material->lkpd_pdf) {
-            Storage::disk('public')->delete($material->lkpd_pdf);
         }
 
         DB::table('grades')
@@ -200,7 +181,7 @@ class TeacherMaterialService
             ->where('users.role', 'student')
             ->select('users.id', 'users.name', 'users.username', 'users.avatar')
             ->get()
-            ->map(fn($s) => [
+            ->map(fn ($s) => [
                 'id' => $s->id,
                 'name' => $s->name,
                 'username' => $s->username,
@@ -480,7 +461,7 @@ class TeacherMaterialService
         }
 
         while ($query->exists()) {
-            $slug = $originalSlug . '-' . $counter;
+            $slug = $originalSlug.'-'.$counter;
             $counter++;
             $query = Material::where('slug', $slug);
             if ($excludeId) {

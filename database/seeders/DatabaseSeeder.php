@@ -106,6 +106,7 @@ class DatabaseSeeder extends Seeder
             'prerequisite_material_id' => null,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
+            'material_pdf' => 'materials/materi-1.pdf',
         ]);
 
         $material2 = Material::create([
@@ -119,6 +120,7 @@ class DatabaseSeeder extends Seeder
             'prerequisite_material_id' => $material1->id,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
+            'material_pdf' => 'materials/materi-2.pdf',
         ]);
 
         $material3 = Material::create([
@@ -132,6 +134,7 @@ class DatabaseSeeder extends Seeder
             'prerequisite_material_id' => $material2->id,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
+            'material_pdf' => 'materials/materi-3.pdf',
         ]);
 
         $rpl1Students = array_slice($students, 0, 20);
