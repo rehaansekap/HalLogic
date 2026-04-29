@@ -9,7 +9,6 @@ use App\Http\Requests\Student\Material\StoreReflectionRequest;
 use App\Http\Requests\Student\Material\SubmitFeedbackRequest;
 use App\Http\Requests\Student\Material\SubmitFinalReflectionRequest;
 use App\Http\Requests\Student\Material\SubmitVoteRequest;
-use App\Http\Requests\Student\Material\UpdateRoleRequest;
 use App\Models\Material;
 use App\Models\Reflection;
 use App\Models\Submission;
@@ -65,12 +64,10 @@ class MaterialController extends Controller
             $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
             $currentStep = $progress ? (int) $progress->current_step : 1;
             $myGroupMembers = $this->groupService->getGroupMembers($groupMember->group_id);
-            $currentUserRole = $groupMember->role;
             $groupStatus = $progress?->status ?? 'locked';
         } else {
             $currentStep = 1;
             $myGroupMembers = collect();
-            $currentUserRole = 'Belum Ada';
             $groupStatus = 'locked';
         }
 
@@ -96,7 +93,7 @@ class MaterialController extends Controller
         }
 
         $unreviewedSubmissions = [];
-        if ($groupMember && $groupMember->role === 'Leader') {
+        if ($groupMember) {
             $allOtherSubmissions = $allSubmissions->filter(fn ($s) => $s['group_code'] !== $myGroupCode);
             foreach ($allOtherSubmissions as $sub) {
                 $hasFeedback = DB::table('feedbacks')
@@ -117,7 +114,7 @@ class MaterialController extends Controller
 
         $allGroupsSubmitted = $this->voteService->areAllGroupsSubmitted($material->id);
 
-        if ($groupMember && $groupMember->role === 'Leader') {
+        if ($groupMember) {
             $hasVoted = $this->voteService->hasVoted($groupMember->group_id, $material->id);
             $myVote = $this->voteService->getGroupVote($groupMember->group_id, $material->id);
         } else {
@@ -143,10 +140,10 @@ class MaterialController extends Controller
 
         $leaderRequirementsCompleted = false;
         if ($groupMember) {
-            $leaderHasVoted = $this->voteService->hasVoted($groupMember->group_id, $material->id);
-            $leaderGaveAllFeedback = is_array($unreviewedSubmissions) ? count($unreviewedSubmissions) === 0 : false;
+            $hasVotedStatus = $this->voteService->hasVoted($groupMember->group_id, $material->id);
+            $gaveAllFeedback = is_array($unreviewedSubmissions) ? count($unreviewedSubmissions) === 0 : false;
 
-            $leaderRequirementsCompleted = $leaderHasVoted && $leaderGaveAllFeedback;
+            $leaderRequirementsCompleted = $hasVotedStatus && $gaveAllFeedback;
         }
 
         return Inertia::render('student/material/index', [
@@ -154,7 +151,6 @@ class MaterialController extends Controller
             'currentStep' => $currentStep,
             'unlockedStep' => $currentStep,
             'groupMembers' => $myGroupMembers,
-            'currentUserRole' => $currentUserRole ?? 'Belum Ada',
             'initialReflection' => $initialReflection,
             'finalReflection' => $finalReflection,
             'gallerySubmissions' => $gallerySubmissions,
@@ -198,10 +194,6 @@ class MaterialController extends Controller
             return redirect()->back()->with('error', 'Anda belum memiliki kelompok!');
         }
 
-        if ($groupMember->role !== 'Leader') {
-            abort(403, 'Hanya Leader Kelompok yang dapat memberikan vote!');
-        }
-
         $validated = $request->validated();
 
         if ($validated['voted_group_id'] == $groupMember->group_id) {
@@ -229,53 +221,7 @@ class MaterialController extends Controller
         return redirect()->back()->with('success', 'Vote berhasil disimpan!');
     }
 
-    public function updateRole(UpdateRoleRequest $request, $slug)
-    {
-        $material = Material::where('slug', $slug)->firstOrFail();
-        $user = Auth::user();
 
-        if (! $this->groupService->isUserLeaderForMaterial($user->id, $material->id)) {
-            abort(403, 'Hanya Leader Kelompok yang boleh mengubah peran anggota!');
-        }
-
-        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
-        if (! $groupMember) {
-            return redirect()->back()->with('error', 'Anda belum memiliki kelompok untuk material ini!');
-        }
-
-        $validated = $request->validated();
-        $targetRole = $this->groupService->getMemberRoleInGroup(
-            $validated['target_user_id'],
-            $groupMember->group_id
-        );
-
-        if ($targetRole === 'Leader') {
-            return redirect()->back()->with('error', 'Peran Leader tidak bisa diubah di sini. Hubungi Guru.');
-        }
-
-        $this->groupService->updateMemberRoleInGroup(
-            $validated['target_user_id'],
-            $groupMember->group_id,
-            $validated['role']
-        );
-
-        return redirect()->back()->with('success', 'Peran anggota berhasil diperbarui!');
-    }
-
-    public function completeStep2(Request $request, $slug)
-    {
-        $material = Material::where('slug', $slug)->firstOrFail();
-        $user = Auth::user();
-
-        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
-        if (! $groupMember) {
-            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk material ini!');
-        }
-
-        $this->progressService->advanceGroupStep($groupMember->group_id, $material->id, 2, 3);
-
-        return redirect()->back()->with('success', 'Organisasi selesai! Lanjut ke Penyelidikan.');
-    }
 
     public function savePhase3(SavePhase3Request $request, $slug)
     {
@@ -291,7 +237,7 @@ class MaterialController extends Controller
 
         DB::transaction(function () use ($validated, $material, $groupMember) {
             $this->submissionService->saveCodeAttempt($groupMember->group_id, $material->id, $validated['code_attempt']);
-            $this->progressService->advanceGroupStep($groupMember->group_id, $material->id, 3, 4);
+            $this->progressService->advanceGroupStep($groupMember->group_id, $material->id, 2, 3);
         });
 
         return redirect()->back()->with('success', 'Eksperimen selesai! Lanjut ke tahap evaluasi.');
@@ -393,7 +339,7 @@ class MaterialController extends Controller
         }
 
         $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
-        if (! $progress || (int) $progress->current_step < 3) {
+        if (! $progress || (int) $progress->current_step < 2) {
             return response()->json(['error' => 'Tahap ini belum terbuka.'], 403);
         }
 

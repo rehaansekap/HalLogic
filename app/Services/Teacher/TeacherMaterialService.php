@@ -235,7 +235,7 @@ class TeacherMaterialService
                         'users.name',
                         'users.username',
                         'users.avatar',
-                        'group_members.role'
+                        'group_members.is_leader'
                     )
                     ->get()
                     ->toArray();
@@ -291,7 +291,7 @@ class TeacherMaterialService
                         'users.name',
                         'users.username',
                         'users.avatar',
-                        'group_members.role'
+                        'group_members.is_leader'
                     )
                     ->get()
                     ->toArray();
@@ -366,11 +366,7 @@ class TeacherMaterialService
                     'file_path' => $group->file_path ?? null,
                     'code_answer' => $group->code_answer ?? null,
                     'submitted_at' => $group->submitted_at ?? null,
-                    'step1_status' => $stepStatus(1),
-                    'step2_status' => $stepStatus(2),
                     'step3_status' => $stepStatus(3),
-                    'step4_status' => $stepStatus(4),
-                    'step5_status' => $stepStatus(5),
                     'submission' => $submission,
                     'likes_count' => $likesCount,
                     'feedbacks' => $feedbacks,

@@ -28,10 +28,9 @@ interface VotableGroup {
     group_name: string;
 }
 
-interface Phase4EvaluationProps {
+interface Phase3EvaluationProps {
     materialSlug: string;
     currentStep: number;
-    currentUserRole: string;
     gallerySubmissions: GallerySubmission[];
     votableGroups: VotableGroup[];
     voteData: {
@@ -41,20 +40,19 @@ interface Phase4EvaluationProps {
     };
     finalReflection?: string;
     unreviewedSubmissions: Array<{ group_name: string; group_code: string }>;
-    leaderRequirementsCompleted: boolean;
+    requirementsCompleted: boolean;
 }
 
-export default function Phase4Evaluation({
+export default function Phase3Evaluation({
     materialSlug,
     currentStep,
-    currentUserRole,
     gallerySubmissions,
     votableGroups,
     voteData,
     finalReflection = '',
     unreviewedSubmissions,
-    leaderRequirementsCompleted,
-}: Phase4EvaluationProps) {
+    requirementsCompleted,
+}: Phase3EvaluationProps) {
     const [selectedVote, setSelectedVote] = useState<number | null>(
         voteData.my_vote || null,
     );
@@ -63,8 +61,7 @@ export default function Phase4Evaluation({
         'gallery' | 'voting' | 'reflection'
     >('gallery');
 
-    const isPhaseActive = currentStep >= 4;
-    const isLeader = currentUserRole === 'Leader';
+    const isPhaseActive = currentStep >= 3;
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -92,7 +89,7 @@ export default function Phase4Evaluation({
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-foreground">
-                            Fase 4: Evaluasi & Penilaian
+                            Fase 3: Evaluasi & Penilaian
                         </h2>
                         <p className="text-muted-foreground">
                             Fase ini akan dibuka setelah eksperimen selesai
@@ -121,7 +118,7 @@ export default function Phase4Evaluation({
                     </div>
                     <div className="flex-1">
                         <h2 className="mb-2 text-2xl font-bold text-foreground">
-                            Fase 4: Evaluasi & Penilaian
+                            Fase 3: Evaluasi & Penilaian
                         </h2>
                         <p className="text-muted-foreground">
                             Lihat karya kelompok lain, berikan feedback, voting,
@@ -131,8 +128,8 @@ export default function Phase4Evaluation({
                 </div>
             </motion.div>
 
-            {/* Leader Requirements */}
-            {isLeader && !leaderRequirementsCompleted && (
+            {/* Group Requirements */}
+            {!requirementsCompleted && (
                 <motion.div
                     className="flex items-start gap-3 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4"
                     variants={itemVariants}
@@ -141,7 +138,7 @@ export default function Phase4Evaluation({
                     <div>
                         <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
                             <ClipboardDocumentListIcon className="h-4 w-4 shrink-0" />
-                            Tugas Ketua yang Belum Selesai
+                            Tugas Kelompok yang Belum Selesai
                         </p>
                         <ul className="space-y-1 text-sm text-muted-foreground">
                             {unreviewedSubmissions.length > 0 && (
@@ -261,15 +258,7 @@ export default function Phase4Evaluation({
                     className="rounded-xl border border-(--palette-limelight)/20 bg-white p-6"
                     variants={itemVariants}
                 >
-                    {!isLeader ? (
-                        <div className="py-8 text-center">
-                            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-blue-500 opacity-50" />
-                            <p className="text-muted-foreground">
-                                Hanya Ketua dapat memberikan suara untuk
-                                kelompok terbaik
-                            </p>
-                        </div>
-                    ) : !voteData.all_groups_submitted ? (
+                    {!voteData.all_groups_submitted ? (
                         <div className="py-8 text-center">
                             <AlertCircle className="mx-auto mb-4 h-12 w-12 text-yellow-500 opacity-50" />
                             <p className="text-muted-foreground">
@@ -281,10 +270,10 @@ export default function Phase4Evaluation({
                         <div className="py-8 text-center">
                             <Star className="mx-auto mb-4 h-12 w-12 text-(--palette-sunflower) opacity-50" />
                             <p className="font-semibold text-foreground">
-                                Anda sudah memberikan suara
+                                Kelompok Anda sudah memberikan suara
                             </p>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Pilihan Anda: Kelompok #{voteData.my_vote}
+                                Pilihan: Kelompok #{voteData.my_vote}
                             </p>
                         </div>
                     ) : (

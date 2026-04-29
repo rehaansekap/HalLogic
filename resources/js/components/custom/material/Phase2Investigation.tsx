@@ -1,21 +1,19 @@
-import { Editor } from '@monaco-editor/react';
 import { LightBulbIcon } from '@heroicons/react/24/outline';
+import { Editor } from '@monaco-editor/react';
 import { motion } from 'framer-motion';
-import { AlertCircle, Code2, Copy, Play, Save, Download, Keyboard } from 'lucide-react';
+import { Code2, Copy, Play, Save, Download, Keyboard } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
-interface Phase3CreativeLabProps {
+interface Phase2InvestigationProps {
     materialSlug: string;
     currentStep: number;
-    currentUserRole: string;
 }
 
-export default function Phase3CreativeLab({
+export default function Phase2Investigation({
     materialSlug,
     currentStep,
-    currentUserRole,
-}: Phase3CreativeLabProps) {
+}: Phase2InvestigationProps) {
     const [code, setCode] = useState(`#include <stdio.h>
 
 int main() {
@@ -29,15 +27,9 @@ int main() {
     const [isSaving, setIsSaving] = useState(false);
     const [savedState, setSavedState] = useState(false);
 
-    const isPhaseActive = currentStep >= 3;
-    const isTechnician =
-        currentUserRole === 'Technician' || currentUserRole === 'Leader';
+    const isPhaseActive = currentStep >= 2;
 
     const handleRunCode = async () => {
-        if (!isTechnician) {
-            return;
-        }
-
         setIsRunning(true);
 
         try {
@@ -56,20 +48,25 @@ int main() {
             const data = await response.json();
             
             let outputResult = '';
+
             if (data.status) {
                 outputResult += `[Status: ${data.status}]\n`;
+
                 if (data.time !== null && data.time !== undefined) {
                     outputResult += `Execution Time: ${data.time}ms\n`;
                 }
+
                 outputResult += `----------------------------------------\n\n`;
             }
             
             if (data.compile_output) {
                 outputResult += `[Compilation Output]\n${data.compile_output}\n\n`;
             }
+
             if (data.stderr) {
                 outputResult += `[Error Output]\n${data.stderr}\n\n`;
             }
+
             if (data.stdout) {
                 outputResult += `${data.stdout}\n`;
             }
@@ -98,7 +95,7 @@ int main() {
             formData.append('language', 'c');
 
             const response = await fetch(
-                `/material/${materialSlug}/save-phase-3`,
+                `/material/${materialSlug}/save-phase-3`, // Keep the same route for now to avoid controller change, but we could rename it
                 {
                     method: 'POST',
                     headers: {
@@ -131,7 +128,7 @@ int main() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'code_phase3.c';
+        a.download = 'code_phase2.c';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -167,11 +164,10 @@ int main() {
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-foreground">
-                            Fase 3: Eksperimen & Koding
+                            Fase 2: Penyelidikan
                         </h2>
                         <p className="text-muted-foreground">
-                            Fase ini akan dibuka setelah organisasi kelompok
-                            selesai
+                            Fase ini akan dibuka setelah refleksi awal selesai
                         </p>
                     </div>
                 </div>
@@ -197,36 +193,14 @@ int main() {
                     </div>
                     <div className="flex-1">
                         <h2 className="mb-2 text-2xl font-bold text-foreground">
-                            Fase 3: Eksperimen & Koding
+                            Fase 2: Penyelidikan
                         </h2>
                         <p className="text-muted-foreground">
-                            Tulis dan jalankan kode C Anda. Teknisi dapat
-                            menjalankan dan menyimpan kode, yang akan dibawa ke
-                            fase pengumpulan.
+                            Tulis dan jalankan kode C Anda untuk menyelesaikan tantangan yang diberikan.
                         </p>
                     </div>
                 </div>
             </motion.div>
-
-            {/* Permissions Check */}
-            {!isTechnician && (
-                <motion.div
-                    className="flex items-start gap-3 rounded-lg border border-blue-500/20 bg-blue-500/10 p-4"
-                    variants={itemVariants}
-                >
-                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
-                    <div>
-                        <p className="font-semibold text-foreground">
-                            Akses Terbatas
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            Hanya Teknisi dan Ketua yang dapat menjalankan dan
-                            menyimpan kode. Anda dapat melihat kode yang telah
-                            disimpan.
-                        </p>
-                    </div>
-                </motion.div>
-            )}
 
             {/* Code Editor */}
             <motion.div
@@ -270,7 +244,6 @@ int main() {
                         value={code}
                         onChange={(value) => setCode(value || '')}
                         options={{
-                            readOnly: !isTechnician,
                             minimap: { enabled: false },
                             fontSize: 14,
                             scrollBeyondLastLine: false,
@@ -282,54 +255,52 @@ int main() {
             </motion.div>
 
             {/* Control Buttons */}
-            {isTechnician && (
-                <motion.div className="flex gap-3" variants={itemVariants}>
-                    <Button
-                        onClick={handleRunCode}
-                        disabled={isRunning}
-                        className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-500 py-3 font-semibold text-white transition-all hover:bg-blue-600 disabled:opacity-50"
-                    >
-                        {isRunning ? (
-                            <>
-                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                                Menjalankan...
-                            </>
-                        ) : (
-                            <>
-                                <Play className="h-5 w-5" />
-                                Jalankan Kode
-                            </>
-                        )}
-                    </Button>
+            <motion.div className="flex gap-3" variants={itemVariants}>
+                <Button
+                    onClick={handleRunCode}
+                    disabled={isRunning}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-500 py-3 font-semibold text-white transition-all hover:bg-blue-600 disabled:opacity-50"
+                >
+                    {isRunning ? (
+                        <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                            Menjalankan...
+                        </>
+                    ) : (
+                        <>
+                            <Play className="h-5 w-5" />
+                            Jalankan Kode
+                        </>
+                    )}
+                </Button>
 
-                    <Button
-                        onClick={handleSaveCode}
-                        disabled={isSaving}
-                        className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 font-semibold transition-all ${
-                            savedState
-                                ? 'bg-(--palette-green) text-white'
-                                : 'bg-(--palette-green) text-white hover:shadow-lg disabled:opacity-50'
-                        }`}
-                    >
-                        {isSaving ? (
-                            <>
-                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                                Menyimpan...
-                            </>
-                        ) : savedState ? (
-                            <>
-                                <AlertCircle className="h-5 w-5" />
-                                Tersimpan!
-                            </>
-                        ) : (
-                            <>
-                                <Save className="h-5 w-5" />
-                                Simpan & Lanjut Fase 4
-                            </>
-                        )}
-                    </Button>
-                </motion.div>
-            )}
+                <Button
+                    onClick={handleSaveCode}
+                    disabled={isSaving}
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 font-semibold transition-all ${
+                        savedState
+                            ? 'bg-(--palette-green) text-white'
+                            : 'bg-(--palette-green) text-white hover:shadow-lg disabled:opacity-50'
+                    }`}
+                >
+                    {isSaving ? (
+                        <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                            Menyimpan...
+                        </>
+                    ) : savedState ? (
+                        <>
+                            <Code2 className="h-5 w-5" />
+                            Tersimpan!
+                        </>
+                    ) : (
+                        <>
+                            <Save className="h-5 w-5" />
+                            Simpan & Lanjut Fase 3
+                        </>
+                    )}
+                </Button>
+            </motion.div>
 
             {/* Standard Input */}
             <motion.div
@@ -347,8 +318,7 @@ int main() {
                         value={stdin}
                         onChange={(e) => setStdin(e.target.value)}
                         placeholder="Masukkan input untuk program (opsional)"
-                        className="w-full min-h-[100px] rounded-lg border border-gray-200 p-3 text-sm font-mono focus:border-(--palette-green) focus:outline-none focus:ring-1 focus:ring-(--palette-green)"
-                        disabled={!isTechnician}
+                        className="w-full min-h-25 rounded-lg border border-gray-200 p-3 text-sm font-mono focus:border-(--palette-green) focus:outline-none focus:ring-1 focus:ring-(--palette-green)"
                     />
                 </div>
             </motion.div>

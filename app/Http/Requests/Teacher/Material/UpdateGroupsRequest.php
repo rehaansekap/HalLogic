@@ -26,7 +26,6 @@ class UpdateGroupsRequest extends FormRequest
             'groups.*.group_code' => ['required', 'string', 'max:20'],
             'groups.*.members' => ['required', 'array'],
             'groups.*.members.*.user_id' => ['required', 'exists:users,id'],
-            'groups.*.members.*.role' => ['required', 'string', 'in:Leader,Problem Analyzer,Algorithm Designer,Presenter'],
         ];
     }
 
@@ -43,8 +42,6 @@ class UpdateGroupsRequest extends FormRequest
             'groups.*.group_code.required' => 'Kode kelompok wajib diisi',
             'groups.*.members.required' => 'Anggota kelompok wajib diisi',
             'groups.*.members.*.user_id.exists' => 'Siswa tidak ditemukan',
-            'groups.*.members.*.role.required' => 'Role anggota wajib diisi',
-            'groups.*.members.*.role.in' => 'Role tidak valid',
         ];
     }
 }

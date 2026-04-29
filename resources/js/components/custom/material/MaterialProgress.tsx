@@ -13,9 +13,8 @@ export default function MaterialProgress({
     onPhaseChange,
 }: MaterialProgressProps) {
     const steps = [
-        'Refleksi',
-        'Organisasi',
-        'Eksperimen',
+        'Orientasi',
+        'Penyelidikan',
         'Evaluasi',
     ];
 
@@ -27,7 +26,7 @@ export default function MaterialProgress({
             transition={{ delay: 0.2 }}
         >
             <div className="flex w-full snap-x snap-mandatory overflow-x-auto p-1 hide-scrollbar md:p-4">
-                <div className="flex min-w-max gap-3 px-1 md:grid md:w-full md:min-w-0 md:grid-cols-4">
+                <div className="flex min-w-max gap-3 px-1 md:grid md:w-full md:min-w-0 md:grid-cols-3">
                     {steps.map((step, idx) => {
                         const stepNumber = idx + 1;
                         const isUnlocked = stepNumber <= currentStep;
@@ -43,28 +42,28 @@ export default function MaterialProgress({
 
                         if (isActive) {
                             stateClasses =
-                                'border-2 border-[var(--palette-limelight)] bg-[var(--palette-limelight)]/10 shadow-md ring-4 ring-[var(--palette-limelight)]/5 scale-[1.02] md:scale-105 z-10';
+                                'border-2 border-(--palette-limelight) bg-(--palette-limelight)/10 shadow-md ring-4 ring-(--palette-limelight)/5 scale-[1.02] md:scale-105 z-10';
                             IconComponent = PlayCircle;
-                            iconColor = 'text-[var(--palette-limelight)]';
+                            iconColor = 'text-(--palette-limelight)';
                             badgeText = 'Sedang Aktif';
                             badgeClasses =
-                                'bg-[var(--palette-limelight)]/20 text-[var(--palette-limelight)]';
+                                'bg-(--palette-limelight)/20 text-(--palette-limelight)';
                         } else if (isCompleted) {
                             stateClasses =
-                                'border-2 border-[var(--palette-green)]/30 bg-[var(--palette-green)]/5 hover:bg-[var(--palette-green)]/10 hover:border-[var(--palette-green)]/50 cursor-pointer shadow-sm';
+                                'border-2 border-(--palette-green)/30 bg-(--palette-green)/5 hover:bg-(--palette-green)/10 hover:border-(--palette-green)/50 cursor-pointer shadow-sm';
                             IconComponent = CheckCircle2;
-                            iconColor = 'text-[var(--palette-green)]';
+                            iconColor = 'text-(--palette-green)';
                             badgeText = 'Selesai';
                             badgeClasses =
-                                'bg-[var(--palette-green)]/10 text-[var(--palette-green)]';
+                                'bg-(--palette-green)/10 text-(--palette-green)';
                         } else if (isCurrentStep) {
                             stateClasses =
-                                'border-2 border-dashed border-[var(--palette-sunflower)] bg-[var(--palette-sunflower)]/5 hover:bg-[var(--palette-sunflower)]/10 cursor-pointer shadow-sm';
+                                'border-2 border-dashed border-(--palette-sunflower) bg-(--palette-sunflower)/5 hover:bg-(--palette-sunflower)/10 cursor-pointer shadow-sm';
                             IconComponent = CircleDot;
-                            iconColor = 'text-[var(--palette-sunflower)]';
+                            iconColor = 'text-(--palette-sunflower)';
                             badgeText = 'Belum Selesai';
                             badgeClasses =
-                                'bg-[var(--palette-sunflower)]/10 text-[var(--palette-sunflower)]';
+                                'bg-(--palette-sunflower)/10 text-(--palette-sunflower)';
                         } else {
                             stateClasses =
                                 'border-2 border-slate-100 bg-slate-50/50 opacity-60 cursor-not-allowed';
@@ -81,7 +80,7 @@ export default function MaterialProgress({
                                     isUnlocked && onPhaseChange(stepNumber)
                                 }
                                 disabled={!isUnlocked}
-                                className={`group relative flex w-[240px] shrink-0 snap-center flex-col items-start gap-3 rounded-2xl p-4 transition-all duration-300 md:w-auto ${stateClasses}`}
+                                className={`group relative flex w-60 shrink-0 snap-center flex-col items-start gap-3 rounded-2xl p-4 transition-all duration-300 md:w-auto ${stateClasses}`}
                                 whileHover={
                                     isUnlocked && !isActive
                                         ? { y: -2, scale: 1.02 }
@@ -95,7 +94,7 @@ export default function MaterialProgress({
                             >
                                 <div className="flex w-full items-center justify-between">
                                     <div
-                                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ${isActive ? 'scale-110 ring-2 ring-[var(--palette-limelight)]/50' : 'group-hover:scale-110'}`}
+                                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ${isActive ? 'scale-110 ring-2 ring-(--palette-limelight)/50' : 'group-hover:scale-110'}`}
                                     >
                                         <IconComponent
                                             className={`h-5 w-5 ${iconColor}`}

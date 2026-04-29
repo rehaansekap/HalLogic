@@ -6,9 +6,8 @@ import MaterialHeader from '@/components/custom/material/MaterialHeader';
 import MaterialProgress from '@/components/custom/material/MaterialProgress';
 import MaterialSidebar from '@/components/custom/material/MaterialSidebar';
 import Phase1Orientation from '@/components/custom/material/Phase1Orientation';
-import Phase2Organization from '@/components/custom/material/Phase2Organization';
-import Phase3CreativeLab from '@/components/custom/material/Phase3CreativeLab';
-import Phase4Evaluation from '@/components/custom/material/Phase4Evaluation';
+import Phase2Investigation from '@/components/custom/material/Phase2Investigation';
+import Phase3Evaluation from '@/components/custom/material/Phase3Evaluation';
 
 interface Material {
     id: number;
@@ -22,7 +21,6 @@ interface Material {
 interface GroupMember {
     user_id: number;
     name: string;
-    role: string;
     username: string;
     avatar?: string;
 }
@@ -47,7 +45,6 @@ interface MaterialPageProps {
     material: Material;
     currentStep: number;
     groupMembers: GroupMember[];
-    currentUserRole: string;
     initialReflection?: string;
     finalReflection?: string;
     gallerySubmissions: GallerySubmission[];
@@ -66,7 +63,6 @@ export default function MaterialPage({
     material,
     currentStep,
     groupMembers,
-    currentUserRole,
     initialReflection,
     finalReflection,
     gallerySubmissions,
@@ -78,13 +74,16 @@ export default function MaterialPage({
     const [pollingActive] = useState(true);
     const lastPollTimeRef = useRef<number>(0);
     const [activePhase, setActivePhase] = useState(currentStep > 0 ? currentStep : 1);
+    const [lastCurrentStep, setLastCurrentStep] = useState(currentStep);
 
     // Update activePhase if currentStep advances
-    useEffect(() => {
+    if (currentStep !== lastCurrentStep) {
+        setLastCurrentStep(currentStep);
+
         if (currentStep > activePhase) {
             setActivePhase(currentStep);
         }
-    }, [currentStep]);
+    }
 
     // Setup polling untuk real-time updates
     useEffect(() => {
@@ -143,9 +142,8 @@ export default function MaterialPage({
                 <MaterialHeader
                     title={material.title}
                     description={material.description}
-                    difficulty={material.difficulty_level}
-                    currentStep={currentStep}
-                    groupStatus={groupStatus}
+                    difficulty={material.difficulty_level === 'easy' ? 1 : material.difficulty_level === 'medium' ? 2 : 3}
+                    groupStatus={groupStatus as any}
                     isLocked={isLocked}
                 />
 
@@ -180,32 +178,17 @@ export default function MaterialPage({
 
                             {/* Phase 2 */}
                             {activePhase === 2 && (
-                                <Phase2Organization
+                                <Phase2Investigation
                                     materialSlug={material.slug}
-                                    groupMembers={groupMembers}
-                                    currentUserRole={currentUserRole}
-                                    isLeader={currentUserRole === 'Leader'}
-                                    groupStatus={groupStatus}
                                     currentStep={currentStep}
                                 />
                             )}
 
-                            {/* Phase 3 */}
+                            {/* Phase 3 - Evaluation */}
                             {activePhase === 3 && (
-                                <Phase3CreativeLab
+                                <Phase3Evaluation
                                     materialSlug={material.slug}
                                     currentStep={currentStep}
-                                    currentUserRole={currentUserRole}
-                                    groupStatus={groupStatus}
-                                />
-                            )}
-
-                            {/* Phase 4 - Evaluation */}
-                            {activePhase === 4 && (
-                                <Phase4Evaluation
-                                    materialSlug={material.slug}
-                                    currentStep={currentStep}
-                                    currentUserRole={currentUserRole}
                                     gallerySubmissions={gallerySubmissions}
                                     votableGroups={voteData.votable_groups}
                                     voteData={voteData}
@@ -213,7 +196,7 @@ export default function MaterialPage({
                                     unreviewedSubmissions={
                                         unreviewedSubmissions
                                     }
-                                    leaderRequirementsCompleted={
+                                    requirementsCompleted={
                                         leaderRequirementsCompleted
                                     }
                                 />
@@ -233,15 +216,15 @@ export default function MaterialPage({
                                 </button>
                                 <button
                                     onClick={() => {
-                                        if (activePhase < currentStep && activePhase < 4) {
+                                        if (activePhase < currentStep && activePhase < 3) {
                                             setActivePhase((prev) => prev + 1);
                                         }
                                     }}
-                                    disabled={activePhase >= currentStep || activePhase === 4}
+                                    disabled={activePhase >= currentStep || activePhase === 3}
                                     className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
-                                        activePhase >= currentStep || activePhase === 4
+                                        activePhase >= currentStep || activePhase === 3
                                             ? 'cursor-not-allowed bg-slate-100 text-slate-400'
-                                            : 'bg-[var(--palette-limelight)] text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
+                                            : 'bg-(--palette-limelight) text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
                                     }`}
                                 >
                                     Selanjutnya

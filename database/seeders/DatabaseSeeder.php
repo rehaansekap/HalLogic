@@ -142,19 +142,19 @@ class DatabaseSeeder extends Seeder
 
             foreach ($groupMembers as $key => $member) {
 
-                $initialRole = ($key === 0) ? 'Leader' : 'Presenter';
-
                 DB::table('group_members')->insert([
                     'group_id' => $group->id,
                     'user_id' => $member->id,
-                    'role' => $initialRole,
+                    'is_leader' => ($key === 0),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
 
             DB::table('group_progress')->insert([
                 'group_id' => $group->id,
                 'material_id' => $material1->id,
-                'current_step' => 4,
+                'current_step' => 3,
                 'status' => 'completed',
             ]);
 
@@ -194,17 +194,17 @@ class DatabaseSeeder extends Seeder
 
             foreach ($groupMembers as $key => $member) {
 
-                $initialRole = ($key === 0) ? 'Leader' : 'Presenter';
-
                 DB::table('group_members')->insert([
                     'group_id' => $group->id,
                     'user_id' => $member->id,
-                    'role' => $initialRole,
+                    'is_leader' => ($key === 0),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
 
             $status = $idx == 0 ? 'completed' : 'in_progress';
-            $step = $idx == 0 ? 4 : rand(1, 3);
+            $step = $idx == 0 ? 3 : rand(1, 3);
 
             DB::table('group_progress')->insert([
                 'group_id' => $group->id,

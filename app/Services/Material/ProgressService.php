@@ -61,7 +61,7 @@ class ProgressService
             ->where('group_id', $groupId)
             ->where('material_id', $materialId)
             ->update([
-                'current_step' => 4,
+                'current_step' => 3,
                 'status' => 'in_progress',
                 'updated_at' => now(),
             ]);
@@ -88,6 +88,6 @@ class ProgressService
     {
         $progress = $this->getGroupProgress($groupId, $materialId);
 
-        return $progress && $progress->current_step >= 4;
+        return $progress && $progress->current_step >= 3;
     }
 }

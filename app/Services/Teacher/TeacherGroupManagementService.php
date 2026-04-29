@@ -98,14 +98,14 @@ class TeacherGroupManagementService
                 DB::table('group_progress')->insert([
                     'group_id' => $groupId,
                     'material_id' => $materialId,
-                    'current_step' => 2,
+                    'current_step' => 1,
                     'status' => 'in_progress',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
             } else {
-                $currentStep = (int) ($existingProgress->current_step ?? 0);
-                $nextStep = max($currentStep, 2);
+                $currentStep = (int) ($existingProgress->current_step ?? 1);
+                $nextStep = max($currentStep, 1);
 
                 $currentStatus = $existingProgress->status ?? 'locked';
                 $nextStatus = $currentStatus === 'completed'
@@ -128,7 +128,7 @@ class TeacherGroupManagementService
                 $inserts[] = [
                     'group_id' => $groupId,
                     'user_id' => $member['user_id'],
-                    'role' => $member['role'],
+                    'is_leader' => $member['is_leader'] ?? false,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -171,7 +171,7 @@ class TeacherGroupManagementService
         return DB::table('group_members')
             ->join('users', 'group_members.user_id', '=', 'users.id')
             ->where('group_members.group_id', $groupId)
-            ->select('users.id', 'users.name', 'users.username', 'users.avatar', 'group_members.role')
+            ->select('users.id', 'users.name', 'users.username', 'users.avatar', 'group_members.is_leader')
             ->get()
             ->toArray();
     }
@@ -184,17 +184,6 @@ class TeacherGroupManagementService
         $errors = [];
 
         foreach ($groupsData as $index => $group) {
-
-            $leaders = collect($group['members'])->where('role', 'Leader')->count();
-
-            if ($leaders === 0) {
-                $errors["groups.{$index}"] = "Kelompok {$group['group_name']} harus memiliki minimal 1 Leader";
-            }
-
-            if ($leaders > 1) {
-                $errors["groups.{$index}"] = "Kelompok {$group['group_name']} hanya boleh memiliki 1 Leader";
-            }
-
             if (count($group['members']) < 3) {
                 $errors["groups.{$index}"] = "Kelompok {$group['group_name']} harus memiliki minimal 3 anggota";
             }

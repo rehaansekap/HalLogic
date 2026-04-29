@@ -46,7 +46,7 @@ class SubmissionService
             $groupMembers = DB::table('group_members')
                 ->join('users', 'group_members.user_id', '=', 'users.id')
                 ->where('group_members.group_id', $submission->group_id)
-                ->select('users.name', 'group_members.role')
+                ->select('users.name')
                 ->get();
 
             return [

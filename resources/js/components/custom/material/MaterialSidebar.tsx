@@ -1,10 +1,6 @@
 import {
-    BeakerIcon,
     InboxIcon,
-    MicrophoneIcon,
-    PuzzlePieceIcon,
-    QuestionMarkCircleIcon,
-    TrophyIcon,
+    UserIcon,
 } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 import { Users } from 'lucide-react';
@@ -12,30 +8,14 @@ import { Users } from 'lucide-react';
 interface GroupMember {
     user_id: number;
     name: string;
-    role: string;
     username: string;
+    is_leader: boolean;
     avatar?: string;
 }
 
 interface MaterialSidebarProps {
     groupMembers: GroupMember[];
 }
-
-const roleColorMap: Record<string, string> = {
-    Leader: 'bg-amber-50 text-amber-600 border border-amber-200 shadow-sm',
-    'Problem Analyzer': 'bg-emerald-50 text-emerald-600 border border-emerald-200 shadow-sm',
-    Presenter: 'bg-lime-50 text-lime-600 border border-lime-200 shadow-sm',
-    'Algorithm Designer': 'bg-green-50 text-green-600 border border-green-200 shadow-sm',
-    'Belum Ada': 'bg-slate-100 text-slate-500 border border-slate-200 shadow-sm',
-};
-
-const roleIconMap: Record<string, React.ElementType> = {
-    Leader: TrophyIcon,
-    'Problem Analyzer': BeakerIcon,
-    Presenter: MicrophoneIcon,
-    'Algorithm Designer': PuzzlePieceIcon,
-    'Belum Ada': QuestionMarkCircleIcon,
-};
 
 export default function MaterialSidebar({
     groupMembers,
@@ -75,7 +55,7 @@ export default function MaterialSidebar({
                             {groupMembers.map((member, idx) => (
                                 <motion.div
                                     key={member.user_id}
-                                    className="group/member flex items-start justify-between gap-2 rounded-lg border border-slate-200/50 bg-slate-50 p-3 transition-all duration-200 hover:shadow-sm"
+                                    className="group/member flex items-center justify-between gap-2 rounded-lg border border-slate-200/50 bg-slate-50 p-3 transition-all duration-200 hover:shadow-sm"
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.5 + idx * 0.05 }}
@@ -85,26 +65,20 @@ export default function MaterialSidebar({
                                             {member.name || 'Unknown'}
                                         </p>
                                         <p className="truncate text-[10px] font-medium text-muted-foreground">
-                                            {member.role}
+                                            @{member.username}
                                         </p>
                                     </div>
-                                    <span
-                                        className={`rounded-md px-2 py-1 text-center text-[10px] font-bold whitespace-nowrap transition-all duration-200 group-hover/member:shadow-sm ${roleColorMap[member.role] ||
-                                            roleColorMap['Belum Ada']
-                                            }`}
-                                    >
-                                        {(() => {
-                                            const RoleIcon =
-                                                roleIconMap[member.role] ||
-                                                roleIconMap['Belum Ada'];
-
-                                            return (
-                                                <>
-                                                    <RoleIcon className="inline-block h-3 w-3" />
-                                                </>
-                                            );
-                                        })()}
-                                    </span>
+                                    <div className="flex flex-col items-end gap-1">
+                                        {member.is_leader ? (
+                                            <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[8px] font-black tracking-tighter text-amber-700 uppercase ring-1 ring-amber-200">
+                                                Ketua
+                                            </span>
+                                        ) : (
+                                            <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[8px] font-black tracking-tighter text-slate-700 uppercase ring-1 ring-slate-200">
+                                                Anggota
+                                            </span>
+                                        )}
+                                    </div>
                                 </motion.div>
                             ))}
                         </div>
