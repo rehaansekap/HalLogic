@@ -1,14 +1,15 @@
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import {
-    Users,
+    Activity,
     BookOpen,
     Building2,
-    Zap,
-    Database,
-    Cpu,
-    Activity,
     CheckCircle2,
+    Cpu,
+    Database,
+    Users,
+    Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 import StatCard from '@/components/custom/cards/StatCard';
@@ -294,8 +295,9 @@ export default function AdminDashboard({
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.45, duration: 0.4 }}
                         >
-                            <p className="text-xs font-semibold text-(--palette-green)">
-                                ✓ All systems operational
+                            <p className="flex items-center gap-1.5 text-xs font-semibold text-(--palette-green)">
+                                <CheckCircleIcon className="h-3.5 w-3.5" />
+                                All systems operational
                             </p>
                         </motion.div>
                     </motion.div>

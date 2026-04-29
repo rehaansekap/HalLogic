@@ -33,19 +33,19 @@ export default function PageHeader({
 
     const roleColors = {
         student: '(--palette-limelight)',
-        teacher: '(--palette-yellow-green)',
+        teacher: '(--palette-green)',
         admin: '(--palette-sunflower)',
     };
 
     const roleBgColors = {
         student: 'bg-(--palette-limelight)/8',
-        teacher: 'bg-(--palette-yellow-green)/8',
+        teacher: 'bg-(--palette-green)/8',
         admin: 'bg-(--palette-sunflower)/8',
     };
 
     const roleBorderColors = {
         student: 'border-(--palette-limelight)/30',
-        teacher: 'border-(--palette-yellow-green)/30',
+        teacher: 'border-(--palette-green)/30',
         admin: 'border-(--palette-sunflower)/30',
     };
 
