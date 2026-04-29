@@ -160,7 +160,7 @@ export default function AdminDashboard({
                 <div className="grid gap-6 lg:grid-cols-3">
                     {/* System Health Panel */}
                     <motion.div
-                        className="rounded-xl border border-(--palette-limelight)/20 bg-linear-to-br from-(--palette-limelight)/5 to-(--palette-green)/5 p-6"
+                        className="rounded-xl border border-(--palette-limelight)/20 bg-(--palette-limelight)/8 p-6"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.25, duration: 0.4 }}
@@ -461,7 +461,7 @@ export default function AdminDashboard({
                                                                 className={`cursor-pointer transition-all ${
                                                                     pageNum ===
                                                                     currentPage
-                                                                        ? 'bg-linear-to-r from-(--palette-green) to-(--palette-chartreuse) text-white'
+                                                                        ? 'bg-(--palette-green) text-white'
                                                                         : 'hover:bg-(--palette-limelight)/10'
                                                                 }`}
                                                             >

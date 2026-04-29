@@ -75,7 +75,7 @@ export default function Pagination({
                     onClick={() => onPageChange(page)}
                     className={`rounded-lg px-3 py-2 text-sm transition-all ${
                         page === currentPage
-                            ? 'bg-linear-to-r from-[--palette-green] to-[--palette-chartreuse] font-semibold text-white'
+                            ? 'bg-(--palette-green) font-semibold text-white'
                             : 'hover:bg-[--palette-limelight]/10'
                     }`}
                     whileHover={{ scale: 1.05 }}

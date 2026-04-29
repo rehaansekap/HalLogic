@@ -27,15 +27,15 @@ export default function FilterButton({
 
     const colorClasses = {
         primary: {
-            bg: 'from-[var(--palette-chartreuse)] to-[var(--palette-limelight)]',
+            bg: 'bg-[var(--palette-chartreuse)]',
             bgInactive: 'bg-[var(--palette-chartreuse)]/10',
         },
         success: {
-            bg: 'from-[var(--palette-green)] to-[var(--palette-chartreuse)]',
+            bg: 'bg-[var(--palette-green)]',
             bgInactive: 'bg-[var(--palette-green)]/10',
         },
         warning: {
-            bg: 'from-[var(--palette-sunflower)] to-[var(--palette-yellow-green)]',
+            bg: 'bg-[var(--palette-sunflower)]',
             bgInactive: 'bg-[var(--palette-sunflower)]/10',
         },
     };
@@ -49,7 +49,7 @@ export default function FilterButton({
                 onClick={() => setIsOpen(!isOpen)}
                 className={`flex items-center gap-2 rounded-lg border px-4 py-2 transition-all ${
                     value
-                        ? `bg-linear-to-r ${colorClass.bg} border-transparent text-white`
+                        ? `${colorClass.bg} border-transparent text-white`
                         : `${colorClass.bgInactive} border-(--palette-limelight)/20`
                 }`}
                 whileHover={{ scale: 1.05 }}
@@ -99,7 +99,7 @@ export default function FilterButton({
                         }}
                         className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-all ${
                             !value
-                                ? `bg-linear-to-r ${colorClass.bg} font-medium text-white`
+                                ? `${colorClass.bg} font-medium text-white`
                                 : 'hover:bg-(--palette-limelight)/5'
                         }`}
                         whileHover={{ x: 4 }}
@@ -117,7 +117,7 @@ export default function FilterButton({
                             }}
                             className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-all ${
                                 value === option.id
-                                    ? `bg-linear-to-r ${colorClass.bg} font-medium text-white`
+                                    ? `${colorClass.bg} font-medium text-white`
                                     : 'hover:bg-(--palette-limelight)/5'
                             }`}
                             initial={{ opacity: 0, x: -10 }}

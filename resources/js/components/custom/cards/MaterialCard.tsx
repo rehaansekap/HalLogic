@@ -174,7 +174,7 @@ export default function MaterialCard({
                         </div>
                         <div className="h-2 overflow-hidden rounded-full bg-[--palette-limelight]/10">
                             <motion.div
-                                className="h-full bg-linear-to-r from-[--palette-green] to-[--palette-chartreuse]"
+                                className="h-full bg-(--palette-green)"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${progress}%` }}
                                 transition={{

@@ -1,17 +1,18 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Zap, BookOpen } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import LevelBar from '@/components/custom/cards/LevelBar';
+import MaterialCard from '@/components/custom/cards/MaterialCard';
 import EmptyState from '@/components/custom/common/EmptyState';
 import FilterButton from '@/components/custom/common/FilterButton';
 import Pagination from '@/components/custom/common/Pagination';
 import PageHeader from '@/components/custom/layout/PageHeader';
 import DashboardSkeleton from '@/components/custom/skeletons/DashboardSkeleton';
-import MaterialCard from '@/components/custom/cards/MaterialCard';
 
 interface Material {
     id: number;
+    slug: string;
     title: string;
     description: string;
     difficulty_level: 1 | 2 | 3;
@@ -199,6 +200,8 @@ export default function StudentDashboard({
                                     >
                                         <MaterialCard
                                             id={material.id}
+                                            // pass slug so parent can navigate
+                                            // onClick will navigate to the material page
                                             title={material.title}
                                             description={material.description}
                                             difficulty={
@@ -211,10 +214,9 @@ export default function StudentDashboard({
                                             prerequisite={material.prerequisite}
                                             delay={0}
                                             onClick={() => {
-                                                // Handle material click
-                                                console.log(
-                                                    'Material clicked:',
-                                                    material.id,
+                                                // Navigate to student material page
+                                                router.visit(
+                                                    `/material/${material.slug}`,
                                                 );
                                             }}
                                         />

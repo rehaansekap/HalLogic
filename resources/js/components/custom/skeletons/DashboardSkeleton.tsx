@@ -18,7 +18,7 @@ export default function DashboardSkeleton({
         >
             {/* Header Skeleton */}
             <div className="mb-8 space-y-4">
-                <div className="rounded-xl border border-(--palette-chartreuse)/10 bg-linear-to-r from-(--palette-chartreuse)/10 to-(--palette-green)/10 p-6 md:p-8">
+                <div className="rounded-xl border border-(--palette-chartreuse)/10 bg-(--palette-chartreuse)/8 p-6 md:p-8">
                     <div className="space-y-3">
                         <div className="animate-pulse-soft h-4 w-32 rounded-full bg-(--palette-limelight)/20" />
                         <div className="animate-pulse-soft h-8 w-64 rounded-full bg-(--palette-green)/20" />

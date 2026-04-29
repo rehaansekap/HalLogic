@@ -309,7 +309,7 @@ export default function TeacherDashboard({
                                                             <div className="flex items-center justify-center gap-2">
                                                                 <div className="h-2 max-w-xs flex-1 overflow-hidden rounded-full bg-(--palette-limelight)/10">
                                                                     <motion.div
-                                                                        className="h-full bg-linear-to-r from-(--palette-green) to-(--palette-chartreuse)"
+                                                                        className="h-full bg-(--palette-green)"
                                                                         initial={{
                                                                             width: 0,
                                                                         }}

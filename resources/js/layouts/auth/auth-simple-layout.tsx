@@ -57,7 +57,7 @@ export default function AuthSimpleLayout({
                             className="flex flex-col items-center gap-2 font-medium transition-transform hover:scale-110"
                         >
                             <motion.div
-                                className="mb-1 flex h-9 w-9 items-center justify-center rounded-md bg-linear-to-br from-(--palette-limelight) to-(--palette-chartreuse)"
+                                className="mb-1 flex h-9 w-9 items-center justify-center rounded-md bg-(--palette-chartreuse)"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
                             >
@@ -70,7 +70,7 @@ export default function AuthSimpleLayout({
                             className="space-y-2 text-center"
                             variants={itemVariants}
                         >
-                            <h1 className="bg-linear-to-r from-(--palette-green) to-(--palette-chartreuse) bg-clip-text text-2xl font-bold text-transparent">
+                            <h1 className="text-2xl font-bold text-(--palette-green)">
                                 {title}
                             </h1>
                             <p className="text-center text-sm text-muted-foreground">

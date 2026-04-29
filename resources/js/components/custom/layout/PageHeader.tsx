@@ -32,15 +32,15 @@ export default function PageHeader({
     }, []);
 
     const roleColors = {
-        student: 'from-(--palette-limelight) to-(--palette-chartreuse)',
-        teacher: 'from-(--palette-yellow-green) to-(--palette-green)',
-        admin: 'from-(--palette-sunflower) to-(--palette-green)',
+        student: '(--palette-limelight)',
+        teacher: '(--palette-yellow-green)',
+        admin: '(--palette-sunflower)',
     };
 
     const roleBgColors = {
-        student: 'bg-(--palette-limelight)/10',
-        teacher: 'bg-(--palette-yellow-green)/10',
-        admin: 'bg-(--palette-sunflower)/10',
+        student: 'bg-(--palette-limelight)/8',
+        teacher: 'bg-(--palette-yellow-green)/8',
+        admin: 'bg-(--palette-sunflower)/8',
     };
 
     const roleBorderColors = {
@@ -56,12 +56,12 @@ export default function PageHeader({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
         >
-            {/* Gradient Banner */}
+            {/* Banner */}
             <div
-                className={`rounded-xl bg-linear-to-r ${role ? roleColors[role] : 'from-(--palette-chartreuse) to-(--palette-green)'} overflow-hidden p-px`}
+                className={`rounded-xl border ${role ? `border-${roleColors[role]}/30` : 'border-(--palette-chartreuse)/30'} overflow-hidden`}
             >
                 <div
-                    className={`rounded-xl ${role ? roleBgColors[role] : 'bg-white'} p-6 backdrop-blur-sm md:p-8`}
+                    className={`rounded-xl ${role ? roleBgColors[role] : 'bg-(--palette-chartreuse)/5'} p-6 backdrop-blur-sm md:p-8`}
                 >
                     <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -101,7 +101,7 @@ export default function PageHeader({
                             </motion.div>
 
                             <motion.h1
-                                className="bg-linear-to-r from-(--palette-green) to-(--palette-chartreuse) bg-clip-text text-3xl font-bold text-transparent md:text-4xl"
+                                className="text-3xl font-bold text-(--palette-green) md:text-4xl"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.2, duration: 0.5 }}

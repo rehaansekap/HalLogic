@@ -39,7 +39,7 @@ export default function EmptyState({
                         stiffness: 100,
                     }}
                 >
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-(--palette-chartreuse) to-(--palette-green) text-white">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--palette-chartreuse) text-white">
                         {icon}
                     </div>
                 </motion.div>
@@ -73,7 +73,7 @@ export default function EmptyState({
 
             {action && (
                 <motion.button
-                    className="rounded-lg bg-linear-to-r from-(--palette-green) to-(--palette-chartreuse) px-6 py-2 text-sm font-medium text-white transition-all hover:shadow-lg"
+                    className="rounded-lg bg-(--palette-green) px-6 py-2 text-sm font-medium text-white transition-all hover:shadow-lg"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{

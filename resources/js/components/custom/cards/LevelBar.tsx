@@ -21,7 +21,7 @@ export default function LevelBar({
 
     return (
         <motion.div
-            className="rounded-xl border border-(--palette-limelight)/20 bg-linear-to-br from-(--palette-limelight)/10 to-(--palette-chartreuse)/10 p-6"
+            className="rounded-xl border border-(--palette-chartreuse)/30 bg-(--palette-chartreuse)/8 p-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay, duration: 0.4 }}
@@ -35,7 +35,7 @@ export default function LevelBar({
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: delay + 0.1, duration: 0.4 }}
                     >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-(--palette-sunflower) to-(--palette-limelight)">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--palette-sunflower)">
                             <Star className="h-6 w-6 text-white" />
                         </div>
                         <div>
@@ -72,9 +72,9 @@ export default function LevelBar({
                         </span>
                     </div>
 
-                    <div className="h-3 overflow-hidden rounded-full border border-(--palette-chartreuse)/20 bg-(--palette-yellow-green)/10">
+                    <div className="h-3 overflow-hidden rounded-full border border-(--palette-chartreuse)/20 bg-(--palette-chartreuse)/15">
                         <motion.div
-                            className="h-full bg-linear-to-r from-(--palette-chartreuse) to-(--palette-limelight)"
+                            className="h-full bg-(--palette-chartreuse)"
                             initial={{ width: 0 }}
                             animate={{ width: `${progressPercent}%` }}
                             transition={{

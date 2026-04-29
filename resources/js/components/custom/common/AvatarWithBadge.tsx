@@ -56,7 +56,7 @@ export default function AvatarWithBadge({
             >
                 <Avatar className={sizeClass.avatar}>
                     <AvatarImage src={src} />
-                    <AvatarFallback className="bg-linear-to-br from-[--palette-chartreuse] to-[--palette-green] font-bold text-white">
+                    <AvatarFallback className="bg-(--palette-chartreuse) font-bold text-white">
                         {initials}
                     </AvatarFallback>
                 </Avatar>

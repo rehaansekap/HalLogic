@@ -27,39 +27,34 @@ export default function StatCard({
 }: StatCardProps) {
     const colorClasses = {
         success: {
-            bg: 'bg-[var(--palette-green)]/10',
-            border: 'border-[var(--palette-green)]/20',
-            icon: 'text-[var(--palette-green)]',
-            gradient:
-                'from-[var(--palette-green)] to-[var(--palette-chartreuse)]',
+            bg: 'bg-[var(--palette-green)]/8',
+            border: 'border-[var(--palette-green)]/30',
+            icon: 'bg-[var(--palette-green)]',
+            text: 'text-[var(--palette-green)]',
         },
         warning: {
-            bg: 'bg-[var(--palette-sunflower)]/10',
-            border: 'border-[var(--palette-sunflower)]/20',
-            icon: 'text-[var(--palette-sunflower)]',
-            gradient:
-                'from-[var(--palette-sunflower)] to-[var(--palette-yellow-green)]',
+            bg: 'bg-[var(--palette-sunflower)]/8',
+            border: 'border-[var(--palette-sunflower)]/30',
+            icon: 'bg-[var(--palette-sunflower)]',
+            text: 'text-[var(--palette-sunflower)]',
         },
         info: {
-            bg: 'bg-[var(--palette-limelight)]/10',
-            border: 'border-[var(--palette-limelight)]/20',
-            icon: 'text-[var(--palette-limelight)]',
-            gradient:
-                'from-[var(--palette-limelight)] to-[var(--palette-chartreuse)]',
+            bg: 'bg-[var(--palette-limelight)]/8',
+            border: 'border-[var(--palette-limelight)]/30',
+            icon: 'bg-[var(--palette-limelight)]',
+            text: 'text-[var(--palette-limelight)]',
         },
         locked: {
-            bg: 'bg-[var(--palette-yellow-green)]/10',
-            border: 'border-[var(--palette-yellow-green)]/20',
-            icon: 'text-[var(--palette-yellow-green)]',
-            gradient:
-                'from-[var(--palette-yellow-green)] to-[var(--palette-green)]',
+            bg: 'bg-[var(--palette-yellow-green)]/8',
+            border: 'border-[var(--palette-yellow-green)]/30',
+            icon: 'bg-[var(--palette-yellow-green)]',
+            text: 'text-[var(--palette-yellow-green)]',
         },
         primary: {
-            bg: 'bg-[var(--palette-chartreuse)]/10',
-            border: 'border-[var(--palette-chartreuse)]/20',
-            icon: 'text-[var(--palette-chartreuse)]',
-            gradient:
-                'from-[var(--palette-chartreuse)] to-[var(--palette-limelight)]',
+            bg: 'bg-[var(--palette-chartreuse)]/8',
+            border: 'border-[var(--palette-chartreuse)]/30',
+            icon: 'bg-[var(--palette-chartreuse)]',
+            text: 'text-[var(--palette-chartreuse)]',
         },
     };
 
@@ -87,7 +82,7 @@ export default function StatCard({
 
                     <div className="flex items-baseline gap-2">
                         <motion.span
-                            className={`bg-linear-to-r text-3xl font-bold md:text-4xl ${colorClass.gradient} bg-clip-text text-transparent`}
+                            className={`text-3xl font-bold md:text-4xl ${colorClass.text}`}
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{
@@ -134,7 +129,7 @@ export default function StatCard({
 
                 {icon && (
                     <motion.div
-                        className={`flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br ${colorClass.gradient} ml-4 p-3 text-white`}
+                        className={`flex h-12 w-12 items-center justify-center rounded-lg ${colorClass.icon} ml-4 p-3 text-white`}
                         initial={{ scale: 0, rotate: -180 }}
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{
