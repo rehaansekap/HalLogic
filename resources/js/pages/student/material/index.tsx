@@ -154,13 +154,14 @@ export default function MaterialPage({
                     isLocked={isLocked}
                 />
 
+                <MaterialProgress
+                    currentStep={currentStep}
+                    activePhase={activePhase}
+                    onPhaseChange={setActivePhase}
+                />
+
                 {/* Content */}
                 <div className="container mx-auto max-w-7xl px-4 py-12">
-                    <MaterialProgress
-                        currentStep={currentStep}
-                        activePhase={activePhase}
-                        onPhaseChange={setActivePhase}
-                    />
 
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                         {/* Main Content */}
@@ -238,22 +239,20 @@ export default function MaterialPage({
                                 <button
                                     onClick={() => setActivePhase((prev) => Math.max(1, prev - 1))}
                                     disabled={activePhase === 1}
-                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
-                                        activePhase === 1
-                                            ? 'cursor-not-allowed bg-slate-100 text-slate-400'
-                                            : 'border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50'
-                                    }`}
+                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${activePhase === 1
+                                        ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                                        : 'border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50'
+                                        }`}
                                 >
                                     Sebelumnya
                                 </button>
                                 <button
                                     onClick={() => setActivePhase((prev) => Math.min(5, prev + 1))}
                                     disabled={activePhase === 5}
-                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
-                                        activePhase === 5
-                                            ? 'cursor-not-allowed bg-slate-100 text-slate-400'
-                                            : 'bg-[var(--palette-limelight)] text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
-                                    }`}
+                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${activePhase === 5
+                                        ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                                        : 'bg-[var(--palette-limelight)] text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
+                                        }`}
                                 >
                                     Selanjutnya
                                 </button>

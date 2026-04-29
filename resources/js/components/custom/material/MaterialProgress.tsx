@@ -1,6 +1,5 @@
-import { PlayIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Lock } from 'lucide-react';
+import { CheckCircle2, CircleDot, Lock, PlayCircle } from 'lucide-react';
 
 interface MaterialProgressProps {
     currentStep: number;
@@ -23,58 +22,117 @@ export default function MaterialProgress({
 
     return (
         <motion.div
-            className="mb-8"
+            className="mt-2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
         >
-            <div className="flex w-full overflow-x-auto pb-4 snap-x snap-mandatory">
-                <div className="flex min-w-max gap-3 md:w-full md:grid md:grid-cols-5">
+            <div className="flex w-full snap-x snap-mandatory overflow-x-auto p-1 hide-scrollbar md:p-4">
+                <div className="flex min-w-max gap-3 px-1 md:grid md:w-full md:min-w-0 md:grid-cols-5">
                     {steps.map((step, idx) => {
                         const stepNumber = idx + 1;
                         const isUnlocked = stepNumber <= currentStep;
+                        const isCompleted = stepNumber < currentStep;
                         const isCurrentStep = stepNumber === currentStep;
                         const isActive = stepNumber === activePhase;
+
+                        let stateClasses = '';
+                        let IconComponent = Lock;
+                        let iconColor = '';
+                        let badgeText = '';
+                        let badgeClasses = '';
+
+                        if (isActive) {
+                            stateClasses =
+                                'border-2 border-[var(--palette-limelight)] bg-[var(--palette-limelight)]/10 shadow-md ring-4 ring-[var(--palette-limelight)]/5 scale-[1.02] md:scale-105 z-10';
+                            IconComponent = PlayCircle;
+                            iconColor = 'text-[var(--palette-limelight)]';
+                            badgeText = 'Sedang Aktif';
+                            badgeClasses =
+                                'bg-[var(--palette-limelight)]/20 text-[var(--palette-limelight)]';
+                        } else if (isCompleted) {
+                            stateClasses =
+                                'border-2 border-[var(--palette-green)]/30 bg-[var(--palette-green)]/5 hover:bg-[var(--palette-green)]/10 hover:border-[var(--palette-green)]/50 cursor-pointer shadow-sm';
+                            IconComponent = CheckCircle2;
+                            iconColor = 'text-[var(--palette-green)]';
+                            badgeText = 'Selesai';
+                            badgeClasses =
+                                'bg-[var(--palette-green)]/10 text-[var(--palette-green)]';
+                        } else if (isCurrentStep) {
+                            stateClasses =
+                                'border-2 border-dashed border-[var(--palette-sunflower)] bg-[var(--palette-sunflower)]/5 hover:bg-[var(--palette-sunflower)]/10 cursor-pointer shadow-sm';
+                            IconComponent = CircleDot;
+                            iconColor = 'text-[var(--palette-sunflower)]';
+                            badgeText = 'Belum Selesai';
+                            badgeClasses =
+                                'bg-[var(--palette-sunflower)]/10 text-[var(--palette-sunflower)]';
+                        } else {
+                            stateClasses =
+                                'border-2 border-slate-100 bg-slate-50/50 opacity-60 cursor-not-allowed';
+                            IconComponent = Lock;
+                            iconColor = 'text-slate-400';
+                            badgeText = 'Terkunci';
+                            badgeClasses = 'bg-slate-200/50 text-slate-500';
+                        }
 
                         return (
                             <motion.button
                                 key={idx}
-                                onClick={() => onPhaseChange(stepNumber)}
+                                onClick={() =>
+                                    isUnlocked && onPhaseChange(stepNumber)
+                                }
                                 disabled={!isUnlocked}
-                                className={`snap-center flex flex-col xl:flex-row items-center gap-3 rounded-xl p-3 xl:p-4 text-center xl:text-left transition-all duration-200 ${
-                                    isActive
-                                        ? 'border-2 border-[--palette-limelight] bg-[--palette-limelight]/10 text-foreground shadow-md'
-                                        : isUnlocked
-                                          ? 'border border-slate-200 bg-white text-slate-600 hover:border-[--palette-limelight]/40 hover:bg-slate-50 hover:shadow-sm'
-                                          : 'cursor-not-allowed border border-slate-100 bg-slate-50/50 text-slate-400 opacity-70'
-                                }`}
-                                whileHover={isUnlocked ? { y: -2 } : {}}
-                                whileTap={isUnlocked ? { scale: 0.98 } : {}}
+                                className={`group relative flex w-[240px] shrink-0 snap-center flex-col items-start gap-3 rounded-2xl p-4 transition-all duration-300 md:w-auto ${stateClasses}`}
+                                whileHover={
+                                    isUnlocked && !isActive
+                                        ? { y: -2, scale: 1.02 }
+                                        : {}
+                                }
+                                whileTap={
+                                    isUnlocked && !isActive
+                                        ? { scale: 0.98 }
+                                        : {}
+                                }
                             >
-                                <div className={`shrink-0 rounded-full p-2 ${isActive ? 'bg-white shadow-sm' : isUnlocked ? 'bg-slate-100' : 'bg-transparent'}`}>
-                                    {isUnlocked && !isActive ? (
-                                        <CheckCircle2 className={`h-5 w-5 ${isCurrentStep ? 'text-[--palette-green]' : 'text-slate-400'}`} />
-                                    ) : isActive ? (
-                                        <PlayIcon className="h-5 w-5 text-[--palette-limelight]" />
-                                    ) : (
-                                        <Lock className="h-4 w-4 text-slate-300" />
-                                    )}
+                                <div className="flex w-full items-center justify-between">
+                                    <div
+                                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ${isActive ? 'scale-110 ring-2 ring-[var(--palette-limelight)]/50' : 'group-hover:scale-110'}`}
+                                    >
+                                        <IconComponent
+                                            className={`h-5 w-5 ${iconColor}`}
+                                        />
+                                    </div>
+                                    <span
+                                        className={`rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase ${badgeClasses}`}
+                                    >
+                                        {badgeText}
+                                    </span>
                                 </div>
-                                <div className="flex flex-col flex-1 items-center xl:items-start min-w-0">
-                                    <span className={`text-xs font-bold xl:text-sm truncate w-full ${isActive ? 'text-[--palette-limelight]' : ''}`}>
+                                <div className="mt-1 flex flex-col items-start text-left">
+                                    <span className="text-xs font-semibold text-muted-foreground">
+                                        Fase {stepNumber}
+                                    </span>
+                                    <span
+                                        className={`text-base font-bold ${isActive ? 'text-foreground' : 'text-slate-700'}`}
+                                    >
                                         {step}
                                     </span>
-                                    {isCurrentStep && (
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-[--palette-green]">
-                                            Fase Aktif
-                                        </span>
-                                    )}
                                 </div>
                             </motion.button>
                         );
                     })}
                 </div>
             </div>
+
+            <style>{`
+                .hide-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .hide-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `}</style>
         </motion.div>
     );
 }
