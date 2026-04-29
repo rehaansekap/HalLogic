@@ -154,7 +154,7 @@ class DatabaseSeeder extends Seeder
             DB::table('group_progress')->insert([
                 'group_id' => $group->id,
                 'material_id' => $material1->id,
-                'current_step' => 5,
+                'current_step' => 4,
                 'status' => 'completed',
             ]);
 
@@ -204,7 +204,7 @@ class DatabaseSeeder extends Seeder
             }
 
             $status = $idx == 0 ? 'completed' : 'in_progress';
-            $step = $idx == 0 ? 5 : rand(1, 3);
+            $step = $idx == 0 ? 4 : rand(1, 3);
 
             DB::table('group_progress')->insert([
                 'group_id' => $group->id,

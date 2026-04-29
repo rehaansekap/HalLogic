@@ -31,7 +31,6 @@ Route::middleware(['auth', 'verified', 'student'])->group(function () {
     Route::post('/material/{slug}/update-role', [MaterialController::class, 'updateRole'])->name('material.update-role');
     Route::post('/material/{slug}/complete-step-2', [MaterialController::class, 'completeStep2'])->name('material.complete-step-2');
     Route::post('/material/{slug}/save-phase-3', [MaterialController::class, 'savePhase3'])->name('material.save-phase-3');
-    Route::post('/material/{slug}/submit-phase-4', [MaterialController::class, 'submitPhase4'])->name('material.submit-phase-4');
     Route::post('/material/{slug}/vote', [MaterialController::class, 'submitVote'])->name('material.vote');
     Route::post('/submission/{submissionId}/like', [MaterialController::class, 'toggleLike'])->name('material.like');
     Route::post('/submission/{submissionId}/feedback', [MaterialController::class, 'submitFeedback'])->name('material.feedback');

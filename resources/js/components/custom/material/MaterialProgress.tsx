@@ -16,7 +16,6 @@ export default function MaterialProgress({
         'Refleksi',
         'Organisasi',
         'Eksperimen',
-        'Pengumpulan',
         'Evaluasi',
     ];
 
@@ -28,7 +27,7 @@ export default function MaterialProgress({
             transition={{ delay: 0.2 }}
         >
             <div className="flex w-full snap-x snap-mandatory overflow-x-auto p-1 hide-scrollbar md:p-4">
-                <div className="flex min-w-max gap-3 px-1 md:grid md:w-full md:min-w-0 md:grid-cols-5">
+                <div className="flex min-w-max gap-3 px-1 md:grid md:w-full md:min-w-0 md:grid-cols-4">
                     {steps.map((step, idx) => {
                         const stepNumber = idx + 1;
                         const isUnlocked = stepNumber <= currentStep;

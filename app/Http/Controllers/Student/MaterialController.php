@@ -8,7 +8,6 @@ use App\Http\Requests\Student\Material\SavePhase3Request;
 use App\Http\Requests\Student\Material\StoreReflectionRequest;
 use App\Http\Requests\Student\Material\SubmitFeedbackRequest;
 use App\Http\Requests\Student\Material\SubmitFinalReflectionRequest;
-use App\Http\Requests\Student\Material\SubmitPhase4Request;
 use App\Http\Requests\Student\Material\SubmitVoteRequest;
 use App\Http\Requests\Student\Material\UpdateRoleRequest;
 use App\Models\Material;
@@ -84,13 +83,7 @@ class MaterialController extends Controller
             $groupMember = null;
         }
 
-        $groupHasSubmitted = false;
-        if ($groupMember) {
-            $groupHasSubmitted = Submission::where('group_id', $groupMember->group_id)
-                ->where('material_id', $material->id)
-                ->where('is_final', true)
-                ->exists();
-        } else {
+        if (! $groupMember) {
             $groupStatus = null;
         }
 
@@ -162,7 +155,6 @@ class MaterialController extends Controller
             'unlockedStep' => $currentStep,
             'groupMembers' => $myGroupMembers,
             'currentUserRole' => $currentUserRole ?? 'Belum Ada',
-            'groupHasSubmitted' => $groupHasSubmitted,
             'initialReflection' => $initialReflection,
             'finalReflection' => $finalReflection,
             'gallerySubmissions' => $gallerySubmissions,
@@ -302,48 +294,7 @@ class MaterialController extends Controller
             $this->progressService->advanceGroupStep($groupMember->group_id, $material->id, 3, 4);
         });
 
-        return redirect()->back()->with('success', 'Eksperimen selesai! Lanjut ke tahap berikutnya.');
-    }
-
-    public function submitPhase4(SubmitPhase4Request $request, $slug)
-    {
-        $material = Material::where('slug', $slug)->firstOrFail();
-        $user = Auth::user();
-
-        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
-        if (! $groupMember) {
-            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk material ini!');
-        }
-
-        if ($groupMember->role !== 'Leader') {
-            abort(403, 'Hanya Leader Kelompok yang dapat mengumpulkan tugas akhir!');
-        }
-
-        $existing = Submission::where('group_id', $groupMember->group_id)
-            ->where('material_id', $material->id)
-            ->where('is_final', true)
-            ->first();
-
-        if ($existing) {
-            return redirect()->back()->with('error', 'Tugas akhir sudah dikumpulkan oleh kelompok ini. Leader tidak dapat mengirim ulang.');
-        }
-
-        $validated = $request->validated();
-
-        DB::transaction(function () use ($request, $validated, $material, $groupMember) {
-            $filePath = $this->submissionService->handleFileUpload($request, $groupMember->group_id);
-
-            $this->submissionService->saveFinalSubmission(
-                $groupMember->group_id,
-                $material->id,
-                $filePath,
-                $validated['code_final']
-            );
-
-            $this->progressService->completeGroupMaterial($groupMember->group_id, $material->id);
-        });
-
-        return redirect()->back()->with('success', 'Tugas akhir berhasil dikumpulkan! Misi selesai.');
+        return redirect()->back()->with('success', 'Eksperimen selesai! Lanjut ke tahap evaluasi.');
     }
 
     public function toggleLike(Request $request, $submissionId)

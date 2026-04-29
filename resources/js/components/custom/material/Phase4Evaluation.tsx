@@ -28,7 +28,7 @@ interface VotableGroup {
     group_name: string;
 }
 
-interface Phase5EvaluationProps {
+interface Phase4EvaluationProps {
     materialSlug: string;
     currentStep: number;
     currentUserRole: string;
@@ -44,7 +44,7 @@ interface Phase5EvaluationProps {
     leaderRequirementsCompleted: boolean;
 }
 
-export default function Phase5Evaluation({
+export default function Phase4Evaluation({
     materialSlug,
     currentStep,
     currentUserRole,
@@ -54,7 +54,7 @@ export default function Phase5Evaluation({
     finalReflection = '',
     unreviewedSubmissions,
     leaderRequirementsCompleted,
-}: Phase5EvaluationProps) {
+}: Phase4EvaluationProps) {
     const [selectedVote, setSelectedVote] = useState<number | null>(
         voteData.my_vote || null,
     );
@@ -63,7 +63,7 @@ export default function Phase5Evaluation({
         'gallery' | 'voting' | 'reflection'
     >('gallery');
 
-    const isPhaseActive = currentStep >= 5;
+    const isPhaseActive = currentStep >= 4;
     const isLeader = currentUserRole === 'Leader';
 
     const containerVariants = {
@@ -92,10 +92,10 @@ export default function Phase5Evaluation({
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-foreground">
-                            Fase 5: Evaluasi & Penilaian
+                            Fase 4: Evaluasi & Penilaian
                         </h2>
                         <p className="text-muted-foreground">
-                            Fase ini akan dibuka setelah pengumpulan selesai
+                            Fase ini akan dibuka setelah eksperimen selesai
                         </p>
                     </div>
                 </div>
@@ -121,7 +121,7 @@ export default function Phase5Evaluation({
                     </div>
                     <div className="flex-1">
                         <h2 className="mb-2 text-2xl font-bold text-foreground">
-                            Fase 5: Evaluasi & Penilaian
+                            Fase 4: Evaluasi & Penilaian
                         </h2>
                         <p className="text-muted-foreground">
                             Lihat karya kelompok lain, berikan feedback, voting,

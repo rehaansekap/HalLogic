@@ -8,8 +8,7 @@ import MaterialSidebar from '@/components/custom/material/MaterialSidebar';
 import Phase1Orientation from '@/components/custom/material/Phase1Orientation';
 import Phase2Organization from '@/components/custom/material/Phase2Organization';
 import Phase3CreativeLab from '@/components/custom/material/Phase3CreativeLab';
-import Phase4Submission from '@/components/custom/material/Phase4Submission';
-import Phase5Evaluation from '@/components/custom/material/Phase5Evaluation';
+import Phase4Evaluation from '@/components/custom/material/Phase4Evaluation';
 
 interface Material {
     id: number;
@@ -49,7 +48,6 @@ interface MaterialPageProps {
     currentStep: number;
     groupMembers: GroupMember[];
     currentUserRole: string;
-    groupHasSubmitted: boolean;
     initialReflection?: string;
     finalReflection?: string;
     gallerySubmissions: GallerySubmission[];
@@ -69,7 +67,6 @@ export default function MaterialPage({
     currentStep,
     groupMembers,
     currentUserRole,
-    groupHasSubmitted,
     initialReflection,
     finalReflection,
     gallerySubmissions,
@@ -203,19 +200,9 @@ export default function MaterialPage({
                                 />
                             )}
 
-                            {/* Phase 4 */}
+                            {/* Phase 4 - Evaluation */}
                             {activePhase === 4 && (
-                                <Phase4Submission
-                                    materialSlug={material.slug}
-                                    currentStep={currentStep}
-                                    currentUserRole={currentUserRole}
-                                    groupHasSubmitted={groupHasSubmitted}
-                                />
-                            )}
-
-                            {/* Phase 5 */}
-                            {activePhase === 5 && (
-                                <Phase5Evaluation
+                                <Phase4Evaluation
                                     materialSlug={material.slug}
                                     currentStep={currentStep}
                                     currentUserRole={currentUserRole}
@@ -246,13 +233,13 @@ export default function MaterialPage({
                                 </button>
                                 <button
                                     onClick={() => {
-                                        if (activePhase < currentStep && activePhase < 5) {
+                                        if (activePhase < currentStep && activePhase < 4) {
                                             setActivePhase((prev) => prev + 1);
                                         }
                                     }}
-                                    disabled={activePhase >= currentStep || activePhase === 5}
+                                    disabled={activePhase >= currentStep || activePhase === 4}
                                     className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
-                                        activePhase >= currentStep || activePhase === 5
+                                        activePhase >= currentStep || activePhase === 4
                                             ? 'cursor-not-allowed bg-slate-100 text-slate-400'
                                             : 'bg-[var(--palette-limelight)] text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
                                     }`}
