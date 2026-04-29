@@ -3,6 +3,7 @@ import { router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import MaterialHeader from '@/components/custom/material/MaterialHeader';
+import MaterialProgress from '@/components/custom/material/MaterialProgress';
 import MaterialSidebar from '@/components/custom/material/MaterialSidebar';
 import Phase1Orientation from '@/components/custom/material/Phase1Orientation';
 import Phase2Organization from '@/components/custom/material/Phase2Organization';
@@ -85,6 +86,14 @@ export default function MaterialPage({
 }: MaterialPageProps) {
     const [pollingActive] = useState(true);
     const lastPollTimeRef = useRef<number>(0);
+    const [activePhase, setActivePhase] = useState(currentStep > 0 ? currentStep : 1);
+
+    // Update activePhase if currentStep advances
+    useEffect(() => {
+        if (currentStep > activePhase) {
+            setActivePhase(currentStep);
+        }
+    }, [currentStep]);
 
     // Setup polling untuk real-time updates
     useEffect(() => {
@@ -151,16 +160,23 @@ export default function MaterialPage({
 
                 {/* Content */}
                 <div className="container mx-auto max-w-7xl px-4 py-12">
-                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    <MaterialProgress
+                        currentStep={currentStep}
+                        activePhase={activePhase}
+                        onPhaseChange={setActivePhase}
+                    />
+
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                         {/* Main Content */}
                         <motion.div
-                            className="space-y-8 lg:col-span-2"
+                            className="space-y-8 lg:col-span-3"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                         >
+
                             {/* Phase 1 */}
-                            {currentStep >= 1 && (
+                            {activePhase === 1 && (
                                 <Phase1Orientation
                                     materialId={material.id}
                                     materialSlug={material.slug}
@@ -171,7 +187,7 @@ export default function MaterialPage({
                             )}
 
                             {/* Phase 2 */}
-                            {currentStep >= 1 && (
+                            {activePhase === 2 && (
                                 <Phase2Organization
                                     materialSlug={material.slug}
                                     groupMembers={groupMembers}
@@ -183,7 +199,7 @@ export default function MaterialPage({
                             )}
 
                             {/* Phase 3 */}
-                            {currentStep >= 1 && (
+                            {activePhase === 3 && (
                                 <Phase3CreativeLab
                                     materialSlug={material.slug}
                                     currentStep={currentStep}
@@ -193,7 +209,7 @@ export default function MaterialPage({
                             )}
 
                             {/* Phase 4 */}
-                            {currentStep >= 1 && (
+                            {activePhase === 4 && (
                                 <Phase4Submission
                                     materialSlug={material.slug}
                                     currentStep={currentStep}
@@ -203,7 +219,7 @@ export default function MaterialPage({
                             )}
 
                             {/* Phase 5 */}
-                            {currentStep >= 1 && (
+                            {activePhase === 5 && (
                                 <Phase5Evaluation
                                     materialSlug={material.slug}
                                     currentStep={currentStep}
@@ -220,6 +236,32 @@ export default function MaterialPage({
                                     }
                                 />
                             )}
+
+                            {/* Navigation Buttons */}
+                            <div className="mt-8 flex items-center justify-between border-t border-slate-200 pt-6">
+                                <button
+                                    onClick={() => setActivePhase((prev) => Math.max(1, prev - 1))}
+                                    disabled={activePhase === 1}
+                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
+                                        activePhase === 1
+                                            ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                                            : 'border border-slate-200 bg-white text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    Sebelumnya
+                                </button>
+                                <button
+                                    onClick={() => setActivePhase((prev) => Math.min(5, prev + 1))}
+                                    disabled={activePhase === 5}
+                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
+                                        activePhase === 5
+                                            ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                                            : 'bg-[var(--palette-limelight)] text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
+                                    }`}
+                                >
+                                    Selanjutnya
+                                </button>
+                            </div>
                         </motion.div>
 
                         {/* Sidebar */}

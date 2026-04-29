@@ -90,14 +90,14 @@ export default function MaterialSidebar({
 
     return (
         <motion.div
-            className="space-y-6"
+            className="space-y-4"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
         >
             {/* Group Status */}
             <motion.div
-                className="group relative overflow-hidden rounded-2xl border-2 bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-xl border-2 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
                 style={{
                     borderColor:
                         status.color.replace('text-', 'var(--palette-') + ')',
@@ -108,16 +108,16 @@ export default function MaterialSidebar({
             >
                 <div className="absolute inset-0 bg-(--palette-limelight)/5 transition-all duration-300 group-hover:from-[--palette-limelight]/10" />
                 <div className="relative z-10">
-                    <div className="mb-5 flex items-center gap-3">
-                        <div className={`rounded-lg p-2 ${status.bg}`}>
-                            <StatusIcon className={`h-5 w-5 ${status.color}`} />
+                    <div className="mb-4 flex items-center gap-2">
+                        <div className={`rounded-lg p-1.5 ${status.bg}`}>
+                            <StatusIcon className={`h-4 w-4 ${status.color}`} />
                         </div>
-                        <h3 className="text-lg font-bold text-foreground">
+                        <h3 className="text-base font-bold text-foreground">
                             Status Kelompok
                         </h3>
                     </div>
                     <div
-                        className={`${status.bg} ${status.border} border-2 ${status.color} rounded-xl px-5 py-3 text-center text-sm font-bold shadow-md`}
+                        className={`${status.bg} ${status.border} border ${status.color} rounded-lg px-4 py-2 text-center text-xs font-bold`}
                     >
                         {status.label}
                     </div>
@@ -126,18 +126,18 @@ export default function MaterialSidebar({
 
             {/* Group Members */}
             <motion.div
-                className="group relative overflow-hidden rounded-2xl border-2 border-[--palette-limelight]/30 bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-xl border border-[--palette-limelight]/30 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.45 }}
             >
-                <div className="absolute inset-0 bg-(--palette-limelight)/8 transition-all duration-300 group-hover:bg-(--palette-limelight)/10" />
+                <div className="absolute inset-0 bg-(--palette-limelight)/5 transition-all duration-300 group-hover:bg-(--palette-limelight)/10" />
                 <div className="relative z-10">
-                    <div className="mb-5 flex items-center gap-3">
-                        <div className="rounded-lg bg-[--palette-limelight]/15 p-2">
-                            <Users className="h-5 w-5 text-[--palette-limelight]" />
+                    <div className="mb-4 flex items-center gap-2">
+                        <div className="rounded-lg bg-[--palette-limelight]/15 p-1.5">
+                            <Users className="h-4 w-4 text-[--palette-limelight]" />
                         </div>
-                        <h3 className="text-lg font-bold text-foreground">
+                        <h3 className="text-base font-bold text-foreground">
                             Anggota Kelompok{' '}
                             <span className="font-black text-[--palette-limelight]">
                                 ({groupMembers.length})
@@ -146,25 +146,25 @@ export default function MaterialSidebar({
                     </div>
 
                     {groupMembers.length > 0 ? (
-                        <div className="space-y-2.5">
+                        <div className="space-y-2">
                             {groupMembers.map((member, idx) => (
                                 <motion.div
                                     key={member.id}
-                                    className="group/member flex items-start justify-between gap-3 rounded-xl border border-slate-200/50 bg-slate-50 p-4 transition-all duration-200 hover:shadow-md"
+                                    className="group/member flex items-start justify-between gap-2 rounded-lg border border-slate-200/50 bg-slate-50 p-3 transition-all duration-200 hover:shadow-sm"
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.5 + idx * 0.05 }}
                                 >
                                     <div className="min-w-0 flex-1">
-                                        <p className="truncate text-sm font-bold text-foreground">
+                                        <p className="truncate text-xs font-bold text-foreground">
                                             {member.user?.name || 'Unknown'}
                                         </p>
-                                        <p className="truncate text-xs font-medium text-muted-foreground">
+                                        <p className="truncate text-[10px] font-medium text-muted-foreground">
                                             {member.user?.email}
                                         </p>
                                     </div>
                                     <span
-                                        className={`rounded-lg px-3 py-1.5 text-center text-xs font-bold whitespace-nowrap transition-all duration-200 group-hover/member:shadow-md ${
+                                        className={`rounded-md px-2 py-1 text-center text-[10px] font-bold whitespace-nowrap transition-all duration-200 group-hover/member:shadow-sm ${
                                             roleColorMap[member.role] ||
                                             roleColorMap['Belum Ada']
                                         }`}
@@ -176,7 +176,7 @@ export default function MaterialSidebar({
 
                                             return (
                                                 <>
-                                                    <RoleIcon className="mr-1 inline-block h-3.5 w-3.5" />
+                                                    <RoleIcon className="mr-1 inline-block h-3 w-3" />
                                                     {member.role}
                                                 </>
                                             );
@@ -186,9 +186,9 @@ export default function MaterialSidebar({
                             ))}
                         </div>
                     ) : (
-                        <div className="py-8 text-center">
-                            <InboxIcon className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
-                            <p className="text-sm font-medium text-muted-foreground">
+                        <div className="py-6 text-center">
+                            <InboxIcon className="mx-auto mb-2 h-6 w-6 text-muted-foreground/50" />
+                            <p className="text-xs font-medium text-muted-foreground">
                                 Belum ada anggota kelompok
                             </p>
                         </div>
@@ -197,17 +197,17 @@ export default function MaterialSidebar({
                     {/* Your Role */}
                     {currentUserRole && currentUserRole !== 'Belum Ada' && (
                         <motion.div
-                            className="mt-5 border-t-2 border-slate-200/50 pt-5"
+                            className="mt-4 border-t border-slate-200/50 pt-4"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.6 }}
                         >
-                            <p className="mb-3 flex items-center gap-1 text-xs font-bold tracking-wider text-muted-foreground uppercase">
-                                <UserIcon className="h-3.5 w-3.5" />
+                            <p className="mb-2 flex items-center gap-1 text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
+                                <UserIcon className="h-3 w-3" />
                                 Peran Anda:
                             </p>
                             <span
-                                className={`inline-block rounded-xl px-4 py-2 text-sm font-bold transition-all duration-200 ${
+                                className={`inline-block rounded-lg px-3 py-1.5 text-xs font-bold transition-all duration-200 ${
                                     roleColorMap[currentUserRole] ||
                                     roleColorMap['Belum Ada']
                                 }`}
@@ -219,7 +219,7 @@ export default function MaterialSidebar({
 
                                     return (
                                         <>
-                                            <RoleIcon className="mr-1 inline-block h-4 w-4" />
+                                            <RoleIcon className="mr-1 inline-block h-3.5 w-3.5" />
                                             {currentUserRole}
                                         </>
                                     );
@@ -233,27 +233,27 @@ export default function MaterialSidebar({
             {/* Collaboration Link */}
             {collaborationLink && currentStep > 1 && (
                 <motion.div
-                    className="group relative overflow-hidden rounded-2xl border-2 border-[--palette-green]/40 bg-(--palette-green)/8 p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl"
+                    className="group relative overflow-hidden rounded-xl border border-[--palette-green]/40 bg-(--palette-green)/8 p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
                 >
                     <div className="absolute inset-0 bg-(--palette-green)/5 transition-all duration-300 group-hover:bg-(--palette-green)/8" />
                     <div className="relative z-10">
-                        <h3 className="mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-foreground uppercase">
-                            <LinkIcon className="h-4 w-4" />
+                        <h3 className="mb-3 flex items-center gap-1.5 text-xs font-bold tracking-wider text-foreground uppercase">
+                            <LinkIcon className="h-3.5 w-3.5" />
                             Link Kolaborasi
                         </h3>
                         <a
                             href={collaborationLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-xl bg-(--palette-green) px-5 py-3 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-2xl active:scale-95"
+                            className="inline-flex w-full justify-center items-center gap-2 rounded-lg bg-(--palette-green) px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95"
                         >
                             <span>Buka Workspace</span>
                         </a>
-                        <p className="mt-3 flex items-center gap-1 text-xs font-medium text-muted-foreground">
-                            <SparklesIcon className="h-3.5 w-3.5" />
+                        <p className="mt-2 flex items-start gap-1 text-[10px] leading-tight font-medium text-muted-foreground">
+                            <SparklesIcon className="h-3 w-3 shrink-0 mt-0.5" />
                             Akses real-time coding bersama dengan tim Anda
                         </p>
                     </div>
