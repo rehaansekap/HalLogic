@@ -82,7 +82,7 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:104
 * @route '/teacher/material'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:104
 * @route '/teacher/material'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:104
 * @route '/teacher/material'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:104
 * @route '/teacher/material'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:101
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:104
 * @route '/teacher/material'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -138,7 +138,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
 * @route '/teacher/material/{slug}/edit'
 */
 export const edit = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -153,7 +153,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
 * @route '/teacher/material/{slug}/edit'
 */
 edit.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -180,7 +180,7 @@ edit.url = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
 * @route '/teacher/material/{slug}/edit'
 */
 edit.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ edit.get = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
 * @route '/teacher/material/{slug}/edit'
 */
 edit.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ edit.head = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
 * @route '/teacher/material/{slug}/edit'
 */
 const editForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ const editForm = (args: { slug: string | number } | [slug: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
 * @route '/teacher/material/{slug}/edit'
 */
 editForm.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -220,7 +220,7 @@ editForm.get = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:128
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
 * @route '/teacher/material/{slug}/edit'
 */
 editForm.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -237,7 +237,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:170
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
 * @route '/teacher/material/{material}/update'
 */
 export const update = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -252,7 +252,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:170
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
 * @route '/teacher/material/{material}/update'
 */
 update.url = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -285,7 +285,7 @@ update.url = (args: { material: number | { id: number } } | [material: number | 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:170
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
 * @route '/teacher/material/{material}/update'
 */
 update.post = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -295,7 +295,7 @@ update.post = (args: { material: number | { id: number } } | [material: number |
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:170
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
 * @route '/teacher/material/{material}/update'
 */
 const updateForm = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -305,7 +305,7 @@ const updateForm = (args: { material: number | { id: number } } | [material: num
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:170
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
 * @route '/teacher/material/{material}/update'
 */
 updateForm.post = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -317,7 +317,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:201
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
 * @route '/teacher/material/{material}'
 */
 export const destroy = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -332,7 +332,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:201
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
 * @route '/teacher/material/{material}'
 */
 destroy.url = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -365,7 +365,7 @@ destroy.url = (args: { material: number | { id: number } } | [material: number |
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:201
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
 * @route '/teacher/material/{material}'
 */
 destroy.delete = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -375,7 +375,7 @@ destroy.delete = (args: { material: number | { id: number } } | [material: numbe
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:201
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
 * @route '/teacher/material/{material}'
 */
 const destroyForm = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -390,7 +390,7 @@ const destroyForm = (args: { material: number | { id: number } } | [material: nu
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:201
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
 * @route '/teacher/material/{material}'
 */
 destroyForm.delete = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -506,7 +506,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:264
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:270
 * @route '/teacher/material/{material}/attendance'
 */
 export const saveAttendance = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -521,7 +521,7 @@ saveAttendance.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:264
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:270
 * @route '/teacher/material/{material}/attendance'
 */
 saveAttendance.url = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -548,7 +548,7 @@ saveAttendance.url = (args: { material: string | number } | [material: string | 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:264
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:270
 * @route '/teacher/material/{material}/attendance'
 */
 saveAttendance.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -558,7 +558,7 @@ saveAttendance.post = (args: { material: string | number } | [material: string |
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:264
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:270
 * @route '/teacher/material/{material}/attendance'
 */
 const saveAttendanceForm = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -568,7 +568,7 @@ const saveAttendanceForm = (args: { material: string | number } | [material: str
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveAttendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:264
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:270
 * @route '/teacher/material/{material}/attendance'
 */
 saveAttendanceForm.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -580,7 +580,7 @@ saveAttendance.form = saveAttendanceForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:294
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:300
 * @route '/teacher/material/{material}/update-groups'
 */
 export const updateGroups = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -595,7 +595,7 @@ updateGroups.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:294
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:300
 * @route '/teacher/material/{material}/update-groups'
 */
 updateGroups.url = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -622,7 +622,7 @@ updateGroups.url = (args: { material: string | number } | [material: string | nu
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:294
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:300
 * @route '/teacher/material/{material}/update-groups'
 */
 updateGroups.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -632,7 +632,7 @@ updateGroups.post = (args: { material: string | number } | [material: string | n
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:294
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:300
 * @route '/teacher/material/{material}/update-groups'
 */
 const updateGroupsForm = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -642,7 +642,7 @@ const updateGroupsForm = (args: { material: string | number } | [material: strin
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:294
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:300
 * @route '/teacher/material/{material}/update-groups'
 */
 updateGroupsForm.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -654,7 +654,7 @@ updateGroups.form = updateGroupsForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:231
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:237
 * @route '/teacher/submission/{submission}/grade'
 */
 export const saveGrade = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -669,7 +669,7 @@ saveGrade.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:231
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:237
 * @route '/teacher/submission/{submission}/grade'
 */
 saveGrade.url = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -696,7 +696,7 @@ saveGrade.url = (args: { submission: string | number } | [submission: string | n
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:231
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:237
 * @route '/teacher/submission/{submission}/grade'
 */
 saveGrade.post = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -706,7 +706,7 @@ saveGrade.post = (args: { submission: string | number } | [submission: string | 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:231
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:237
 * @route '/teacher/submission/{submission}/grade'
 */
 const saveGradeForm = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -716,7 +716,7 @@ const saveGradeForm = (args: { submission: string | number } | [submission: stri
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::saveGrade
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:231
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:237
 * @route '/teacher/submission/{submission}/grade'
 */
 saveGradeForm.post = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

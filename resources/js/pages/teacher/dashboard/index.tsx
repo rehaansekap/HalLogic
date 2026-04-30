@@ -1,6 +1,15 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { BookOpen, Users, Zap, Clock, Search, Eye, Edit2 } from 'lucide-react';
+import {
+    BookOpen,
+    Clock,
+    Edit2,
+    Eye,
+    MoreHorizontal,
+    Search,
+    Users,
+    Zap,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import StatCard from '@/components/custom/cards/StatCard';
@@ -10,6 +19,13 @@ import Pagination from '@/components/custom/common/Pagination';
 import PageHeader from '@/components/custom/layout/PageHeader';
 import DashboardSkeleton from '@/components/custom/skeletons/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import DeleteMaterialButton from '@/pages/teacher/material/components/DeleteMaterialButton';
 import { show } from '@/routes/teacher/material';
@@ -134,10 +150,10 @@ export default function TeacherDashboard({
             <Head title="Dashboard - Teacher" />
 
             <motion.div
-                className="space-y-6 p-6"
+                className="space-y-8 p-6 md:p-8"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.4 }}
             >
                 {/* Page Header */}
                 <PageHeader
@@ -198,21 +214,20 @@ export default function TeacherDashboard({
                 >
                     {/* Header with Search and Filter */}
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <h2 className="flex items-center gap-2 text-2xl font-bold">
-                                <BookOpen className="h-6 w-6 text-(--palette-green)" />
-                                Your Materials
-                            </h2>
-                            <Link href={create().url}>
-                                <Button className="bg-(--palette-green) hover:bg-(--palette-green)/90">
-                                    <BookOpen className="mr-2 h-4 w-4" />
-                                    Tambah Material
-                                </Button>
-                            </Link>
+                        <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                            <div>
+                                <h2 className="flex items-center gap-2 text-2xl font-extrabold text-foreground tracking-tight">
+                                    <BookOpen className="h-7 w-7 text-(--palette-green)" />
+                                    Your Materials
+                                </h2>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    Manage and monitor your learning content
+                                </p>
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-3 md:flex-row">
-                            <div className="relative flex-1">
+                            <div className="w-full min-h-full relative">
                                 <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                                 <Input
                                     placeholder="Search materials..."
@@ -228,8 +243,9 @@ export default function TeacherDashboard({
                             {classrooms.length > 0 && (
                                 <FilterButton
                                     label="Filter by Classroom"
+                                    className="max-w-2xl"
                                     options={classrooms}
-                                    value={selectedClassroom}
+                                    value={selectedClassroom ?? undefined}
                                     onChange={(val) => {
                                         setSelectedClassroom(val);
                                         setCurrentPage(1);
@@ -238,6 +254,13 @@ export default function TeacherDashboard({
                                     color="success"
                                 />
                             )}
+
+                            <Link href={create().url}>
+                                <Button className="min-w-full bg-(--palette-green) hover:bg-(--palette-green)/90 text-white font-bold shadow-lg shadow-(--palette-green)/20 transition-all hover:scale-105 active:scale-95">
+                                    <BookOpen className="mr-2 h-5 w-5" />
+                                    Tambah Material
+                                </Button>
+                            </Link>
                         </div>
                     </div>
 
@@ -260,20 +283,20 @@ export default function TeacherDashboard({
                                 <div className="overflow-x-auto">
                                     <table className="w-full">
                                         <thead>
-                                            <tr className="border-b border-(--palette-limelight)/10 bg-(--palette-limelight)/5">
-                                                <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
-                                                    Material
+                                            <tr className="border-b border-(--palette-limelight)/20 bg-(--palette-limelight)/5">
+                                                <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                                    Material Details
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
-                                                    Class
+                                                <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                                    Target Class
                                                 </th>
-                                                <th className="px-6 py-3 text-center text-sm font-semibold text-foreground">
-                                                    Progress
+                                                <th className="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                                    Group Progress
                                                 </th>
-                                                <th className="px-6 py-3 text-center text-sm font-semibold text-foreground">
-                                                    Review
+                                                <th className="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                                    Review Status
                                                 </th>
-                                                <th className="px-6 py-3 text-right text-sm font-semibold text-foreground">
+                                                <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider">
                                                     Actions
                                                 </th>
                                             </tr>
@@ -364,51 +387,49 @@ export default function TeacherDashboard({
                                                             </span>
                                                         </td>
                                                         <td className="px-6 py-4 text-right">
-                                                            <div className="flex items-center justify-end gap-2">
+                                                            <div className="flex items-center justify-end gap-1">
                                                                 <Link
                                                                     href={show.url(
                                                                         material.slug,
                                                                     )}
                                                                 >
-                                                                    <motion.button
-                                                                        className="rounded-lg p-2 transition-colors hover:bg-(--palette-limelight)/10"
-                                                                        whileHover={{
-                                                                            scale: 1.1,
-                                                                        }}
-                                                                        whileTap={{
-                                                                            scale: 0.95,
-                                                                        }}
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        className="h-9 w-9 rounded-full text-(--palette-green) hover:bg-(--palette-green)/10 transition-transform active:scale-90"
                                                                         title="View Material"
                                                                     >
-                                                                        <Eye className="h-4 w-4 text-(--palette-green)" />
-                                                                    </motion.button>
+                                                                        <Eye className="h-5 w-5" />
+                                                                    </Button>
                                                                 </Link>
-                                                                <Link
-                                                                    href={edit.url(
-                                                                        material.slug,
-                                                                    )}
-                                                                >
-                                                                    <motion.button
-                                                                        className="rounded-lg p-2 transition-colors hover:bg-blue-50"
-                                                                        whileHover={{
-                                                                            scale: 1.1,
-                                                                        }}
-                                                                        whileTap={{
-                                                                            scale: 0.95,
-                                                                        }}
-                                                                        title="Edit Material"
-                                                                    >
-                                                                        <Edit2 className="h-4 w-4 text-blue-500" />
-                                                                    </motion.button>
-                                                                </Link>
-                                                                <DeleteMaterialButton
-                                                                    materialId={
-                                                                        material.id
-                                                                    }
-                                                                    materialTitle={
-                                                                        material.title
-                                                                    }
-                                                                />
+
+                                                                <DropdownMenu>
+                                                                    <DropdownMenuTrigger asChild>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="icon"
+                                                                            className="h-9 w-9 rounded-full hover:bg-gray-100 transition-transform active:scale-90"
+                                                                        >
+                                                                            <MoreHorizontal className="h-5 w-5 text-muted-foreground" />
+                                                                        </Button>
+                                                                    </DropdownMenuTrigger>
+                                                                    <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border-(--palette-limelight)/20 bg-white/95 backdrop-blur-sm">
+                                                                        <Link href={edit.url(material.slug)}>
+                                                                            <DropdownMenuItem className="flex items-center gap-3 cursor-pointer py-3 px-4 rounded-xl focus:bg-(--palette-green)/10 focus:text-(--palette-green) transition-colors mb-1">
+                                                                                <Edit2 className="h-4 w-4" />
+                                                                                <span className="font-semibold">Edit Material</span>
+                                                                            </DropdownMenuItem>
+                                                                        </Link>
+                                                                        <DropdownMenuSeparator className="my-1 bg-(--palette-limelight)/10" />
+                                                                        <div className="p-1">
+                                                                            <DeleteMaterialButton
+                                                                                materialId={material.id}
+                                                                                materialTitle={material.title}
+                                                                                variant="dropdown"
+                                                                            />
+                                                                        </div>
+                                                                    </DropdownMenuContent>
+                                                                </DropdownMenu>
                                                             </div>
                                                         </td>
                                                     </motion.tr>

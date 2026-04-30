@@ -1,11 +1,18 @@
 import { Head, router } from '@inertiajs/react';
+import { motion } from 'framer-motion';
+import { Edit3 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import Swal from 'sweetalert2';
 
+import PageHeader from '@/components/custom/layout/PageHeader';
 import type { MaterialFormData } from '@/hooks/useMaterialForm';
 import { update } from '@/routes/teacher/materials';
+
+import type {
+    Classroom,
+    MaterialOption,
+} from '../components/MaterialFormStepper';
 import MaterialFormStepper from '../components/MaterialFormStepper';
-import type { Classroom, MaterialOption } from '../components/MaterialFormStepper';
 
 interface EditMaterialProps {
     material: {
@@ -24,12 +31,16 @@ interface EditMaterialProps {
     };
     classrooms: Classroom[];
     ownMaterials: MaterialOption[];
+    user: {
+        name: string;
+    };
 }
 
 export default function EditMaterial({
     material,
     classrooms,
     ownMaterials,
+    user,
 }: EditMaterialProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -50,37 +61,42 @@ export default function EditMaterial({
         (formData: MaterialFormData) => {
             setIsSubmitting(true);
 
-            router.post(
-                update.url(material.id),
-                formData as any,
-                {
-                    forceFormData: true,
-                    onSuccess: async () => {
-                        // Show success alert
-                        await Swal.fire({
-                            icon: 'success',
-                            title: 'Material Berhasil Diperbarui!',
-                            text: 'Perubahan material Anda telah disimpan.',
-                            confirmButtonColor: '#3b82f6',
-                        });
-                    },
-                    onError: (errors) => {
-                        const message =
-                            Object.values(errors).flat()[0] ||
-                            'Gagal memperbarui material. Silakan coba lagi.';
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi Kesalahan',
-                            text: message,
-                            confirmButtonColor: '#ef4444',
-                        });
-                    },
-                    onFinish: () => {
-                        setIsSubmitting(false);
-                    },
+            router.post(update.url(material.id), formData as any, {
+                forceFormData: true,
+                onSuccess: async () => {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Material Berhasil Diperbarui!',
+                        text: 'Perubahan material Anda telah disimpan.',
+                        confirmButtonColor: '#10b981', // --palette-green
+                        customClass: {
+                            popup: 'rounded-3xl border-none shadow-2xl',
+                            confirmButton:
+                                'rounded-xl px-8 py-3 font-bold uppercase tracking-wider transition-transform hover:scale-105 active:scale-95',
+                        },
+                    });
                 },
-            );
+                onError: (errors) => {
+                    const message =
+                        Object.values(errors).flat()[0] ||
+                        'Gagal memperbarui material. Silakan coba lagi.';
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: message,
+                        confirmButtonColor: '#ef4444',
+                        customClass: {
+                            popup: 'rounded-3xl border-none shadow-2xl',
+                            confirmButton:
+                                'rounded-xl px-8 py-3 font-bold uppercase tracking-wider transition-transform hover:scale-105 active:scale-95',
+                        },
+                    });
+                },
+                onFinish: () => {
+                    setIsSubmitting(false);
+                },
+            });
         },
         [material.id],
     );
@@ -89,16 +105,31 @@ export default function EditMaterial({
         <>
             <Head title={`Edit Material - ${material.title}`} />
 
-            <div className="min-h-screen bg-gray-100 py-8">
-                <MaterialFormStepper
-                    mode="edit"
-                    classrooms={classrooms}
-                    prerequisites={ownMaterials}
-                    initialMaterial={initialMaterial}
-                    onSubmit={handleSubmit}
-                    isSubmitting={isSubmitting}
+            <motion.div
+                className="space-y-8 p-6 md:p-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+            >
+                <PageHeader
+                    title="Perbarui Material"
+                    subtitle={`Mengedit konten untuk: ${material.title}`}
+                    icon={<Edit3 className="h-6 w-6" />}
+                    role="teacher"
+                    userName={user.name}
                 />
-            </div>
+
+                <div className="mx-auto max-w-5xl">
+                    <MaterialFormStepper
+                        mode="edit"
+                        classrooms={classrooms}
+                        prerequisites={ownMaterials}
+                        initialMaterial={initialMaterial}
+                        onSubmit={handleSubmit}
+                        isSubmitting={isSubmitting}
+                    />
+                </div>
+            </motion.div>
         </>
     );
 }

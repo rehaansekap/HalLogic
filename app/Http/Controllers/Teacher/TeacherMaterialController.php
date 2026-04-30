@@ -92,6 +92,9 @@ class TeacherMaterialController extends Controller
         return Inertia::render('teacher/material/create/index', [
             'classrooms' => $classrooms,
             'ownMaterials' => $ownMaterials,
+            'user' => [
+                'name' => $user->name,
+            ],
         ]);
     }
 
@@ -161,6 +164,9 @@ class TeacherMaterialController extends Controller
             ],
             'classrooms' => $classrooms,
             'ownMaterials' => $ownMaterials,
+            'user' => [
+                'name' => $user->name,
+            ],
         ]);
     }
 

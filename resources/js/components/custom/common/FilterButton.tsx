@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import { ChevronDown, X } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+
+import { cn } from '@/lib/utils';
 
 interface FilterButtonProps {
     label: string;
@@ -13,6 +14,7 @@ interface FilterButtonProps {
     onChange: (value: string | number | null) => void;
     placeholder?: string;
     color?: 'primary' | 'success' | 'warning';
+    className?: string;
 }
 
 export default function FilterButton({
@@ -22,6 +24,7 @@ export default function FilterButton({
     onChange,
     placeholder = 'All',
     color = 'primary',
+    className,
 }: FilterButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -44,18 +47,19 @@ export default function FilterButton({
     const colorClass = colorClasses[color];
 
     return (
-        <div className="relative">
+        <div className={cn('relative', className)}>
             <motion.button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center gap-2 rounded-lg border px-4 py-2 transition-all ${
+                className={cn(
+                    'flex items-center justify-between gap-2 rounded-lg border px-4 py-2 transition-all w-full',
                     value
                         ? `${colorClass.bg} border-transparent text-white`
-                        : `${colorClass.bgInactive} border-(--palette-limelight)/20`
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                        : `${colorClass.bgInactive} border-(--palette-limelight)/20`,
+                )}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
             >
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium truncate">
                     {selectedOption ? selectedOption.name : label}
                 </span>
                 <motion.div
@@ -64,19 +68,6 @@ export default function FilterButton({
                 >
                     <ChevronDown className="h-4 w-4" />
                 </motion.div>
-                {value && (
-                    <Button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onChange(null);
-                        }}
-                        className="ml-1 rounded p-0.5 transition-colors hover:bg-white/20"
-                        aria-label="Clear filter"
-                        title="Clear filter"
-                    >
-                        <X className="h-3 w-3" />
-                    </Button>
-                )}
             </motion.button>
 
             {/* Dropdown Menu */}
@@ -88,7 +79,7 @@ export default function FilterButton({
                         : { opacity: 0, y: -10, pointerEvents: 'none' }
                 }
                 transition={{ duration: 0.2 }}
-                className="absolute top-full left-0 z-10 mt-2 w-48 rounded-xl border border-(--palette-limelight)/20 bg-white shadow-lg"
+                className="absolute top-full left-0 z-20 mt-3 w-64 rounded-2xl border border-(--palette-limelight)/20 bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden"
             >
                 <div className="space-y-1 p-2">
                     {/* All Option */}
@@ -97,10 +88,10 @@ export default function FilterButton({
                             onChange(null);
                             setIsOpen(false);
                         }}
-                        className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-all ${
+                        className={`w-full rounded-xl px-4 py-3 text-left text-sm transition-all mb-1 ${
                             !value
-                                ? `${colorClass.bg} font-medium text-white`
-                                : 'hover:bg-(--palette-limelight)/5'
+                                ? `${colorClass.bg} font-bold text-white shadow-lg`
+                                : 'hover:bg-(--palette-limelight)/10 text-muted-foreground'
                         }`}
                         whileHover={{ x: 4 }}
                     >
@@ -115,10 +106,10 @@ export default function FilterButton({
                                 onChange(option.id);
                                 setIsOpen(false);
                             }}
-                            className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-all ${
+                            className={`w-full rounded-xl px-4 py-3 text-left text-sm transition-all mb-1 last:mb-0 ${
                                 value === option.id
-                                    ? `${colorClass.bg} font-medium text-white`
-                                    : 'hover:bg-(--palette-limelight)/5'
+                                    ? `${colorClass.bg} font-bold text-white shadow-lg`
+                                    : 'hover:bg-(--palette-limelight)/10 text-muted-foreground'
                             }`}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
