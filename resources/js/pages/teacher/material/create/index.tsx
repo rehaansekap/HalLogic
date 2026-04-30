@@ -4,8 +4,8 @@ import Swal from 'sweetalert2';
 
 import type { MaterialFormData } from '@/hooks/useMaterialForm';
 import { store } from '@/routes/teacher/materials';
-import MaterialFormStepper from './MaterialFormStepper';
-import type { Classroom, MaterialOption } from './MaterialFormStepper';
+import MaterialFormStepper from '../components/MaterialFormStepper';
+import type { Classroom, MaterialOption } from '../components/MaterialFormStepper';
 
 interface CreateMaterialProps {
     classrooms: Classroom[];

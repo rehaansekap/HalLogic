@@ -11,7 +11,7 @@ import PageHeader from '@/components/custom/layout/PageHeader';
 import DashboardSkeleton from '@/components/custom/skeletons/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import DeleteMaterialButton from '@/pages/teacher/material/DeleteMaterialButton';
+import DeleteMaterialButton from '@/pages/teacher/material/components/DeleteMaterialButton';
 import { show } from '@/routes/teacher/material';
 import { create, edit } from '@/routes/teacher/materials';
 

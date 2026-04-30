@@ -89,7 +89,7 @@ class TeacherMaterialController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('teacher/material/create', [
+        return Inertia::render('teacher/material/create/index', [
             'classrooms' => $classrooms,
             'ownMaterials' => $ownMaterials,
         ]);
@@ -143,7 +143,7 @@ class TeacherMaterialController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('teacher/material/edit', [
+        return Inertia::render('teacher/material/edit/index', [
             'material' => [
                 'id' => $material->id,
                 'classroom_id' => $material->classroom_id,
