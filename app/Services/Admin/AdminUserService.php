@@ -3,7 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class AdminUserService
@@ -15,15 +15,15 @@ class AdminUserService
     {
         $query = User::query();
 
-        if (!empty($filters['role']) && $filters['role'] !== 'all') {
+        if (! empty($filters['role']) && $filters['role'] !== 'all') {
             $query->where('role', $filters['role']);
         }
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('email', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('username', 'like', '%' . $filters['search'] . '%');
+                $q->where('name', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('email', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('username', 'like', '%'.$filters['search'].'%');
             });
         }
 
@@ -72,7 +72,7 @@ class AdminUserService
             'level' => $data['level'] ?? 1,
         ];
 
-        if (!empty($data['avatar']) && $data['avatar'] instanceof \Illuminate\Http\UploadedFile) {
+        if (! empty($data['avatar']) && $data['avatar'] instanceof UploadedFile) {
             $path = $data['avatar']->store('avatars', 'public');
             $userData['avatar'] = $path;
         }
@@ -94,11 +94,11 @@ class AdminUserService
             'level' => $data['level'] ?? $user->level,
         ];
 
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $userData['password'] = $data['password'];
         }
 
-        if (!empty($data['avatar']) && $data['avatar'] instanceof \Illuminate\Http\UploadedFile) {
+        if (! empty($data['avatar']) && $data['avatar'] instanceof UploadedFile) {
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }

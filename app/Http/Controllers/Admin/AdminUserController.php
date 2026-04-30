@@ -70,7 +70,7 @@ class AdminUserController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->withErrors(['error' => 'Gagal menambahkan user: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Gagal menambahkan user: '.$e->getMessage()]);
         }
     }
 
@@ -114,7 +114,7 @@ class AdminUserController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->withErrors(['error' => 'Gagal memperbarui user: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Gagal memperbarui user: '.$e->getMessage()]);
         }
     }
 
@@ -145,7 +145,7 @@ class AdminUserController extends Controller
 
             return redirect()
                 ->back()
-                ->withErrors(['error' => 'Gagal menghapus user: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Gagal menghapus user: '.$e->getMessage()]);
         }
     }
 }

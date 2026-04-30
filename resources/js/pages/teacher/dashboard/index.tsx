@@ -1,7 +1,8 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { BookOpen, Users, Zap, Clock, Search, Trash2, Eye } from 'lucide-react';
+import { BookOpen, Users, Zap, Clock, Search, Eye, Edit2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+
 import StatCard from '@/components/custom/cards/StatCard';
 import EmptyState from '@/components/custom/common/EmptyState';
 import FilterButton from '@/components/custom/common/FilterButton';
@@ -10,9 +11,13 @@ import PageHeader from '@/components/custom/layout/PageHeader';
 import DashboardSkeleton from '@/components/custom/skeletons/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import DeleteMaterialButton from '@/pages/teacher/material/DeleteMaterialButton';
+import { show } from '@/routes/teacher/material';
+import { create, edit } from '@/routes/teacher/materials';
 
 interface Material {
     id: number;
+    slug: string;
     title: string;
     description: string;
     difficulty_level: 'easy' | 'medium' | 'hard';
@@ -58,11 +63,6 @@ export default function TeacherDashboard({
     >(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading] = useState(false);
-    const [deleteModal, setDeleteModal] = useState<{
-        isOpen: boolean;
-        materialId?: number;
-        materialTitle?: string;
-    }>({ isOpen: false });
 
     // Filter materials by search and classroom
     const filteredMaterials = useMemo(() => {
@@ -77,7 +77,7 @@ export default function TeacherDashboard({
             const matchesClassroom =
                 !selectedClassroom ||
                 material.classroom_name ===
-                classrooms.find((c) => c.id === selectedClassroom)?.name;
+                    classrooms.find((c) => c.id === selectedClassroom)?.name;
 
             return matchesSearch && matchesClassroom;
         });
@@ -89,20 +89,6 @@ export default function TeacherDashboard({
         (currentPage - 1) * MATERIALS_PER_PAGE,
         currentPage * MATERIALS_PER_PAGE,
     );
-
-    const handleDeleteMaterial = (materialId: number, title: string) => {
-        setDeleteModal({
-            isOpen: true,
-            materialId,
-            materialTitle: title,
-        });
-    };
-
-    const confirmDelete = () => {
-        // Handle deletion - integrate with backend
-        console.log('Deleting material:', deleteModal.materialId);
-        setDeleteModal({ isOpen: false });
-    };
 
     const statVariants = {
         hidden: { opacity: 0 },
@@ -212,10 +198,18 @@ export default function TeacherDashboard({
                 >
                     {/* Header with Search and Filter */}
                     <div className="space-y-4">
-                        <h2 className="flex items-center gap-2 text-2xl font-bold">
-                            <BookOpen className="h-6 w-6 text-(--palette-green)" />
-                            Your Materials
-                        </h2>
+                        <div className="flex items-center justify-between">
+                            <h2 className="flex items-center gap-2 text-2xl font-bold">
+                                <BookOpen className="h-6 w-6 text-(--palette-green)" />
+                                Your Materials
+                            </h2>
+                            <Link href={create().url}>
+                                <Button className="bg-(--palette-green) hover:bg-(--palette-green)/90">
+                                    <BookOpen className="mr-2 h-4 w-4" />
+                                    Tambah Material
+                                </Button>
+                            </Link>
+                        </div>
 
                         <div className="flex flex-col gap-3 md:flex-row">
                             <div className="relative flex-1">
@@ -338,7 +332,7 @@ export default function TeacherDashboard({
                                                                             delay:
                                                                                 0.35 +
                                                                                 idx *
-                                                                                0.05 +
+                                                                                    0.05 +
                                                                                 0.1,
                                                                             duration: 0.6,
                                                                         }}
@@ -357,11 +351,12 @@ export default function TeacherDashboard({
                                                         </td>
                                                         <td className="px-6 py-4 text-center">
                                                             <span
-                                                                className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${material.needs_review >
+                                                                className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                                                                    material.needs_review >
                                                                     0
-                                                                    ? 'bg-(--palette-sunflower)/20 text-(--palette-sunflower)'
-                                                                    : 'bg-(--palette-green)/20 text-(--palette-green)'
-                                                                    }`}
+                                                                        ? 'bg-(--palette-sunflower)/20 text-(--palette-sunflower)'
+                                                                        : 'bg-(--palette-green)/20 text-(--palette-green)'
+                                                                }`}
                                                             >
                                                                 {
                                                                     material.needs_review
@@ -370,36 +365,50 @@ export default function TeacherDashboard({
                                                         </td>
                                                         <td className="px-6 py-4 text-right">
                                                             <div className="flex items-center justify-end gap-2">
-                                                                <motion.button
-                                                                    className="rounded-lg p-2 transition-colors hover:bg-(--palette-limelight)/10"
-                                                                    whileHover={{
-                                                                        scale: 1.1,
-                                                                    }}
-                                                                    whileTap={{
-                                                                        scale: 0.95,
-                                                                    }}
-                                                                    title="View Material"
+                                                                <Link
+                                                                    href={show.url(
+                                                                        material.slug,
+                                                                    )}
                                                                 >
-                                                                    <Eye className="h-4 w-4 text-(--palette-green)" />
-                                                                </motion.button>
-                                                                <motion.button
-                                                                    className="rounded-lg p-2 transition-colors hover:bg-red-50"
-                                                                    whileHover={{
-                                                                        scale: 1.1,
-                                                                    }}
-                                                                    whileTap={{
-                                                                        scale: 0.95,
-                                                                    }}
-                                                                    onClick={() =>
-                                                                        handleDeleteMaterial(
-                                                                            material.id,
-                                                                            material.title,
-                                                                        )
+                                                                    <motion.button
+                                                                        className="rounded-lg p-2 transition-colors hover:bg-(--palette-limelight)/10"
+                                                                        whileHover={{
+                                                                            scale: 1.1,
+                                                                        }}
+                                                                        whileTap={{
+                                                                            scale: 0.95,
+                                                                        }}
+                                                                        title="View Material"
+                                                                    >
+                                                                        <Eye className="h-4 w-4 text-(--palette-green)" />
+                                                                    </motion.button>
+                                                                </Link>
+                                                                <Link
+                                                                    href={edit.url(
+                                                                        material.slug,
+                                                                    )}
+                                                                >
+                                                                    <motion.button
+                                                                        className="rounded-lg p-2 transition-colors hover:bg-blue-50"
+                                                                        whileHover={{
+                                                                            scale: 1.1,
+                                                                        }}
+                                                                        whileTap={{
+                                                                            scale: 0.95,
+                                                                        }}
+                                                                        title="Edit Material"
+                                                                    >
+                                                                        <Edit2 className="h-4 w-4 text-blue-500" />
+                                                                    </motion.button>
+                                                                </Link>
+                                                                <DeleteMaterialButton
+                                                                    materialId={
+                                                                        material.id
                                                                     }
-                                                                    title="Delete Material"
-                                                                >
-                                                                    <Trash2 className="h-4 w-4 text-red-500" />
-                                                                </motion.button>
+                                                                    materialTitle={
+                                                                        material.title
+                                                                    }
+                                                                />
                                                             </div>
                                                         </td>
                                                     </motion.tr>
@@ -429,53 +438,6 @@ export default function TeacherDashboard({
                     )}
                 </motion.div>
             </motion.div>
-
-            {/* Delete Confirmation Modal */}
-            {deleteModal.isOpen && (
-                <motion.div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                    onClick={() => setDeleteModal({ isOpen: false })}
-                >
-                    <motion.div
-                        className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl"
-                        initial={{ scale: 0.9, y: 20 }}
-                        animate={{ scale: 1, y: 0 }}
-                        transition={{ duration: 0.3, type: 'spring' }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <h3 className="mb-2 text-lg font-bold text-foreground">
-                            Delete Material?
-                        </h3>
-                        <p className="mb-4 text-sm text-muted-foreground">
-                            Are you sure you want to delete{' '}
-                            <span className="font-semibold">
-                                "{deleteModal.materialTitle}"
-                            </span>
-                            ? This action cannot be undone.
-                        </p>
-                        <div className="flex gap-3">
-                            <Button
-                                variant="outline"
-                                className="flex-1"
-                                onClick={() =>
-                                    setDeleteModal({ isOpen: false })
-                                }
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                className="flex-1 bg-red-500 text-white hover:bg-red-600"
-                                onClick={confirmDelete}
-                            >
-                                Delete
-                            </Button>
-                        </div>
-                    </motion.div>
-                </motion.div>
-            )}
         </>
     );
 }

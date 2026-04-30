@@ -78,7 +78,7 @@ class AdminClassroomController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->withErrors(['error' => 'Gagal menambahkan kelas: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Gagal menambahkan kelas: '.$e->getMessage()]);
         }
     }
 
@@ -123,7 +123,7 @@ class AdminClassroomController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->withErrors(['error' => 'Gagal memperbarui kelas: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Gagal memperbarui kelas: '.$e->getMessage()]);
         }
     }
 
@@ -147,7 +147,7 @@ class AdminClassroomController extends Controller
 
             return redirect()
                 ->back()
-                ->withErrors(['error' => 'Gagal menghapus kelas: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Gagal menghapus kelas: '.$e->getMessage()]);
         }
     }
 
@@ -201,7 +201,7 @@ class AdminClassroomController extends Controller
 
             return redirect()
                 ->back()
-                ->withErrors(['error' => 'Gagal memperbarui siswa: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Gagal memperbarui siswa: '.$e->getMessage()]);
         }
     }
 }

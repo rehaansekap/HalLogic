@@ -11,14 +11,13 @@ class EnsureUserHasRole
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string  $role
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string $role): Response
     {
         $user = $request->user();
 
-        if (!$user || $user->role !== $role) {
+        if (! $user || $user->role !== $role) {
             // Redirect based on actual role
             if ($user) {
                 if ($user->role === 'student') {

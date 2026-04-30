@@ -93,7 +93,6 @@ class TeacherGroupManagementService
                 ->where('material_id', $materialId)
                 ->first();
 
-
             if (! $existingProgress) {
                 DB::table('group_progress')->insert([
                     'group_id' => $groupId,

@@ -16,20 +16,20 @@ class AdminClassroomService
         $query = Classroom::with(['teacher:id,name,avatar', 'students']);
 
         // Filter by teacher
-        if (!empty($filters['teacher_id']) && $filters['teacher_id'] !== 'all') {
+        if (! empty($filters['teacher_id']) && $filters['teacher_id'] !== 'all') {
             $query->where('teacher_id', $filters['teacher_id']);
         }
 
         // Filter by academic year
-        if (!empty($filters['academic_year']) && $filters['academic_year'] !== 'all') {
+        if (! empty($filters['academic_year']) && $filters['academic_year'] !== 'all') {
             $query->where('academic_year', $filters['academic_year']);
         }
 
         // Search by name or join code
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('join_code', 'like', '%' . $filters['search'] . '%');
+                $q->where('name', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('join_code', 'like', '%'.$filters['search'].'%');
             });
         }
 
@@ -132,7 +132,7 @@ class AdminClassroomService
     private function generateUniqueJoinCode()
     {
         do {
-            $code = strtoupper(Str::random(6)) . '-' . date('Y');
+            $code = strtoupper(Str::random(6)).'-'.date('Y');
         } while (Classroom::where('join_code', $code)->exists());
 
         return $code;
@@ -165,7 +165,7 @@ class AdminClassroomService
         ];
 
         // Regenerate join code if requested
-        if (!empty($data['regenerate_code'])) {
+        if (! empty($data['regenerate_code'])) {
             $classroomData['join_code'] = $this->generateUniqueJoinCode();
         }
 
