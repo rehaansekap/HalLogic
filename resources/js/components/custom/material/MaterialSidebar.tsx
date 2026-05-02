@@ -211,37 +211,48 @@ export default function MaterialSidebar({
             </motion.div>
 
             {/* Download Material & Tugas - Only in Phase 2+ */}
-            {currentStep >= 2 && materialPdf && (
+            {currentStep >= 2 && (
                 <motion.div
-                    className="group relative overflow-hidden rounded-xl border border-amber-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
+                    className={`group relative overflow-hidden rounded-xl border ${materialPdf ? 'border-amber-200' : 'border-slate-200'} bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.55 }}
                 >
-                    <div className="absolute inset-0 bg-amber-50/30 transition-all duration-300 group-hover:bg-amber-50" />
+                    <div className={`absolute inset-0 ${materialPdf ? 'bg-amber-50/30 group-hover:bg-amber-50' : 'bg-slate-50/30'} transition-all duration-300`} />
                     <div className="relative z-10">
                         <div className="mb-3 flex items-center gap-2">
-                            <div className="rounded-lg bg-amber-100 p-1.5">
-                                <Download className="h-4 w-4 text-amber-600" />
+                            <div className={`rounded-lg ${materialPdf ? 'bg-amber-100' : 'bg-slate-100'} p-1.5`}>
+                                <FileText className={`h-4 w-4 ${materialPdf ? 'text-amber-600' : 'text-slate-400'}`} />
                             </div>
                             <h3 className="text-base font-bold text-foreground">
                                 Materi & Tugas
                             </h3>
                         </div>
-                        <p className="mb-4 text-xs text-muted-foreground">
-                            Download file materi dan tugas untuk membantu investigasi Anda.
-                        </p>
-                        <Button
-                            variant="outline"
-                            className="w-full border-amber-200 bg-white font-bold text-amber-700 hover:bg-amber-50 hover:text-amber-800"
-                            size="sm"
-                            asChild
-                        >
-                            <a href={`/storage/${materialPdf}`} target="_blank" rel="noopener noreferrer">
-                                <Download className="mr-2 h-3 w-3" />
-                                Download PDF
-                            </a>
-                        </Button>
+
+                        {materialPdf ? (
+                            <>
+                                <p className="mb-4 text-xs text-muted-foreground">
+                                    Download file materi dan tugas untuk membantu investigasi Anda.
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    className="w-full border-amber-200 bg-white font-bold text-amber-700 hover:bg-amber-50 hover:text-amber-800"
+                                    size="sm"
+                                    asChild
+                                >
+                                    <a href={`/storage/${materialPdf}`} target="_blank" rel="noopener noreferrer">
+                                        <Download className="mr-2 h-3 w-3" />
+                                        Download PDF
+                                    </a>
+                                </Button>
+                            </>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-2">
+                                <p className="text-center text-xs font-medium text-slate-500 italic">
+                                    Materi belum diupload oleh guru
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </motion.div>
             )}
