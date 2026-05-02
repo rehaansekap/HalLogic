@@ -411,7 +411,7 @@ export default function TabGroupManagement({
                                 {group.members.map((member) => (
                                     <div
                                         key={member.id}
-                                        className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-(--palette-limelight)/5 transition-colors group"
+                                        className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-(--palette-limelight)/5 transition-colors"
                                     >
                                         <div className="flex items-center gap-2 min-w-0">
                                             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--palette-green)/10 text-[10px] font-bold text-(--palette-green)">
@@ -426,7 +426,7 @@ export default function TabGroupManagement({
                                                 <Crown className="h-3.5 w-3.5 text-(--palette-sunflower) shrink-0" />
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="flex items-center gap-1 shrink-0">
                                             {!member.is_leader && (
                                                 <button
                                                     onClick={() =>
