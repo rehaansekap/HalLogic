@@ -257,8 +257,8 @@ export default function MaterialSidebar({
                 </motion.div>
             )}
 
-        {/* File Upload Section - Only show in Phase 2 Investigation */}
-        {currentStep === 2 && (
+        {/* File Upload Section - Show in Phase 2 or if already submitted */}
+        {(currentStep === 2 || isSubmitted) && (
             <motion.div
                 className="group relative overflow-hidden rounded-xl border border-blue-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
                 initial={{ opacity: 0, y: 10 }}
