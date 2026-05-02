@@ -35,7 +35,7 @@ interface Group {
 
 interface SubmissionData {
     id: number;
-    file_path: string | null;
+    files: string[];
     code_answer: string | null;
     submitted_at: string | null;
 }
@@ -64,7 +64,7 @@ interface MonitoringGroup {
     status: string;
     members: GroupMember[];
     submission_id: number | null;
-    file_path: string | null;
+    files: string[];
     code_answer: string | null;
     submitted_at: string | null;
     step3_status: string;

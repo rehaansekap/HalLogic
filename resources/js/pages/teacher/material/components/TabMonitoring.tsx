@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Award,
     CheckCircle2,
@@ -8,6 +8,8 @@ import {
     Loader2,
     MessageCircle,
     Users,
+    ChevronDown,
+    ChevronUp,
 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
@@ -26,7 +28,7 @@ interface GroupMember {
 
 interface SubmissionData {
     id: number;
-    file_path: string | null;
+    files: string[];
     code_answer: string | null;
     submitted_at: string | null;
 }
@@ -55,7 +57,7 @@ interface MonitoringGroup {
     status: string;
     members: GroupMember[];
     submission_id: number | null;
-    file_path: string | null;
+    files: string[];
     code_answer: string | null;
     submitted_at: string | null;
     step3_status: string;
@@ -120,6 +122,9 @@ export default function TabMonitoring({
         setSelectedGroup(null);
     }, []);
 
+    const [isInitialOpen, setIsInitialOpen] = useState(true);
+    const [isFinalOpen, setIsFinalOpen] = useState(false);
+
     if (groupsMonitoring.length === 0) {
         return (
             <EmptyState
@@ -130,6 +135,52 @@ export default function TabMonitoring({
             />
         );
     }
+
+    const initialReflections = allReflections.filter((r) => r.type === 'initial');
+    const finalReflections = allReflections.filter((r) => r.type === 'final');
+
+    const renderReflectionList = (reflections: AllReflection[], delayOffset: number) => (
+        <div className="space-y-3 p-4">
+            {reflections.length > 0 ? (
+                reflections.map((reflection, idx) => (
+                    <motion.div
+                        key={idx}
+                        className="rounded-lg border border-(--palette-limelight)/10 p-3 hover:bg-(--palette-limelight)/5 transition-colors"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: delayOffset + idx * 0.03 }}
+                    >
+                        <div className="mb-1.5 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-(--palette-green)/10 text-[10px] font-bold text-(--palette-green)">
+                                    {reflection.user_name.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="text-sm font-semibold text-foreground">
+                                    {reflection.user_name}
+                                </span>
+                                {reflection.group_name && (
+                                    <span className="rounded-full bg-(--palette-limelight)/10 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                        {reflection.group_name}
+                                    </span>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                                <Clock className="h-3 w-3" />
+                                {new Date(reflection.created_at).toLocaleDateString('id-ID')}
+                            </div>
+                        </div>
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                            {reflection.content}
+                        </p>
+                    </motion.div>
+                ))
+            ) : (
+                <div className="py-8 text-center text-sm text-muted-foreground italic">
+                    Belum ada refleksi untuk kategori ini.
+                </div>
+            )}
+        </div>
+    );
 
     return (
         <motion.div
@@ -204,8 +255,8 @@ export default function TabMonitoring({
                                 <div className="mb-3 flex gap-1">
                                     {stepLabels.map((label, stepIdx) => {
                                         const stepNum = stepIdx + 1;
-                                        let stepClass =
-                                            'bg-gray-100 text-muted-foreground';
+                                        let stepClass = 'bg-gray-100 text-muted-foreground';
+
                                         if (group.status === 'completed') {
                                             stepClass =
                                                 'bg-(--palette-green)/15 text-(--palette-green)';
@@ -280,57 +331,91 @@ export default function TabMonitoring({
                 </div>
             </div>
 
-            {/* All Reflections */}
-            {allReflections.length > 0 && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                >
-                    <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                        <MessageCircle className="h-4 w-4" />
-                        Refleksi Siswa ({allReflections.length})
-                    </h3>
-                    <div className="space-y-3 max-h-96 overflow-y-auto rounded-xl border border-(--palette-limelight)/20 p-4">
-                        {allReflections.map((reflection, idx) => (
+            {/* Student Reflections Accordions */}
+            <div className="space-y-4">
+                <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                    <MessageCircle className="h-4 w-4" />
+                    Refleksi Siswa
+                </h3>
+
+                {/* Initial Reflections Accordion */}
+                <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white shadow-sm">
+                    <button
+                        onClick={() => setIsInitialOpen(!isInitialOpen)}
+                        className="flex w-full items-center justify-between p-4 transition-colors hover:bg-(--palette-limelight)/5"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-blue-100 p-1.5">
+                                <MessageCircle className="h-4 w-4 text-blue-600" />
+                            </div>
+                            <div className="text-left">
+                                <span className="block text-sm font-bold text-foreground">Refleksi Awal</span>
+                                <span className="text-[10px] font-medium text-muted-foreground">
+                                    {initialReflections.length} Siswa telah mengisi
+                                </span>
+                            </div>
+                        </div>
+                        {isInitialOpen ? (
+                            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        )}
+                    </button>
+                    <AnimatePresence>
+                        {isInitialOpen && (
                             <motion.div
-                                key={idx}
-                                className="rounded-lg border border-(--palette-limelight)/10 p-3 hover:bg-(--palette-limelight)/5 transition-colors"
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.55 + idx * 0.03 }}
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: 'easeInOut' }}
                             >
-                                <div className="mb-1.5 flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-(--palette-green)/10 text-[10px] font-bold text-(--palette-green)">
-                                            {reflection.user_name
-                                                .charAt(0)
-                                                .toUpperCase()}
-                                        </div>
-                                        <span className="text-sm font-semibold text-foreground">
-                                            {reflection.user_name}
-                                        </span>
-                                        {reflection.group_name && (
-                                            <span className="rounded-full bg-(--palette-limelight)/10 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                                                {reflection.group_name}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                                        <Clock className="h-3 w-3" />
-                                        {new Date(
-                                            reflection.created_at,
-                                        ).toLocaleDateString('id-ID')}
-                                    </div>
+                                <div className="max-h-80 overflow-y-auto border-t border-(--palette-limelight)/10">
+                                    {renderReflectionList(initialReflections, 0.5)}
                                 </div>
-                                <p className="text-sm leading-relaxed text-muted-foreground">
-                                    {reflection.content}
-                                </p>
                             </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
-            )}
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* Final Reflections Accordion */}
+                <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white shadow-sm">
+                    <button
+                        onClick={() => setIsFinalOpen(!isFinalOpen)}
+                        className="flex w-full items-center justify-between p-4 transition-colors hover:bg-(--palette-limelight)/5"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-(--palette-green)/10 p-1.5">
+                                <CheckCircle2 className="h-4 w-4 text-(--palette-green)" />
+                            </div>
+                            <div className="text-left">
+                                <span className="block text-sm font-bold text-foreground">Refleksi Akhir</span>
+                                <span className="text-[10px] font-medium text-muted-foreground">
+                                    {finalReflections.length} Siswa telah mengisi
+                                </span>
+                            </div>
+                        </div>
+                        {isFinalOpen ? (
+                            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        )}
+                    </button>
+                    <AnimatePresence>
+                        {isFinalOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            >
+                                <div className="max-h-80 overflow-y-auto border-t border-(--palette-limelight)/10">
+                                    {renderReflectionList(finalReflections, 0.5)}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </div>
 
             {/* Submission Detail Modal */}
             {selectedGroup && (

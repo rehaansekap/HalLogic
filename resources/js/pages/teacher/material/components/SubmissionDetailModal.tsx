@@ -7,6 +7,7 @@ import {
     MessageSquare,
     Save,
     X,
+    Download,
 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -24,7 +25,7 @@ interface GroupMember {
 
 interface SubmissionData {
     id: number;
-    file_path: string | null;
+    files: string[];
     code_answer: string | null;
     submitted_at: string | null;
 }
@@ -190,17 +191,23 @@ export default function SubmissionDetailModal({
                                 File / Jawaban
                             </h3>
                             <div className="rounded-xl border border-(--palette-limelight)/20 bg-(--palette-limelight)/5 p-4">
-                                {submission.file_path && (
-                                    <div className="mb-3 flex items-center gap-2">
-                                        <FileText className="h-4 w-4 text-(--palette-green)" />
-                                        <a
-                                            href={`/storage/${submission.file_path}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-sm font-medium text-(--palette-green) underline hover:no-underline"
-                                        >
-                                            Lihat File Submission
-                                        </a>
+                                {submission.files && submission.files.length > 0 && (
+                                    <div className="mb-3 space-y-2">
+                                        {submission.files.map((file, idx) => (
+                                            <div key={idx} className="flex items-center gap-2">
+                                                <FileText className="h-4 w-4 text-(--palette-green)" />
+                                                <a
+                                                    href={`/storage/${file}`}
+                                                    download
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-2 text-sm font-medium text-(--palette-green) underline hover:no-underline truncate"
+                                                >
+                                                    <Download className="h-3 w-3" />
+                                                    {file.split('/').pop()}
+                                                </a>
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
                                 {submission.code_answer && (

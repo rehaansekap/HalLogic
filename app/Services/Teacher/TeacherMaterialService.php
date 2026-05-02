@@ -274,11 +274,10 @@ class TeacherMaterialService
                 };
 
                 $files = json_decode($group->files ?? '[]', true);
-                $filePath = ! empty($files) && is_array($files) ? $files[0] : null;
 
                 $submission = $group->submission_id ? [
                     'id' => $group->submission_id,
-                    'file_path' => $filePath,
+                    'files' => $files,
                     'code_answer' => null,
                     'submitted_at' => $group->submitted_at,
                 ] : null;
@@ -310,7 +309,7 @@ class TeacherMaterialService
                     'status' => $group->status,
                     'members' => $members,
                     'submission_id' => $group->submission_id ?? null,
-                    'file_path' => $filePath ?? null,
+                    'files' => $files,
                     'code_answer' => null,
                     'submitted_at' => $group->submitted_at ?? null,
                     'step3_status' => $stepStatus(3),
