@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
 * @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
@@ -44,43 +44,6 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
-* @route '/teacher/material/create'
-*/
-const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
-* @route '/teacher/material/create'
-*/
-createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::create
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:79
-* @route '/teacher/material/create'
-*/
-createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-create.form = createForm
-
-/**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
 * @see app/Http/Controllers/Teacher/TeacherMaterialController.php:104
 * @route '/teacher/material'
@@ -113,28 +76,6 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:104
-* @route '/teacher/material'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::store
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:104
-* @route '/teacher/material'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
@@ -199,43 +140,6 @@ edit.head = (args: { slug: string | number } | [slug: string | number ] | string
 })
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
-* @route '/teacher/material/{slug}/edit'
-*/
-const editForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
-* @route '/teacher/material/{slug}/edit'
-*/
-editForm.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::edit
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:131
-* @route '/teacher/material/{slug}/edit'
-*/
-editForm.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-edit.form = editForm
-
-/**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
 * @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
 * @route '/teacher/material/{material}/update'
@@ -294,28 +198,6 @@ update.post = (args: { material: number | { id: number } } | [material: number |
 })
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
-* @route '/teacher/material/{material}/update'
-*/
-const updateForm = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
-* @route '/teacher/material/{material}/update'
-*/
-updateForm.post = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, options),
-    method: 'post',
-})
-
-update.form = updateForm
-
-/**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
 * @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
 * @route '/teacher/material/{material}'
@@ -372,38 +254,6 @@ destroy.delete = (args: { material: number | { id: number } } | [material: numbe
     url: destroy.url(args, options),
     method: 'delete',
 })
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
-* @route '/teacher/material/{material}'
-*/
-const destroyForm = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
-* @route '/teacher/material/{material}'
-*/
-destroyForm.delete = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
 
 const materials = {
     create: Object.assign(create, create),

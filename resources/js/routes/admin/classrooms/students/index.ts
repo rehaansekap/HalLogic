@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\AdminClassroomController::manage
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:157
@@ -68,43 +68,6 @@ manage.head = (args: { classroom: number | { id: number } } | [classroom: number
 })
 
 /**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::manage
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:157
-* @route '/admin/classrooms/{classroom}/students'
-*/
-const manageForm = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: manage.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::manage
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:157
-* @route '/admin/classrooms/{classroom}/students'
-*/
-manageForm.get = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: manage.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::manage
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:157
-* @route '/admin/classrooms/{classroom}/students'
-*/
-manageForm.head = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: manage.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-manage.form = manageForm
-
-/**
 * @see \App\Http\Controllers\Admin\AdminClassroomController::update
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:179
 * @route '/admin/classrooms/{classroom}/students'
@@ -161,28 +124,6 @@ update.post = (args: { classroom: number | { id: number } } | [classroom: number
     url: update.url(args, options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::update
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:179
-* @route '/admin/classrooms/{classroom}/students'
-*/
-const updateForm = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::update
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:179
-* @route '/admin/classrooms/{classroom}/students'
-*/
-updateForm.post = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, options),
-    method: 'post',
-})
-
-update.form = updateForm
 
 const students = {
     manage: Object.assign(manage, manage),

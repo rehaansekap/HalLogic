@@ -148,4 +148,46 @@ class AdminUserController extends Controller
                 ->withErrors(['error' => 'Gagal menghapus user: '.$e->getMessage()]);
         }
     }
+
+    /**
+     * Bulk delete users
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:users,id',
+        ]);
+
+        $ids = $request->input('ids');
+
+        // Prevent deleting self
+        if (in_array(Auth::id(), $ids)) {
+            $ids = array_filter($ids, fn ($id) => $id != Auth::id());
+        }
+
+        if (empty($ids)) {
+            return redirect()
+                ->back()
+                ->withErrors(['error' => 'Tidak ada user valid yang dapat dihapus.']);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $this->userService->bulkDeleteUsers($ids);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', count($ids).' user berhasil dihapus!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()
+                ->back()
+                ->withErrors(['error' => 'Gagal menghapus users: '.$e->getMessage()]);
+        }
+    }
 }

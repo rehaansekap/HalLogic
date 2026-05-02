@@ -125,6 +125,18 @@ class AdminUserService
     }
 
     /**
+     * Bulk delete users
+     */
+    public function bulkDeleteUsers(array $ids)
+    {
+        $users = User::whereIn('id', $ids)->get();
+
+        foreach ($users as $user) {
+            $this->deleteUser($user);
+        }
+    }
+
+    /**
      * Get single user detail
      */
     public function getUserDetail($id)

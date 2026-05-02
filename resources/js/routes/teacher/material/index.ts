@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
 * @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
@@ -62,43 +62,6 @@ show.head = (args: { slug: string | number } | [slug: string | number ] | string
 })
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
-* @route '/teacher/material/{slug}'
-*/
-const showForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
-* @route '/teacher/material/{slug}'
-*/
-showForm.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::show
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:46
-* @route '/teacher/material/{slug}'
-*/
-showForm.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
-
-/**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::attendance
 * @see app/Http/Controllers/Teacher/TeacherMaterialController.php:270
 * @route '/teacher/material/{material}/attendance'
@@ -151,28 +114,6 @@ attendance.post = (args: { material: string | number } | [material: string | num
 })
 
 /**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::attendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:270
-* @route '/teacher/material/{material}/attendance'
-*/
-const attendanceForm = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: attendance.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::attendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:270
-* @route '/teacher/material/{material}/attendance'
-*/
-attendanceForm.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: attendance.url(args, options),
-    method: 'post',
-})
-
-attendance.form = attendanceForm
-
-/**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
 * @see app/Http/Controllers/Teacher/TeacherMaterialController.php:300
 * @route '/teacher/material/{material}/update-groups'
@@ -223,28 +164,6 @@ updateGroups.post = (args: { material: string | number } | [material: string | n
     url: updateGroups.url(args, options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:300
-* @route '/teacher/material/{material}/update-groups'
-*/
-const updateGroupsForm = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: updateGroups.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:300
-* @route '/teacher/material/{material}/update-groups'
-*/
-updateGroupsForm.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: updateGroups.url(args, options),
-    method: 'post',
-})
-
-updateGroups.form = updateGroupsForm
 
 const material = {
     show: Object.assign(show, show),

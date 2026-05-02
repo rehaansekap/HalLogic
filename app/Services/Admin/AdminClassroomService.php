@@ -97,20 +97,9 @@ class AdminClassroomService
      */
     public function getAvailableStudents($currentClassroomId = null)
     {
-        $query = User::where('role', 'student');
-
-        if ($currentClassroomId) {
-            $query->where(function ($q) use ($currentClassroomId) {
-                $q->whereDoesntHave('classrooms')
-                    ->orWhereHas('classrooms', function ($qq) use ($currentClassroomId) {
-                        $qq->where('classrooms.id', $currentClassroomId);
-                    });
-            });
-        } else {
-            $query->whereDoesntHave('classrooms');
-        }
-
-        return $query->select('id', 'name', 'username', 'avatar')
+        return User::where('role', 'student')
+            ->whereDoesntHave('classrooms')
+            ->select('id', 'name', 'username', 'avatar')
             ->orderBy('name')
             ->get();
     }

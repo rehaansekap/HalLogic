@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 import students from './students'
 /**
 * @see \App\Http\Controllers\Admin\AdminClassroomController::index
@@ -45,43 +45,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::index
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:26
-* @route '/admin/classrooms'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::index
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:26
-* @route '/admin/classrooms'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::index
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:26
-* @route '/admin/classrooms'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
-
-/**
 * @see \App\Http\Controllers\Admin\AdminClassroomController::create
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:51
 * @route '/admin/classrooms/create'
@@ -126,43 +89,6 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::create
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:51
-* @route '/admin/classrooms/create'
-*/
-const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::create
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:51
-* @route '/admin/classrooms/create'
-*/
-createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::create
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:51
-* @route '/admin/classrooms/create'
-*/
-createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-create.form = createForm
-
-/**
 * @see \App\Http\Controllers\Admin\AdminClassroomController::store
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:63
 * @route '/admin/classrooms'
@@ -195,28 +121,6 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::store
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:63
-* @route '/admin/classrooms'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::store
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:63
-* @route '/admin/classrooms'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Admin\AdminClassroomController::edit
@@ -287,43 +191,6 @@ edit.head = (args: { classroom: number | { id: number } } | [classroom: number |
 })
 
 /**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::edit
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:88
-* @route '/admin/classrooms/{classroom}/edit'
-*/
-const editForm = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::edit
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:88
-* @route '/admin/classrooms/{classroom}/edit'
-*/
-editForm.get = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::edit
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:88
-* @route '/admin/classrooms/{classroom}/edit'
-*/
-editForm.head = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-edit.form = editForm
-
-/**
 * @see \App\Http\Controllers\Admin\AdminClassroomController::update
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:108
 * @route '/admin/classrooms/{classroom}'
@@ -382,38 +249,6 @@ update.put = (args: { classroom: number | { id: number } } | [classroom: number 
 })
 
 /**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::update
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:108
-* @route '/admin/classrooms/{classroom}'
-*/
-const updateForm = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::update
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:108
-* @route '/admin/classrooms/{classroom}'
-*/
-updateForm.put = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-update.form = updateForm
-
-/**
 * @see \App\Http\Controllers\Admin\AdminClassroomController::destroy
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:133
 * @route '/admin/classrooms/{classroom}'
@@ -470,38 +305,6 @@ destroy.delete = (args: { classroom: number | { id: number } } | [classroom: num
     url: destroy.url(args, options),
     method: 'delete',
 })
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::destroy
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:133
-* @route '/admin/classrooms/{classroom}'
-*/
-const destroyForm = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Admin\AdminClassroomController::destroy
-* @see app/Http/Controllers/Admin/AdminClassroomController.php:133
-* @route '/admin/classrooms/{classroom}'
-*/
-destroyForm.delete = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
 
 const classrooms = {
     index: Object.assign(index, index),
