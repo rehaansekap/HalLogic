@@ -38,6 +38,7 @@ export default function TabAttendance({
         for (const record of initialAttendance) {
             map[record.student_id] = record.is_present;
         }
+
         return map;
     });
     const [isSaving, setIsSaving] = useState(false);
@@ -55,6 +56,7 @@ export default function TabAttendance({
             for (const student of students) {
                 map[student.id] = present;
             }
+
             setAttendanceData(map);
         },
         [students],
@@ -64,6 +66,7 @@ export default function TabAttendance({
         const present = students.filter(
             (s) => attendanceData[s.id] === true,
         ).length;
+
         return { present, absent: students.length - present };
     }, [students, attendanceData]);
 
@@ -165,6 +168,34 @@ export default function TabAttendance({
                         <X className="mr-1 h-3.5 w-3.5" />
                         Semua Tidak Hadir
                     </Button>
+                    {/* Save Button */}
+                    <div className="flex justify-end">
+                        <Button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="bg-(--palette-green) font-bold text-white shadow-(--palette-green)/20 shadow-sm transition-all hover:scale-105 hover:bg-(--palette-green)/90 active:scale-95"
+                        >
+                            {isSaving ? (
+                                <>
+                                    <motion.div
+                                        className="mr-2 h-4 w-4 rounded-full border-2 border-white/30 border-t-white"
+                                        animate={{ rotate: 360 }}
+                                        transition={{
+                                            repeat: Infinity,
+                                            duration: 0.8,
+                                            ease: 'linear',
+                                        }}
+                                    />
+                                    Menyimpan...
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="mr-2 h-4 w-4" />
+                                    Simpan Kehadiran
+                                </>
+                            )}
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -174,13 +205,13 @@ export default function TabAttendance({
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-(--palette-limelight)/20 bg-(--palette-limelight)/5">
-                                <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                <th className="px-6 py-3 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                     #
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                <th className="px-6 py-3 text-left text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                     Siswa
                                 </th>
-                                <th className="px-6 py-3 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                <th className="px-6 py-3 text-center text-xs font-bold tracking-wider text-muted-foreground uppercase">
                                     Status
                                 </th>
                             </tr>
@@ -189,10 +220,11 @@ export default function TabAttendance({
                             {students.map((student, idx) => {
                                 const isPresent =
                                     attendanceData[student.id] ?? false;
+
                                 return (
                                     <motion.tr
                                         key={student.id}
-                                        className="border-b border-(--palette-limelight)/10 transition-colors hover:bg-(--palette-limelight)/5 cursor-pointer"
+                                        className="cursor-pointer border-b border-(--palette-limelight)/10 transition-colors hover:bg-(--palette-limelight)/5"
                                         onClick={() =>
                                             toggleAttendance(student.id)
                                         }
@@ -213,7 +245,7 @@ export default function TabAttendance({
                                                         .toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <p className="font-semibold text-foreground text-sm">
+                                                    <p className="text-sm font-semibold text-foreground">
                                                         {student.name}
                                                     </p>
                                                     <p className="text-xs text-muted-foreground">
@@ -263,7 +295,7 @@ export default function TabAttendance({
                 <Button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="bg-(--palette-green) font-bold text-white hover:bg-(--palette-green)/90 transition-all hover:scale-105 active:scale-95 shadow-sm shadow-(--palette-green)/20"
+                    className="bg-(--palette-green) font-bold text-white shadow-(--palette-green)/20 shadow-sm transition-all hover:scale-105 hover:bg-(--palette-green)/90 active:scale-95"
                 >
                     {isSaving ? (
                         <>

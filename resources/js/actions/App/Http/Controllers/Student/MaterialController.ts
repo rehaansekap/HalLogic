@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Student\MaterialController::show
 * @see app/Http/Controllers/Student/MaterialController.php:36
@@ -62,6 +62,43 @@ show.head = (args: { slug: string | number } | [slug: string | number ] | string
 })
 
 /**
+* @see \App\Http\Controllers\Student\MaterialController::show
+* @see app/Http/Controllers/Student/MaterialController.php:36
+* @route '/material/{slug}'
+*/
+const showForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Student\MaterialController::show
+* @see app/Http/Controllers/Student/MaterialController.php:36
+* @route '/material/{slug}'
+*/
+showForm.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Student\MaterialController::show
+* @see app/Http/Controllers/Student/MaterialController.php:36
+* @route '/material/{slug}'
+*/
+showForm.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\Student\MaterialController::submitReflection
 * @see app/Http/Controllers/Student/MaterialController.php:82
 * @route '/material/{slug}/reflection'
@@ -112,6 +149,28 @@ submitReflection.post = (args: { slug: string | number } | [slug: string | numbe
     url: submitReflection.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\Student\MaterialController::submitReflection
+* @see app/Http/Controllers/Student/MaterialController.php:82
+* @route '/material/{slug}/reflection'
+*/
+const submitReflectionForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: submitReflection.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Student\MaterialController::submitReflection
+* @see app/Http/Controllers/Student/MaterialController.php:82
+* @route '/material/{slug}/reflection'
+*/
+submitReflectionForm.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: submitReflection.url(args, options),
+    method: 'post',
+})
+
+submitReflection.form = submitReflectionForm
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::savePhase3
@@ -166,6 +225,28 @@ savePhase3.post = (args: { slug: string | number } | [slug: string | number ] | 
 })
 
 /**
+* @see \App\Http\Controllers\Student\MaterialController::savePhase3
+* @see app/Http/Controllers/Student/MaterialController.php:105
+* @route '/material/{slug}/save-phase-3'
+*/
+const savePhase3Form = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: savePhase3.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Student\MaterialController::savePhase3
+* @see app/Http/Controllers/Student/MaterialController.php:105
+* @route '/material/{slug}/save-phase-3'
+*/
+savePhase3Form.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: savePhase3.url(args, options),
+    method: 'post',
+})
+
+savePhase3.form = savePhase3Form
+
+/**
 * @see \App\Http\Controllers\Student\MaterialController::submitFinalReflection
 * @see app/Http/Controllers/Student/MaterialController.php:138
 * @route '/material/{slug}/finish'
@@ -218,6 +299,28 @@ submitFinalReflection.post = (args: { slug: string | number } | [slug: string | 
 })
 
 /**
+* @see \App\Http\Controllers\Student\MaterialController::submitFinalReflection
+* @see app/Http/Controllers/Student/MaterialController.php:138
+* @route '/material/{slug}/finish'
+*/
+const submitFinalReflectionForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: submitFinalReflection.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Student\MaterialController::submitFinalReflection
+* @see app/Http/Controllers/Student/MaterialController.php:138
+* @route '/material/{slug}/finish'
+*/
+submitFinalReflectionForm.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: submitFinalReflection.url(args, options),
+    method: 'post',
+})
+
+submitFinalReflection.form = submitFinalReflectionForm
+
+/**
 * @see \App\Http\Controllers\Student\MaterialController::runCode
 * @see app/Http/Controllers/Student/MaterialController.php:176
 * @route '/material/{slug}/run-code'
@@ -268,6 +371,28 @@ runCode.post = (args: { slug: string | number } | [slug: string | number ] | str
     url: runCode.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\Student\MaterialController::runCode
+* @see app/Http/Controllers/Student/MaterialController.php:176
+* @route '/material/{slug}/run-code'
+*/
+const runCodeForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: runCode.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Student\MaterialController::runCode
+* @see app/Http/Controllers/Student/MaterialController.php:176
+* @route '/material/{slug}/run-code'
+*/
+runCodeForm.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: runCode.url(args, options),
+    method: 'post',
+})
+
+runCode.form = runCodeForm
 
 const MaterialController = { show, submitReflection, savePhase3, submitFinalReflection, runCode }
 

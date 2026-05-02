@@ -82,8 +82,8 @@ class DatabaseSeeder extends Seeder
                 'email' => "siswa$i@sekolah.id",
                 'password' => Hash::make('123123123'),
                 'role' => 'student',
-                'xp' => 0,
-                'level' => 1,
+                'xp' => rand(0, 500),
+                'level' => rand(1, 3),
                 'avatar' => 'student.png',
             ]);
 
@@ -92,7 +92,7 @@ class DatabaseSeeder extends Seeder
                 'classroom_id' => $targetClass->id,
             ]);
 
-            // $students[] = $student;
+            $students[] = $student;
         }
 
         $material1 = Material::create([
@@ -137,7 +137,6 @@ class DatabaseSeeder extends Seeder
             'material_pdf' => 'materials/materi-3.pdf',
         ]);
 
-        /*
         $rpl1Students = array_slice($students, 0, 20);
         $chunksRPL1 = array_chunk($rpl1Students, 4);
 
@@ -230,6 +229,5 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-        */
     }
 }

@@ -26,36 +26,36 @@ export function UserMenuContent({ user }: Props) {
 
     return (
         <>
-            <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+            <DropdownMenuLabel className="p-3 font-normal">
+                <div className="flex items-center gap-3 text-left">
                     <UserInfo user={user} showEmail={true} />
                 </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="my-1 bg-(--palette-limelight)/10" />
             <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="cursor-pointer rounded-xl px-4 py-3 focus:bg-(--palette-green)/10 focus:text-(--palette-green) transition-colors mb-1">
                     <Link
-                        className="block w-full cursor-pointer"
+                        className="flex w-full items-center gap-3"
                         href={edit()}
                         prefetch
                         onClick={cleanup}
                     >
-                        <Settings className="mr-2" />
-                        Settings
+                        <Settings className="h-4 w-4" />
+                        <span className="font-semibold">Settings</span>
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuSeparator className="my-1 bg-(--palette-limelight)/10" />
+            <DropdownMenuItem asChild className="cursor-pointer rounded-xl px-4 py-3 text-red-600 focus:bg-red-50 focus:text-red-700 transition-colors">
                 <Link
-                    className="block w-full cursor-pointer"
+                    className="flex w-full items-center gap-3"
                     href={logout()}
                     as="button"
                     onClick={handleLogout}
                     data-test="logout-button"
                 >
-                    <LogOut className="mr-2" />
-                    Log out
+                    <LogOut className="h-4 w-4" />
+                    <span className="font-semibold">Log out</span>
                 </Link>
             </DropdownMenuItem>
         </>

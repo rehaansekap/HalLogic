@@ -11,6 +11,7 @@ import {
     UserPlus,
     Users,
     X,
+    Search,
 } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -18,6 +19,13 @@ import Swal from 'sweetalert2';
 import EmptyState from '@/components/custom/common/EmptyState';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { updateGroups } from '@/routes/teacher/material';
 
 interface Student {
@@ -59,6 +67,7 @@ export default function TabGroupManagement({
 }: TabGroupManagementProps) {
     const [groups, setGroups] = useState<Group[]>(initialGroups);
     const [isSaving, setIsSaving] = useState(false);
+    const [studentSearchQuery, setStudentSearchQuery] = useState('');
 
     const assignedStudentIds = useMemo(() => {
         const ids = new Set<number>();
@@ -75,6 +84,15 @@ export default function TabGroupManagement({
     const unassignedStudents = useMemo(() => {
         return students.filter((s) => !assignedStudentIds.has(s.id));
     }, [students, assignedStudentIds]);
+
+    const filteredUnassignedStudents = useMemo(() => {
+        if (!studentSearchQuery) {
+            return unassignedStudents;
+        }
+        return unassignedStudents.filter((s) =>
+            s.name.toLowerCase().includes(studentSearchQuery.toLowerCase()),
+        );
+    }, [unassignedStudents, studentSearchQuery]);
 
     const addGroup = useCallback(() => {
         const newId = ++tempIdCounter;
@@ -441,42 +459,61 @@ export default function TabGroupManagement({
 
                             {/* Add Member */}
                             {unassignedStudents.length > 0 && (
-                                <div className="mt-2 border-t border-(--palette-limelight)/10 pt-2">
-                                    <div className="relative">
-                                        <select
-                                            aria-label="Tambah anggota kelompok"
-                                            className="w-full appearance-none rounded-lg border border-(--palette-limelight)/20 bg-transparent px-3 py-1.5 text-xs text-muted-foreground focus:border-(--palette-green) focus:outline-none transition-colors"
-                                            value=""
-                                            onChange={(e) => {
-                                                const studentId = Number(
-                                                    e.target.value,
-                                                );
+                                <div className="mt-3 border-t border-(--palette-limelight)/10 pt-3">
+                                    <Select
+                                        value=""
+                                        onValueChange={(value) => {
+                                            const studentId = parseInt(value, 10);
+                                            const student = unassignedStudents.find((s) => s.id === studentId);
 
-                                                const student =
-                                                    unassignedStudents.find(
-                                                        (s) =>
-                                                            s.id === studentId,
-                                                    );
-
-                                                if (student) {
-                                                    addMemberToGroup(
-                                                        group.group_id,
-                                                        student,
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            <option value="" disabled>
-                                                + Tambah Anggota
-                                            </option>
-                                            {unassignedStudents.map((s) => (
-                                                <option key={s.id} value={s.id}>
-                                                    {s.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <UserPlus className="pointer-events-none absolute top-1/2 right-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/50" />
-                                    </div>
+                                            if (student) {
+                                                addMemberToGroup(group.group_id, student);
+                                                setStudentSearchQuery('');
+                                            }
+                                        }}
+                                    >
+                                        <SelectTrigger className="h-9 w-full rounded-xl border-(--palette-limelight)/20 bg-transparent px-3 text-[11px] font-bold text-muted-foreground transition-all hover:bg-(--palette-limelight)/5 focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20">
+                                            <div className="flex items-center gap-2">
+                                                <UserPlus className="h-3.5 w-3.5 text-(--palette-green)" />
+                                                <SelectValue placeholder="Tambah Anggota" />
+                                            </div>
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-2xl border-(--palette-limelight)/20 bg-white/95 p-2 shadow-2xl backdrop-blur-sm">
+                                            {unassignedStudents.length > 5 && (
+                                                <div className="mb-2 border-b border-(--palette-limelight)/10 p-2">
+                                                    <div className="relative">
+                                                        <Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Cari siswa..."
+                                                            value={studentSearchQuery}
+                                                            onChange={(e) => setStudentSearchQuery(e.target.value)}
+                                                            className="w-full rounded-lg bg-(--palette-limelight)/5 py-1.5 pr-3 pl-8 text-[11px] focus:ring-1 focus:ring-(--palette-green) focus:outline-none"
+                                                            onKeyDown={(e) => e.stopPropagation()}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className="max-h-48 overflow-y-auto">
+                                                {filteredUnassignedStudents.length > 0 ? (
+                                                    filteredUnassignedStudents.map((s) => (
+                                                        <SelectItem
+                                                            key={s.id}
+                                                            value={s.id.toString()}
+                                                            className="mb-1 cursor-pointer rounded-xl px-4 py-2.5 text-xs font-semibold transition-colors last:mb-0 focus:bg-(--palette-green)/10 focus:text-(--palette-green)"
+                                                        >
+                                                            {s.name}
+                                                        </SelectItem>
+                                                    ))
+                                                ) : (
+                                                    <div className="py-4 text-center text-[11px] text-muted-foreground">
+                                                        Siswa tidak ditemukan
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             )}
 

@@ -8,7 +8,9 @@ import {
     Lightbulb,
     Target,
     Users,
+    Search,
 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -79,6 +81,9 @@ export default function Step1BasicInfo({
     difficultyLevels,
     setFieldValue,
 }: Step1BasicInfoProps) {
+    const [classroomSearch, setClassroomSearch] = useState('');
+    const [prerequisiteSearch, setPrerequisiteSearch] = useState('');
+
     const getError = (field: string) => errors[field]?.[0];
 
     const difficultyConfig = {
@@ -104,6 +109,26 @@ export default function Step1BasicInfo({
             label: 'Sulit',
         },
     };
+
+    const filteredClassrooms = useMemo(() => {
+        if (!classroomSearch) {
+            return classrooms;
+        }
+
+        return classrooms.filter((c) =>
+            c.name.toLowerCase().includes(classroomSearch.toLowerCase()),
+        );
+    }, [classrooms, classroomSearch]);
+
+    const filteredPrerequisites = useMemo(() => {
+        if (!prerequisiteSearch) {
+            return prerequisites;
+        }
+
+        return prerequisites.filter((p) =>
+            p.title.toLowerCase().includes(prerequisiteSearch.toLowerCase()),
+        );
+    }, [prerequisites, prerequisiteSearch]);
 
     return (
         <motion.div
@@ -195,20 +220,44 @@ export default function Step1BasicInfo({
                                         <SelectValue placeholder="Pilih kelas..." />
                                     </SelectTrigger>
                                     <SelectContent className="min-w-64 rounded-2xl border-(--palette-limelight)/20 bg-white/95 p-2 shadow-2xl backdrop-blur-sm">
-                                        {classrooms.map((classroom) => (
-                                            <SelectItem
-                                                key={classroom.id}
-                                                value={classroom.id.toString()}
-                                                className="mb-1 cursor-pointer rounded-xl px-4 py-3 transition-colors last:mb-0 focus:bg-(--palette-green)/10 focus:text-(--palette-green)"
-                                            >
-                                                <span className="font-semibold">
-                                                    {classroom.name}
-                                                </span>
-                                                <span className="ml-2 text-[10px] font-bold tracking-wider uppercase opacity-60">
-                                                    ({classroom.academic_year})
-                                                </span>
-                                            </SelectItem>
-                                        ))}
+                                        {classrooms.length > 5 && (
+                                            <div className="mb-2 border-b border-(--palette-limelight)/10 p-2">
+                                                <div className="relative">
+                                                    <Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Cari kelas..."
+                                                        value={classroomSearch}
+                                                        onChange={(e) => setClassroomSearch(e.target.value)}
+                                                        className="w-full rounded-lg bg-(--palette-limelight)/5 py-1.5 pr-3 pl-8 text-[11px] focus:ring-1 focus:ring-(--palette-green) focus:outline-none"
+                                                        onKeyDown={(e) => e.stopPropagation()}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="max-h-48 overflow-y-auto">
+                                            {filteredClassrooms.length > 0 ? (
+                                                filteredClassrooms.map((classroom) => (
+                                                    <SelectItem
+                                                        key={classroom.id}
+                                                        value={classroom.id.toString()}
+                                                        className="mb-1 cursor-pointer rounded-xl px-4 py-3 transition-colors last:mb-0 focus:bg-(--palette-green)/10 focus:text-(--palette-green)"
+                                                    >
+                                                        <span className="font-semibold">
+                                                            {classroom.name}
+                                                        </span>
+                                                        <span className="ml-2 text-[10px] font-bold tracking-wider uppercase opacity-60">
+                                                            ({classroom.academic_year})
+                                                        </span>
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                <div className="py-4 text-center text-xs text-muted-foreground">
+                                                    Kelas tidak ditemukan
+                                                </div>
+                                            )}
+                                        </div>
                                     </SelectContent>
                                 </Select>
                                 {getError('classroom_id') && (
@@ -364,21 +413,45 @@ export default function Step1BasicInfo({
                                 <SelectValue placeholder="Pilih material prasyarat..." />
                             </SelectTrigger>
                             <SelectContent className="min-w-64 rounded-2xl border-(--palette-limelight)/20 bg-white/95 p-2 shadow-2xl backdrop-blur-sm">
-                                <SelectItem
-                                    value="none"
-                                    className="mb-1 cursor-pointer rounded-xl px-4 py-3 font-semibold transition-colors last:mb-0 focus:bg-gray-100"
-                                >
-                                    Tidak Ada Prasyarat
-                                </SelectItem>
-                                {prerequisites.map((material) => (
+                                {prerequisites.length > 5 && (
+                                    <div className="mb-2 border-b border-(--palette-limelight)/10 p-2">
+                                        <div className="relative">
+                                            <Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
+                                            <input
+                                                type="text"
+                                                placeholder="Cari material..."
+                                                value={prerequisiteSearch}
+                                                onChange={(e) => setPrerequisiteSearch(e.target.value)}
+                                                className="w-full rounded-lg bg-(--palette-limelight)/5 py-1.5 pr-3 pl-8 text-[11px] focus:ring-1 focus:ring-(--palette-green) focus:outline-none"
+                                                onKeyDown={(e) => e.stopPropagation()}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="max-h-48 overflow-y-auto">
                                     <SelectItem
-                                        key={material.id}
-                                        value={material.id.toString()}
-                                        className="mb-1 cursor-pointer rounded-xl px-4 py-3 font-semibold transition-colors last:mb-0 focus:bg-(--palette-green)/10 focus:text-(--palette-green)"
+                                        value="none"
+                                        className="mb-1 cursor-pointer rounded-xl px-4 py-3 font-semibold transition-colors last:mb-0 focus:bg-gray-100"
                                     >
-                                        {material.title}
+                                        Tidak Ada Prasyarat
                                     </SelectItem>
-                                ))}
+                                    {filteredPrerequisites.length > 0 ? (
+                                        filteredPrerequisites.map((material) => (
+                                            <SelectItem
+                                                key={material.id}
+                                                value={material.id.toString()}
+                                                className="mb-1 cursor-pointer rounded-xl px-4 py-3 font-semibold transition-colors last:mb-0 focus:bg-(--palette-green)/10 focus:text-(--palette-green)"
+                                            >
+                                                {material.title}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <div className="py-4 text-center text-xs text-muted-foreground">
+                                            Material tidak ditemukan
+                                        </div>
+                                    )}
+                                </div>
                             </SelectContent>
                         </Select>
                     </div>

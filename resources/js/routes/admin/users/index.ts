@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\AdminUserController::index
 * @see app/Http/Controllers/Admin/AdminUserController.php:27
@@ -44,6 +44,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\Admin\AdminUserController::index
+* @see app/Http/Controllers/Admin/AdminUserController.php:27
+* @route '/admin/users'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::index
+* @see app/Http/Controllers/Admin/AdminUserController.php:27
+* @route '/admin/users'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::index
+* @see app/Http/Controllers/Admin/AdminUserController.php:27
+* @route '/admin/users'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
 * @see \App\Http\Controllers\Admin\AdminUserController::bulkDestroy
 * @see app/Http/Controllers/Admin/AdminUserController.php:155
 * @route '/admin/users/bulk-destroy'
@@ -76,6 +113,38 @@ bulkDestroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> =>
     url: bulkDestroy.url(options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::bulkDestroy
+* @see app/Http/Controllers/Admin/AdminUserController.php:155
+* @route '/admin/users/bulk-destroy'
+*/
+const bulkDestroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: bulkDestroy.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::bulkDestroy
+* @see app/Http/Controllers/Admin/AdminUserController.php:155
+* @route '/admin/users/bulk-destroy'
+*/
+bulkDestroyForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: bulkDestroy.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+bulkDestroy.form = bulkDestroyForm
 
 /**
 * @see \App\Http\Controllers\Admin\AdminUserController::create
@@ -122,6 +191,43 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\Admin\AdminUserController::create
+* @see app/Http/Controllers/Admin/AdminUserController.php:47
+* @route '/admin/users/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::create
+* @see app/Http/Controllers/Admin/AdminUserController.php:47
+* @route '/admin/users/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::create
+* @see app/Http/Controllers/Admin/AdminUserController.php:47
+* @route '/admin/users/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
+
+/**
 * @see \App\Http\Controllers\Admin\AdminUserController::store
 * @see app/Http/Controllers/Admin/AdminUserController.php:55
 * @route '/admin/users'
@@ -154,6 +260,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::store
+* @see app/Http/Controllers/Admin/AdminUserController.php:55
+* @route '/admin/users'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::store
+* @see app/Http/Controllers/Admin/AdminUserController.php:55
+* @route '/admin/users'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Admin\AdminUserController::edit
@@ -224,6 +352,43 @@ edit.head = (args: { user: number | { id: number } } | [user: number | { id: num
 })
 
 /**
+* @see \App\Http\Controllers\Admin\AdminUserController::edit
+* @see app/Http/Controllers/Admin/AdminUserController.php:80
+* @route '/admin/users/{user}/edit'
+*/
+const editForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::edit
+* @see app/Http/Controllers/Admin/AdminUserController.php:80
+* @route '/admin/users/{user}/edit'
+*/
+editForm.get = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::edit
+* @see app/Http/Controllers/Admin/AdminUserController.php:80
+* @route '/admin/users/{user}/edit'
+*/
+editForm.head = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
+
+/**
 * @see \App\Http\Controllers\Admin\AdminUserController::update
 * @see app/Http/Controllers/Admin/AdminUserController.php:99
 * @route '/admin/users/{user}'
@@ -282,6 +447,38 @@ update.put = (args: { user: number | { id: number } } | [user: number | { id: nu
 })
 
 /**
+* @see \App\Http\Controllers\Admin\AdminUserController::update
+* @see app/Http/Controllers/Admin/AdminUserController.php:99
+* @route '/admin/users/{user}'
+*/
+const updateForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::update
+* @see app/Http/Controllers/Admin/AdminUserController.php:99
+* @route '/admin/users/{user}'
+*/
+updateForm.put = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\Admin\AdminUserController::destroy
 * @see app/Http/Controllers/Admin/AdminUserController.php:124
 * @route '/admin/users/{user}'
@@ -338,6 +535,38 @@ destroy.delete = (args: { user: number | { id: number } } | [user: number | { id
     url: destroy.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::destroy
+* @see app/Http/Controllers/Admin/AdminUserController.php:124
+* @route '/admin/users/{user}'
+*/
+const destroyForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\AdminUserController::destroy
+* @see app/Http/Controllers/Admin/AdminUserController.php:124
+* @route '/admin/users/{user}'
+*/
+destroyForm.delete = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
 
 const users = {
     index: Object.assign(index, index),

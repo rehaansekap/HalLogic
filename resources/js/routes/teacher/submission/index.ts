@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::grade
 * @see app/Http/Controllers/Teacher/TeacherMaterialController.php:237
@@ -50,6 +50,28 @@ grade.post = (args: { submission: string | number } | [submission: string | numb
     url: grade.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\Teacher\TeacherMaterialController::grade
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:237
+* @route '/teacher/submission/{submission}/grade'
+*/
+const gradeForm = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: grade.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Teacher\TeacherMaterialController::grade
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:237
+* @route '/teacher/submission/{submission}/grade'
+*/
+gradeForm.post = (args: { submission: string | number } | [submission: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: grade.url(args, options),
+    method: 'post',
+})
+
+grade.form = gradeForm
 
 const submission = {
     grade: Object.assign(grade, grade),
