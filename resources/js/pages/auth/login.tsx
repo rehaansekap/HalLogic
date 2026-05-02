@@ -1,5 +1,8 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -11,6 +14,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
+
+const MySwal = withReactContent(Swal);
 
 type Props = {
     status?: string;
@@ -36,6 +41,20 @@ export default function Login({
     canResetPassword,
     canRegister,
 }: Props) {
+    const { flash } = usePage().props as any;
+
+    useEffect(() => {
+        if (flash?.info) {
+            MySwal.fire({
+                title: 'Informasi Akun',
+                text: flash.info,
+                icon: 'info',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: 'var(--palette-limelight)',
+            });
+        }
+    }, [flash?.info]);
+
     return (
         <>
             <Head title="Log in" />

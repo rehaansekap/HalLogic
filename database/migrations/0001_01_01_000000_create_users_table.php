@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['student', 'teacher', 'admin'])->default('student');
-
+            $table->boolean('must_logout')->default(false);
             $table->integer('xp')->default(0);
             $table->integer('level')->default(1);
             $table->string('avatar')->nullable();

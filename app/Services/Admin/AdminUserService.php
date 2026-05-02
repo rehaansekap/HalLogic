@@ -94,8 +94,22 @@ class AdminUserService
             'level' => $data['level'] ?? $user->level,
         ];
 
+        // Check for force logout conditions (username, password, or role change)
+        $shouldLogout = false;
+        if ($user->username !== $data['username']) {
+            $shouldLogout = true;
+        }
+        if ($user->role !== $data['role']) {
+            $shouldLogout = true;
+        }
+
         if (! empty($data['password'])) {
             $userData['password'] = $data['password'];
+            $shouldLogout = true;
+        }
+
+        if ($shouldLogout) {
+            $userData['must_logout'] = true;
         }
 
         if (! empty($data['avatar']) && $data['avatar'] instanceof UploadedFile) {

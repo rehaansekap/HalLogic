@@ -1,6 +1,6 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, usePoll } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import MaterialHeader from '@/components/custom/material/MaterialHeader';
 import MaterialProgress from '@/components/custom/material/MaterialProgress';
 import MaterialSidebar from '@/components/custom/material/MaterialSidebar';
@@ -53,8 +53,6 @@ export default function MaterialPage({
     submission,
     attendance,
 }: MaterialPageProps) {
-    const [pollingActive] = useState(true);
-    const lastPollTimeRef = useRef<number>(0);
     const [activePhase, setActivePhase] = useState(currentStep > 0 ? currentStep : 1);
     const [lastCurrentStep, setLastCurrentStep] = useState(currentStep);
 
@@ -67,35 +65,10 @@ export default function MaterialPage({
         }
     }
 
-    // Setup polling untuk real-time updates
-    useEffect(() => {
-        if (!pollingActive || !initialReflection) {
-            return;
-        }
-
-        // initialize last poll time once after mount to avoid calling Date.now() during render
-        lastPollTimeRef.current = Date.now();
-
-        const pollInterval = setInterval(() => {
-            const now = Date.now();
-
-            // Poll every 3 seconds during active phases
-            if (now - lastPollTimeRef.current > 3000) {
-                router.reload({
-                    only: [
-                        'groupMembers',
-                        'currentStep',
-                        'groupStatus',
-                        'submission',
-                        'attendance',
-                    ],
-                });
-                lastPollTimeRef.current = now;
-            }
-        }, 1000);
-
-        return () => clearInterval(pollInterval);
-    }, [pollingActive, initialReflection]);
+    // Setup polling untuk real-time updates (Inertia v3)
+    usePoll(3000, {
+        only: ['groupMembers', 'currentStep', 'groupStatus', 'submission', 'attendance'],
+    });
 
     const isLocked = material && !initialReflection;
     const containerVariants = {
