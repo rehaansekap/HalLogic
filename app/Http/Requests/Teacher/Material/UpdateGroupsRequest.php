@@ -26,6 +26,7 @@ class UpdateGroupsRequest extends FormRequest
             'groups.*.group_code' => ['required', 'string', 'max:20'],
             'groups.*.members' => ['required', 'array'],
             'groups.*.members.*.user_id' => ['required', 'exists:users,id'],
+            'groups.*.members.*.is_leader' => ['required', 'boolean'],
         ];
     }
 
