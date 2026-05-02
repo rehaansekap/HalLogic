@@ -60,6 +60,7 @@ class TeacherMaterialController extends Controller
                 'id' => $material->id,
                 'title' => $material->title,
                 'description' => $material->description,
+                'difficulty_level' => $material->difficulty_level,
                 'slug' => $material->slug,
             ],
             'classroom' => $materialData['classroom'],
@@ -67,7 +68,6 @@ class TeacherMaterialController extends Controller
             'groups' => $materialData['groups'],
             'groupsMonitoring' => $materialData['groupsMonitoring'],
             'allReflections' => $materialData['allReflections'],
-            'voteResults' => $materialData['voteResults'],
             'stats' => $materialData['stats'],
             'initialAttendance' => $initialAttendance,
         ]);

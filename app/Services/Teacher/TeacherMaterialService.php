@@ -161,7 +161,7 @@ class TeacherMaterialService
             ->where('users.role', 'student')
             ->select('users.id', 'users.name', 'users.username', 'users.avatar')
             ->get()
-            ->map(fn ($s) => [
+            ->map(fn($s) => [
                 'id' => $s->id,
                 'name' => $s->name,
                 'username' => $s->username,
@@ -235,8 +235,7 @@ class TeacherMaterialService
                 'group_progress.current_step',
                 'group_progress.status',
                 'submissions.id as submission_id',
-                'submissions.file_path',
-                'submissions.code_answer',
+                'submissions.files',
                 'submissions.submitted_at',
                 'grades.score',
                 'grades.teacher_notes'
@@ -274,10 +273,13 @@ class TeacherMaterialService
                     return 'locked';
                 };
 
+                $files = json_decode($group->files ?? '[]', true);
+                $filePath = ! empty($files) && is_array($files) ? $files[0] : null;
+
                 $submission = $group->submission_id ? [
                     'id' => $group->submission_id,
-                    'file_path' => $group->file_path,
-                    'code_answer' => $group->code_answer,
+                    'file_path' => $filePath,
+                    'code_answer' => null,
                     'submitted_at' => $group->submitted_at,
                 ] : null;
 
@@ -308,8 +310,8 @@ class TeacherMaterialService
                     'status' => $group->status,
                     'members' => $members,
                     'submission_id' => $group->submission_id ?? null,
-                    'file_path' => $group->file_path ?? null,
-                    'code_answer' => $group->code_answer ?? null,
+                    'file_path' => $filePath ?? null,
+                    'code_answer' => null,
                     'submitted_at' => $group->submitted_at ?? null,
                     'step3_status' => $stepStatus(3),
                     'submission' => $submission,
@@ -393,7 +395,7 @@ class TeacherMaterialService
         }
 
         while ($query->exists()) {
-            $slug = $originalSlug.'-'.$counter;
+            $slug = $originalSlug . '-' . $counter;
             $counter++;
             $query = Material::where('slug', $slug);
             if ($excludeId) {
