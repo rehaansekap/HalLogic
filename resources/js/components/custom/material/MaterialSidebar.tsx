@@ -28,6 +28,10 @@ interface MaterialSidebarProps {
         files: string[] | null;
         submitted_at: string | null;
     } | null;
+    attendance?: {
+        is_present: boolean;
+        updated_at: string;
+    } | null;
     materialPdf?: string;
 }
 
@@ -36,6 +40,7 @@ export default function MaterialSidebar({
     currentStep,
     slug,
     submission,
+    attendance,
     materialPdf,
 }: MaterialSidebarProps) {
     const [isDragging, setIsDragging] = useState(false);
@@ -112,6 +117,35 @@ export default function MaterialSidebar({
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
         >
+            {/* Attendance Status */}
+            <motion.div
+                className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+            >
+                <div className={`absolute inset-0 transition-all duration-300 ${attendance?.is_present ? 'bg-green-50/50 group-hover:bg-green-50' : attendance ? 'bg-red-50/50 group-hover:bg-red-50' : 'bg-amber-50/50 group-hover:bg-amber-50'}`} />
+                <div className="relative z-10 flex items-center gap-3">
+                    <div className={`rounded-xl p-2 ${attendance?.is_present ? 'bg-green-100' : attendance ? 'bg-red-100' : 'bg-amber-100'}`}>
+                        {attendance?.is_present ? (
+                            <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        ) : attendance ? (
+                            <X className="h-5 w-5 text-red-600" />
+                        ) : (
+                            <Users className="h-5 w-5 text-amber-600" />
+                        )}
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            Status Kehadiran
+                        </p>
+                        <p className={`text-sm font-black ${attendance?.is_present ? 'text-green-600' : attendance ? 'text-red-600' : 'text-amber-600'}`}>
+                            {attendance?.is_present ? 'Hadir' : attendance ? 'Tidak Hadir' : 'Belum Diverifikasi Guru'}
+                        </p>
+                    </div>
+                </div>
+            </motion.div>
+
             {/* Group Members */}
             <motion.div
                 className="group relative overflow-hidden rounded-xl border border-[--palette-limelight]/30 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"

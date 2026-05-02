@@ -54,9 +54,18 @@ class MaterialController extends Controller
 
         if ($groupMember) {
             $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
-            $currentStep = $progress ? (int) $progress->current_step : 1;
+
+            // Auto-advance if student has reflection but group is still at step 1
+            if ($initialReflection && (! $progress || (int) $progress->current_step === 1)) {
+                $this->progressService->updateGroupProgress($groupMember->group_id, $material->id, 2);
+                $currentStep = 2;
+                $groupStatus = 'in_progress';
+            } else {
+                $currentStep = $progress ? (int) $progress->current_step : 1;
+                $groupStatus = $progress?->status ?? 'locked';
+            }
+
             $myGroupMembers = $this->groupService->getGroupMembers($groupMember->group_id);
-            $groupStatus = $progress?->status ?? 'locked';
         } else {
             $currentStep = 1;
             $myGroupMembers = collect();
@@ -75,6 +84,10 @@ class MaterialController extends Controller
             'groupStatus' => $groupStatus,
             'submission' => Submission::where('group_id', $groupMember?->group_id)
                 ->where('material_id', $material->id)
+                ->first(),
+            'attendance' => DB::table('attendances')
+                ->where('material_id', $material->id)
+                ->where('user_id', $user->id)
                 ->first(),
         ]);
     }

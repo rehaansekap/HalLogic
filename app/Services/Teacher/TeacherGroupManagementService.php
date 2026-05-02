@@ -135,9 +135,35 @@ class TeacherGroupManagementService
             if (! empty($inserts)) {
                 DB::table('group_members')->insert($inserts);
             }
+
+            $this->syncGroupProgressWithReflections($materialId, $groupId, array_column($groupData['members'], 'user_id'));
         }
 
         return $createdMapping;
+    }
+
+    /**
+     * Sync group progress based on member reflections
+     */
+    private function syncGroupProgressWithReflections(int $materialId, int $groupId, array $userIds): void
+    {
+        if (empty($userIds)) {
+            return;
+        }
+
+        $hasReflections = DB::table('reflections')
+            ->where('material_id', $materialId)
+            ->whereIn('user_id', $userIds)
+            ->where('type', 'initial')
+            ->exists();
+
+        if ($hasReflections) {
+            DB::table('group_progress')
+                ->where('group_id', $groupId)
+                ->where('material_id', $materialId)
+                ->where('current_step', 1)
+                ->update(['current_step' => 2, 'updated_at' => now()]);
+        }
     }
 
     /**

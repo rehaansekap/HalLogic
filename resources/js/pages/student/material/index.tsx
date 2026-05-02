@@ -37,6 +37,10 @@ interface MaterialPageProps {
         files: string[] | null;
         submitted_at: string | null;
     } | null;
+    attendance?: {
+        is_present: boolean;
+        updated_at: string;
+    } | null;
 }
 
 export default function MaterialPage({
@@ -47,6 +51,7 @@ export default function MaterialPage({
     finalReflection,
     groupStatus,
     submission,
+    attendance,
 }: MaterialPageProps) {
     const [pollingActive] = useState(true);
     const lastPollTimeRef = useRef<number>(0);
@@ -82,6 +87,7 @@ export default function MaterialPage({
                         'currentStep',
                         'groupStatus',
                         'submission',
+                        'attendance',
                     ],
                 });
                 lastPollTimeRef.current = now;
@@ -210,6 +216,7 @@ export default function MaterialPage({
                                     currentStep={currentStep}
                                     slug={material.slug}
                                     submission={submission}
+                                    attendance={attendance}
                                     materialPdf={material.material_pdf}
                                 />
                             </div>

@@ -113,4 +113,64 @@ class TeacherMaterialGroupTest extends TestCase
         $this->assertEquals(1, DB::table('groups')->count());
         $this->assertEquals(3, DB::table('group_members')->count());
     }
+
+    public function test_group_progress_advances_to_step_2_when_assigned_student_has_reflection(): void
+    {
+        $teacher = $this->createTeacher();
+        $material = $this->createClassroomAndMaterial($teacher);
+        $student = User::factory()->create(['role' => 'student']);
+
+        // 1. Student submits reflection (no group)
+        DB::table('reflections')->insert([
+            'user_id' => $student->id,
+            'material_id' => $material->id,
+            'content' => 'Test reflection',
+            'type' => 'initial',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // 2. Teacher assigns student to a new group
+        $payload = [
+            'groups' => [
+                [
+                    'group_id' => 999,
+                    'group_name' => 'Kelompok Pintar',
+                    'group_code' => 'PINTAR-1',
+                    'members' => [
+                        [
+                            'user_id' => $student->id,
+                            'is_leader' => true,
+                        ],
+                        [
+                            'user_id' => User::factory()->create(['role' => 'student'])->id,
+                            'is_leader' => false,
+                        ],
+                        [
+                            'user_id' => User::factory()->create(['role' => 'student'])->id,
+                            'is_leader' => false,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->actingAs($teacher)
+            ->post(route('teacher.material.update-groups', $material->id), $payload);
+
+        // 3. Verify group progress is at step 2
+        $group = DB::table('groups')->where('group_code', 'PINTAR-1')->first();
+        $progress = DB::table('group_progress')
+            ->where('group_id', $group->id)
+            ->where('material_id', $material->id)
+            ->first();
+
+        $this->assertEquals(2, $progress->current_step);
+
+        // 4. Verify student sees currentStep 2
+        $response = $this->actingAs($student)
+            ->get(route('material.show', $material->slug));
+
+        $response->assertInertia(fn ($page) => $page->where('currentStep', 2));
+    }
 }
