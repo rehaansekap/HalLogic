@@ -78,7 +78,7 @@ By default, this project is configured to use SQLite. If you want to use another
 
 Run migrations and seeders to get the initial data:
 ```bash
-php artisan migrate --seed
+php artisan migrate:fresh --seed
 ```
 
 ### 7. Storage Link
