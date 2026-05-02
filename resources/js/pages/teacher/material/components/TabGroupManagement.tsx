@@ -89,6 +89,7 @@ export default function TabGroupManagement({
         if (!studentSearchQuery) {
             return unassignedStudents;
         }
+        
         return unassignedStudents.filter((s) =>
             s.name.toLowerCase().includes(studentSearchQuery.toLowerCase()),
         );
@@ -537,7 +538,7 @@ export default function TabGroupManagement({
             )}
 
             {/* Save Button */}
-            {groups.length > 0 && (
+            {(groups.length > 0 || initialGroups.length > 0) && (
                 <div className="flex justify-end">
                     <Button
                         onClick={handleSave}

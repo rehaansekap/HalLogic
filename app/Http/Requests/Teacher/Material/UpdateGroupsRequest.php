@@ -20,7 +20,7 @@ class UpdateGroupsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'groups' => ['required', 'array'],
+            'groups' => ['present', 'array'],
             'groups.*.group_id' => ['required', 'integer'],
             'groups.*.group_name' => ['required', 'string', 'max:100'],
             'groups.*.group_code' => ['required', 'string', 'max:20'],

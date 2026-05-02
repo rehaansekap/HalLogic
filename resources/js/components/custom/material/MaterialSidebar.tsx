@@ -254,17 +254,18 @@ export default function MaterialSidebar({
                                     ))}
                                 </div>
                             </div>
-                            <p className="text-[10px] italic text-muted-foreground">
-                                * Anda dapat mengunggah berkas baru untuk memperbarui kiriman.
-                            </p>
+                            <div className="mt-4">
+                                <Button
+                                    disabled
+                                    className="w-full bg-green-600 font-bold text-white opacity-100 disabled:opacity-100"
+                                    size="sm"
+                                >
+                                    <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
+                                    Sudah Mengumpulkan
+                                </Button>
+                            </div>
                         </div>
-                    ) : (
-                        <p className="mb-4 text-xs text-muted-foreground">
-                            Unggah bukti eksperimen (PDF, Docs, TXT, atau C).
-                        </p>
-                    )}
-
-                    {!isLeader ? (
+                    ) : !isLeader ? (
                         <div className="rounded-xl border border-amber-100 bg-amber-50/50 p-6 text-center">
                             <Lock className="mx-auto mb-2 h-8 w-8 text-amber-500/50" />
                             <p className="text-sm font-bold text-amber-800">Akses Terkunci</p>
@@ -275,11 +276,15 @@ export default function MaterialSidebar({
                     ) : (
                         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
                             <div
-                                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                                onDragOver={(e) => {
+                                    e.preventDefault();
+                                    setIsDragging(true);
+                                }}
                                 onDragLeave={() => setIsDragging(false)}
                                 onDrop={(e) => {
                                     e.preventDefault();
                                     setIsDragging(false);
+
                                     if (e.dataTransfer.files) {
                                         setData('files', [...data.files, ...Array.from(e.dataTransfer.files)]);
                                     }
@@ -361,7 +366,7 @@ export default function MaterialSidebar({
                                 ) : (
                                     <FileUp className="mr-2 h-3 w-3" />
                                 )}
-                                {isSubmitted ? 'Perbarui Berkas' : 'Kirim Berkas'}
+                                Kirim Berkas
                             </Button>
                         </form>
                     )}
