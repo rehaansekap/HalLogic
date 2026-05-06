@@ -103,18 +103,6 @@ export default function Login({
                                 custom={1}
                                 variants={itemVariants}
                             >
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm text-(--palette-green) transition-colors hover:text-(--palette-chartreuse)"
-                                            tabIndex={5}
-                                        >
-                                            Forgot password?
-                                        </TextLink>
-                                    )}
-                                </div>
                                 <PasswordInput
                                     id="password"
                                     name="password"
@@ -158,24 +146,6 @@ export default function Login({
                                 </Button>
                             </motion.div>
                         </motion.div>
-
-                        {canRegister && (
-                            <motion.div
-                                className="text-center text-sm text-muted-foreground"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.3, duration: 0.5 }}
-                            >
-                                Don't have an account?{' '}
-                                <TextLink
-                                    href={register()}
-                                    className="font-semibold text-(--palette-green) transition-colors hover:text-(--palette-chartreuse)"
-                                    tabIndex={5}
-                                >
-                                    Sign up
-                                </TextLink>
-                            </motion.div>
-                        )}
                     </>
                 )}
             </Form>
