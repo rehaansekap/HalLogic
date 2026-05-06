@@ -161,7 +161,7 @@ class TeacherMaterialService
             ->where('users.role', 'student')
             ->select('users.id', 'users.name', 'users.username', 'users.avatar')
             ->get()
-            ->map(fn($s) => [
+            ->map(fn ($s) => [
                 'id' => $s->id,
                 'name' => $s->name,
                 'username' => $s->username,
@@ -394,7 +394,7 @@ class TeacherMaterialService
         }
 
         while ($query->exists()) {
-            $slug = $originalSlug . '-' . $counter;
+            $slug = $originalSlug.'-'.$counter;
             $counter++;
             $query = Material::where('slug', $slug);
             if ($excludeId) {

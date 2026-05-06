@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckForceLogout
@@ -20,7 +21,7 @@ class CheckForceLogout
             $user->must_logout = false;
             $user->save();
 
-            \Illuminate\Support\Facades\Auth::logout();
+            Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 

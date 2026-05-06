@@ -18,7 +18,7 @@ export default function AuthSimpleLayout({
                 delayChildren: 0.2,
             },
         },
-    };
+    } as const;
 
     const itemVariants = {
         hidden: { opacity: 0, y: 10 },
@@ -27,7 +27,7 @@ export default function AuthSimpleLayout({
             y: 0,
             transition: { duration: 0.5, ease: 'easeOut' },
         },
-    };
+    } as const;
 
     return (
         <div className="relative flex min-h-svh flex-col items-center justify-center gap-6 overflow-hidden bg-background p-6 md:p-10">
@@ -61,7 +61,7 @@ export default function AuthSimpleLayout({
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                <AppLogoIcon className="size-9 fill-current text-(--palette-white)" />
+                                <AppLogoIcon className="size-9" />
                             </motion.div>
                             <span className="sr-only">{title}</span>
                         </Link>
