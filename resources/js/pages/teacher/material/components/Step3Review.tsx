@@ -180,6 +180,30 @@ export default function Step3Review({
                                 value={formData.description}
                                 isFullWidth
                             />
+                            <InfoRow
+                                label="Ringkasan Materi"
+                                value={formData.summary}
+                                isFullWidth
+                            />
+                            <div className="col-span-full space-y-2.5">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                                    Tujuan Pembelajaran
+                                </p>
+                                {formData.learning_objectives && formData.learning_objectives.length > 0 ? (
+                                    <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10">
+                                        {formData.learning_objectives.map((objective, idx) => (
+                                            <div key={idx} className="flex gap-2 text-sm font-semibold text-foreground">
+                                                <span className="text-(--palette-green) font-bold shrink-0">{idx + 1}.</span>
+                                                <p className="leading-relaxed">{objective}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm font-semibold text-muted-foreground/40 italic">
+                                        Tidak ada tujuan pembelajaran
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </ReviewSection>
 

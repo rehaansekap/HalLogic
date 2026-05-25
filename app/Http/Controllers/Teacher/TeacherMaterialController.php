@@ -161,6 +161,8 @@ class TeacherMaterialController extends Controller
                 'prerequisite_material_id' => $material->prerequisite_material_id,
                 'started_at' => $material->started_at,
                 'finished_at' => $material->finished_at,
+                'summary' => $material->summary,
+                'learning_objectives' => $material->learning_objectives,
             ],
             'classrooms' => $classrooms,
             'ownMaterials' => $ownMaterials,

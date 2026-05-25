@@ -37,6 +37,8 @@ return new class extends Migration
 
             $table->string('material_pdf')->nullable();
             $table->json('simulator_config')->nullable();
+            $table->text('summary')->nullable();
+            $table->json('learning_objectives')->nullable();
 
             $table->timestamps();
         });

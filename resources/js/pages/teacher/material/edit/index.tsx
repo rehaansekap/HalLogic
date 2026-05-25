@@ -28,6 +28,8 @@ interface EditMaterialProps {
         prerequisite_material_id: number | null;
         started_at: string | null;
         finished_at: string | null;
+        summary?: string | null;
+        learning_objectives?: string[] | null;
     };
     classrooms: Classroom[];
     ownMaterials: MaterialOption[];
@@ -55,6 +57,8 @@ export default function EditMaterial({
         started_at: material.started_at,
         finished_at: material.finished_at,
         material_pdf_existing: material.material_pdf || undefined,
+        summary: material.summary || '',
+        learning_objectives: material.learning_objectives || [''],
     };
 
     const handleSubmit = useCallback(

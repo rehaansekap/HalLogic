@@ -27,12 +27,15 @@ class Material extends Model
         'case_narrative',
         'material_pdf',
         'simulator_config',
+        'summary',
+        'learning_objectives',
     ];
 
     protected $casts = [
         'simulator_config' => 'array',
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
+        'learning_objectives' => 'array',
     ];
 
     public function teacher(): BelongsTo

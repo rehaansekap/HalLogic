@@ -34,6 +34,9 @@ class UpdateMaterialRequest extends FormRequest
             'prerequisite_material_id' => ['nullable', 'exists:materials,id'],
             'started_at' => ['nullable', 'date'],
             'finished_at' => ['nullable', 'date', 'after_or_equal:started_at'],
+            'summary' => ['required', 'string', 'max:2000'],
+            'learning_objectives' => ['required', 'array', 'min:1'],
+            'learning_objectives.*' => ['required', 'string', 'max:255'],
         ];
     }
 
@@ -63,6 +66,13 @@ class UpdateMaterialRequest extends FormRequest
             'started_at.date' => 'Format tanggal mulai tidak valid',
             'finished_at.date' => 'Format tanggal selesai tidak valid',
             'finished_at.after_or_equal' => 'Tanggal selesai harus setelah tanggal mulai',
+            'summary.required' => 'Ringkasan materi wajib diisi',
+            'summary.max' => 'Ringkasan materi maksimal 2000 karakter',
+            'learning_objectives.required' => 'Tujuan pembelajaran wajib diisi',
+            'learning_objectives.array' => 'Tujuan pembelajaran tidak valid',
+            'learning_objectives.min' => 'Minimal harus mengisi satu tujuan pembelajaran',
+            'learning_objectives.*.required' => 'Tujuan pembelajaran tidak boleh kosong',
+            'learning_objectives.*.max' => 'Tujuan pembelajaran maksimal 255 karakter',
         ];
     }
 

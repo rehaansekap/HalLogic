@@ -37,6 +37,8 @@ class TeacherMaterialService
             'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
             'finished_at' => $data['finished_at'] ?? null,
+            'summary' => $data['summary'] ?? null,
+            'learning_objectives' => $data['learning_objectives'] ?? null,
         ]);
 
         return $material;
@@ -75,6 +77,8 @@ class TeacherMaterialService
             'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
             'finished_at' => $data['finished_at'] ?? null,
+            'summary' => $data['summary'] ?? null,
+            'learning_objectives' => $data['learning_objectives'] ?? null,
         ]);
 
         return $material->fresh();

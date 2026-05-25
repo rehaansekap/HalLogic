@@ -12,6 +12,8 @@ export interface MaterialFormData {
     case_narrative: string;
     material_pdf: File | null;
     material_pdf_existing?: string; // For edit mode - existing file path
+    summary: string;
+    learning_objectives: string[];
 }
 
 export interface FormErrors {
@@ -32,6 +34,10 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
         case_narrative: initialData?.case_narrative ?? '',
         material_pdf: initialData?.material_pdf ?? null,
         material_pdf_existing: initialData?.material_pdf_existing ?? undefined,
+        summary: initialData?.summary ?? '',
+        learning_objectives: (initialData?.learning_objectives && initialData.learning_objectives.length > 0)
+            ? initialData.learning_objectives
+            : [''],
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
@@ -91,6 +97,28 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                     newErrors.finished_at = [
                         'Tanggal selesai harus setelah tanggal mulai',
                     ];
+                }
+            }
+
+            // Summary validation
+            if (!formData.summary || !formData.summary.trim()) {
+                newErrors.summary = ['Ringkasan materi wajib diisi'];
+            } else if (formData.summary.length > 2000) {
+                newErrors.summary = ['Ringkasan materi maksimal 2000 karakter'];
+            }
+
+            // Learning objectives validation
+            if (!formData.learning_objectives || formData.learning_objectives.length === 0) {
+                newErrors.learning_objectives = ['Minimal harus mengisi satu tujuan pembelajaran'];
+            } else {
+                const emptyIndex = formData.learning_objectives.findIndex(tp => !tp.trim());
+                if (emptyIndex !== -1) {
+                    newErrors.learning_objectives = ['Tujuan pembelajaran tidak boleh kosong'];
+                } else {
+                    const longIndex = formData.learning_objectives.findIndex(tp => tp.length > 255);
+                    if (longIndex !== -1) {
+                        newErrors.learning_objectives = ['Tujuan pembelajaran maksimal 255 karakter'];
+                    }
                 }
             }
         } else if (step === 2) {

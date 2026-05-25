@@ -237,7 +237,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:178
 * @route '/teacher/material/{material}/update'
 */
 export const update = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -252,7 +252,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:178
 * @route '/teacher/material/{material}/update'
 */
 update.url = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -285,7 +285,7 @@ update.url = (args: { material: number | { id: number } } | [material: number | 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:178
 * @route '/teacher/material/{material}/update'
 */
 update.post = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -295,7 +295,7 @@ update.post = (args: { material: number | { id: number } } | [material: number |
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:178
 * @route '/teacher/material/{material}/update'
 */
 const updateForm = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -305,7 +305,7 @@ const updateForm = (args: { material: number | { id: number } } | [material: num
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::update
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:176
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:178
 * @route '/teacher/material/{material}/update'
 */
 updateForm.post = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -317,7 +317,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:209
 * @route '/teacher/material/{material}'
 */
 export const destroy = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -332,7 +332,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:209
 * @route '/teacher/material/{material}'
 */
 destroy.url = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -365,7 +365,7 @@ destroy.url = (args: { material: number | { id: number } } | [material: number |
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:209
 * @route '/teacher/material/{material}'
 */
 destroy.delete = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -375,7 +375,7 @@ destroy.delete = (args: { material: number | { id: number } } | [material: numbe
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:209
 * @route '/teacher/material/{material}'
 */
 const destroyForm = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -390,7 +390,7 @@ const destroyForm = (args: { material: number | { id: number } } | [material: nu
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::destroy
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:207
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:209
 * @route '/teacher/material/{material}'
 */
 destroyForm.delete = (args: { material: number | { id: number } } | [material: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
