@@ -59,6 +59,7 @@ export default function MaterialFormStepper({
 }: MaterialFormStepperProps) {
     const {
         currentStep,
+        furthestStep,
         formData,
         errors,
         nextStep,
@@ -105,6 +106,7 @@ export default function MaterialFormStepper({
                     {steps.map((step, index) => {
                         const Icon = step.icon;
                         const isActive = currentStep === step.number;
+                        const isReachable = step.number <= furthestStep;
                         const isCompleted = currentStep > step.number;
 
                         return (
@@ -122,12 +124,14 @@ export default function MaterialFormStepper({
                                 )}
 
                                 <button
-                                    onClick={() => isCompleted && goToStep(step.number)}
-                                    disabled={!isCompleted && !isActive}
+                                    onClick={() => isReachable && goToStep(step.number)}
+                                    disabled={!isReachable}
                                     className={cn(
                                         "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500",
                                         isActive ? "bg-(--palette-green) text-white ring-8 ring-(--palette-green)/10 scale-110 shadow-lg shadow-(--palette-green)/20" :
-                                            isCompleted ? "bg-(--palette-white) text-(--palette-green) border border-(--palette-green)" : "bg-white text-gray-300 border-2 border-gray-100"
+                                            isCompleted ? "bg-(--palette-white) text-(--palette-green) border border-(--palette-green) cursor-pointer hover:bg-(--palette-green)/5" :
+                                                isReachable ? "bg-white text-(--palette-green)/70 border-2 border-(--palette-green)/30 cursor-pointer hover:border-(--palette-green)/50 hover:bg-(--palette-green)/5" :
+                                                    "bg-white text-gray-300 border-2 border-gray-100 cursor-not-allowed"
                                     )}
                                 >
                                     {isCompleted ? (
@@ -140,13 +144,13 @@ export default function MaterialFormStepper({
                                 <div className="mt-5 text-center px-2">
                                     <p className={cn(
                                         "text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 transition-colors duration-300",
-                                        isActive ? "text-(--palette-green)" : isCompleted ? "text-(--palette-green)/70" : "text-gray-400"
+                                        isActive ? "text-(--palette-green)" : isCompleted ? "text-(--palette-green)/80" : isReachable ? "text-(--palette-green)/50" : "text-gray-400"
                                     )}>
                                         Step {step.number}
                                     </p>
                                     <h4 className={cn(
                                         "text-xs font-extrabold transition-colors duration-300 uppercase tracking-wider",
-                                        isActive ? "text-gray-900" : "text-gray-400"
+                                        isActive ? "text-gray-900" : isCompleted ? "text-gray-700" : isReachable ? "text-gray-600" : "text-gray-400"
                                     )}>
                                         {step.title}
                                     </h4>

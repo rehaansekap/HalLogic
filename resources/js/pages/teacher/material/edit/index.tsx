@@ -1,11 +1,14 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { Edit3 } from 'lucide-react';
+import { Edit3, ArrowLeft } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import Swal from 'sweetalert2';
 
+import { Button } from '@/components/ui/button';
+
 import PageHeader from '@/components/custom/layout/PageHeader';
 import type { MaterialFormData } from '@/hooks/useMaterialForm';
+import { dashboard } from '@/routes/teacher';
 import { update } from '@/routes/teacher/materials';
 
 import type {
@@ -118,11 +121,24 @@ export default function EditMaterial({
             <Head title={`Edit Material - ${material.title}`} />
 
             <motion.div
-                className="space-y-8 p-6 md:p-8"
+                className="space-y-6 p-6 md:p-8"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4 }}
             >
+                <div className="mb-2">
+                    <Link href={dashboard.url()}>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="group gap-2 text-muted-foreground hover:text-foreground transition-all"
+                        >
+                            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                            Kembali ke Dashboard
+                        </Button>
+                    </Link>
+                </div>
+
                 <PageHeader
                     title="Perbarui Material"
                     subtitle={`Mengedit konten untuk: ${material.title}`}

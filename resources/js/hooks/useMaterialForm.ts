@@ -62,6 +62,7 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
 
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [furthestStep, setFurthestStep] = useState(initialData ? 4 : 1);
 
     const setFieldValue = (field: keyof MaterialFormData, value: any) => {
         setFormData((prev) => ({
@@ -207,7 +208,9 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
 
     const nextStep = (): boolean => {
         if (validateStep(currentStep)) {
-            setCurrentStep((prev) => Math.min(prev + 1, 4));
+            const next = Math.min(currentStep + 1, 4);
+            setCurrentStep(next);
+            setFurthestStep((prev) => Math.max(prev, next));
             return true;
         }
         return false;
@@ -218,15 +221,18 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
     };
 
     const goToStep = (step: number) => {
-        if (step > 1 && !validateStep(currentStep)) {
+        if (step > furthestStep) return false;
+        if (step > currentStep && !validateStep(currentStep)) {
             return false;
         }
         setCurrentStep(step);
+        setFurthestStep((prev) => Math.max(prev, step));
         return true;
     };
 
     return {
         currentStep,
+        furthestStep,
         formData,
         errors,
         isSubmitting,
