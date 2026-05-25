@@ -102,11 +102,45 @@ class DatabaseSeeder extends Seeder
             'difficulty_level' => 1,
             'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
             'case_narrative' => 'Mall Grand Indonesia mengubah tarif parkirnya. 1 jam pertama Rp5.000, jam berikutnya Rp3.000 flat. Bantu mereka membuat sistem otomatis!',
-            'simulator_config' => json_encode(['type' => 'logic', 'answer' => 8000]),
+            'simulator_config' => ['type' => 'logic', 'answer' => 8000],
             'prerequisite_material_id' => null,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
             'material_pdf' => 'materials/materi-1.pdf',
+            'summary' => 'Materi ini membahas konsep dasar logika percabangan, khususnya pernyataan If-Else. Siswa akan belajar bagaimana program mengambil keputusan berdasarkan kondisi tertentu, dengan studi kasus menentukan tarif parkir otomatis.',
+            'learning_objectives' => [
+                'Memahami alur logika percabangan dalam pemrograman.',
+                'Mampu menuliskan pernyataan If-Else dengan benar.',
+                'Mampu menerapkan struktur percabangan untuk memecahkan masalah nyata.',
+            ],
+            'pre_reflection_questions' => [
+                'Apa yang kamu ketahui tentang bagaimana komputer mengambil keputusan?',
+                'Pernahkah kamu mendengar istilah logika If-Else? Jelaskan pendapatmu.',
+            ],
+            'post_reflection_questions' => [
+                'Apakah kamu dapat membedakan kapan harus menggunakan If saja dan kapan harus menggunakan If-Else?',
+                'Tantangan apa yang paling sulit saat kamu mencoba membuat kondisi percabangan tadi?',
+            ],
+            'sub_materials' => [
+                [
+                    'title' => 'Sub Materi 1: Konsep Dasar Percabangan',
+                    'content' => '<p>Logika percabangan adalah struktur kontrol yang memungkinkan program untuk menjalankan blok kode yang berbeda berdasarkan hasil evaluasi kondisi (apakah bernilai true atau false). Struktur yang paling dasar adalah <code>if</code> dan <code>if-else</code>.</p>',
+                    'image_path' => null,
+                ],
+                [
+                    'title' => 'Sub Materi 2: Blok Kode Kondisional',
+                    'content' => '<p>Dalam struktur <code>if-else</code>, jika kondisi di dalam <code>if</code> tidak terpenuhi (false), maka program akan beralih mengeksekusi blok kode yang ada di dalam <code>else</code>. Ini sangat berguna untuk menangani dua kemungkinan pilihan.</p>',
+                    'image_path' => null,
+                ],
+            ],
+            'code_examples' => [
+                [
+                    'title' => 'Contoh Struktur If-Else Sederhana',
+                    'code' => "let tarif = 0;\nlet jam = 3;\nif (jam <= 1) {\n    tarif = 5000;\n} else {\n    tarif = 5000 + (jam - 1) * 3000;\n}\nconsole.log(tarif);",
+                    'output' => '11000',
+                    'explanation' => 'Kode di atas mengevaluasi variabel jam. Karena jam bernilai 3 (lebih dari 1), maka blok else akan dijalankan sehingga tarif menjadi 5000 + 2 * 3000 = 11000.',
+                ],
+            ],
         ]);
 
         $material2 = Material::create([
@@ -116,11 +150,45 @@ class DatabaseSeeder extends Seeder
             'difficulty_level' => 2,
             'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
             'case_narrative' => 'Mesin penjual otomatis di sekolah error. Jika tekan tombol A harusnya keluar Teh, tombol B keluar Kopi. Tapi sekarang acak-acakan.',
-            'simulator_config' => json_encode(['type' => 'string_match', 'answer' => 'Teh Botol']),
+            'simulator_config' => ['type' => 'string_match', 'answer' => 'Teh Botol'],
             'prerequisite_material_id' => $material1->id,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
             'material_pdf' => 'materials/materi-2.pdf',
+            'summary' => 'Materi ini mengajarkan penggunaan struktur Switch-Case sebagai alternatif dari If-Else bertingkat. Siswa akan mempelajari bagaimana memproses banyak kondisi dengan lebih terstruktur melalui studi kasus perbaikan mesin minuman otomatis.',
+            'learning_objectives' => [
+                'Memahami perbedaan fungsional antara If-Else dan Switch-Case.',
+                'Mampu menuliskan struktur Switch-Case beserta penggunaan kata kunci break dan default.',
+                'Mampu merancang menu pilihan berbasis Switch-Case.',
+            ],
+            'pre_reflection_questions' => [
+                'Menurutmu, apa yang terjadi jika kita memiliki puluhan kondisi If-Else bertingkat? Apakah ada cara lain yang lebih rapi?',
+                'Apa yang kamu bayangkan tentang cara kerja tombol-tombol pada mesin minuman otomatis?',
+            ],
+            'post_reflection_questions' => [
+                'Mengapa kata kunci break sangat penting di dalam struktur Switch-Case?',
+                'Apakah kamu merasa lebih mudah membaca struktur Switch-Case dibandingkan If-Else bertingkat?',
+            ],
+            'sub_materials' => [
+                [
+                    'title' => 'Sub Materi 1: Pengenalan Switch-Case',
+                    'content' => '<p>Struktur <code>switch</code> mengevaluasi suatu ekspresi dan mencocokkan nilainya dengan berbagai pilihan <code>case</code>. Jika cocok, blok kode case tersebut akan dieksekusi.</p>',
+                    'image_path' => null,
+                ],
+                [
+                    'title' => 'Sub Materi 2: Peran Break dan Default',
+                    'content' => '<p>Pernyataan <code>break</code> digunakan untuk keluar dari struktur switch setelah case yang cocok selesai dieksekusi. Tanpa break, program akan terus mengeksekusi case di bawahnya. <code>default</code> bertindak seperti else, yaitu berjalan jika tidak ada case yang cocok.</p>',
+                    'image_path' => null,
+                ],
+            ],
+            'code_examples' => [
+                [
+                    'title' => 'Contoh Switch-Case',
+                    'code' => "let tombol = 'B';\nlet minuman = '';\nswitch(tombol) {\n    case 'A':\n        minuman = 'Teh';\n        break;\n    case 'B':\n        minuman = 'Kopi';\n        break;\n    default:\n        minuman = 'Air Putih';\n}\nconsole.log(minuman);",
+                    'output' => 'Kopi',
+                    'explanation' => 'Karena nilai dari tombol adalah B, program mencocokkannya dengan case B dan mengisi minuman dengan Kopi, lalu keluar dari switch karena ada break.',
+                ],
+            ],
         ]);
 
         $material3 = Material::create([
@@ -130,11 +198,45 @@ class DatabaseSeeder extends Seeder
             'difficulty_level' => 3,
             'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
             'case_narrative' => 'Guru piket lelah memanggil 40 nama setiap pagi. Buat program yang bisa mengulang panggilan secara otomatis.',
-            'simulator_config' => json_encode(['type' => 'loop', 'answer' => 30]),
+            'simulator_config' => ['type' => 'loop', 'answer' => 30],
             'prerequisite_material_id' => $material2->id,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
             'material_pdf' => 'materials/materi-3.pdf',
+            'summary' => 'Materi ini memfokuskan pada pemahaman perulangan (looping), khususnya menggunakan struktur For Loop. Siswa akan belajar cara mengeksekusi blok kode berulang kali secara efisien tanpa menulis ulang baris kode, dengan studi kasus sistem rekap absensi kelas.',
+            'learning_objectives' => [
+                'Memsep perulangan dan kegunaannya dalam pemrograman.',
+                'Mengidentifikasi bagian-bagian utama For Loop: inisialisasi, kondisi, dan increment/decrement.',
+                'Mampu menerapkan perulangan untuk memproses data berulang.',
+            ],
+            'pre_reflection_questions' => [
+                'Bagaimana cara kamu menyuruh komputer menulis kalimat Saya tidak akan terlambat lagi sebanyak 100 kali?',
+                'Apa perbedaan utama antara perulangan dan percabangan yang kamu ketahui?',
+            ],
+            'post_reflection_questions' => [
+                'Apa yang terjadi jika kondisi perulangan yang kamu buat selalu bernilai true?',
+                'Sebutkan satu implementasi perulangan yang bisa membantu mempermudah kehidupan sehari-hari.',
+            ],
+            'sub_materials' => [
+                [
+                    'title' => 'Sub Materi 1: Struktur For Loop',
+                    'content' => '<p>Perulangan <code>for</code> digunakan ketika kita sudah tahu pasti berapa kali perulangan harus dilakukan. Ia memiliki tiga komponen: inisialisasi counter, kondisi perulangan, dan pembaruan counter.</p>',
+                    'image_path' => null,
+                ],
+                [
+                    'title' => 'Sub Materi 2: Increment dan Decrement',
+                    'content' => '<p>Dalam perulangan, nilai counter dapat bertambah (increment, misalnya i++) atau berkurang (decrement, misalnya i--) setiap kali satu putaran perulangan selesai dilakukan.</p>',
+                    'image_path' => null,
+                ],
+            ],
+            'code_examples' => [
+                [
+                    'title' => 'Contoh Perulangan Sederhana',
+                    'code' => "let totalPanggilan = 0;\nfor (let i = 1; i <= 30; i++) {\n    totalPanggilan++;\n}\nconsole.log(totalPanggilan);",
+                    'output' => '30',
+                    'explanation' => 'Loop berjalan dari i = 1 hingga i = 30. Di setiap iterasi, variabel totalPanggilan bertambah 1. Sehingga nilai akhirnya adalah 30.',
+                ],
+            ],
         ]);
 
         /*
