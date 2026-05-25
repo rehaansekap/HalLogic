@@ -30,7 +30,7 @@ export default function DeleteMaterialButton({
             html: `
                 <div class="text-left space-y-4">
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        Apakah Anda yakin ingin menghapus <b>"${materialTitle}"</b>? 
+                        Apakah Kamu yakin ingin menghapus <b>"${materialTitle}"</b>? 
                         Tindakan ini tidak dapat dibatalkan dan akan menghapus semua data terkait.
                     </p>
                     <div class="p-3 bg-red-50 rounded-lg border border-red-100 mb-4">

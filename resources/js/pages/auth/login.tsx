@@ -352,7 +352,7 @@ export default function Login({ status, canResetPassword, canRegister }: Props) 
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
                         >
-                            Dengan masuk, Anda menyetujui ketentuan penggunaan platform HalLogic.
+                            Dengan masuk, Kamu menyetujui ketentuan penggunaan platform HalLogic.
                         </motion.p>
                     </div>
                 </motion.div>
