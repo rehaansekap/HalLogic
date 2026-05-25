@@ -130,7 +130,7 @@ class AdminUserController extends Controller
             if ($user->getKey() === Auth::id()) {
                 return redirect()
                     ->back()
-                    ->withErrors(['error' => 'Tidak dapat menghapus akun Anda sendiri!']);
+                    ->withErrors(['error' => 'Tidak dapat menghapus akun sendiri!']);
             }
 
             $this->userService->deleteUser($user);

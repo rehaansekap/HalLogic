@@ -21,7 +21,7 @@ export default function RealTimeMonitor() {
         if (lastUserRef.current && !currentUserId) {
             MySwal.fire({
                 title: 'Sesi Berakhir',
-                text: flash?.info || 'Akun Anda telah diperbarui oleh Admin. Silakan login kembali.',
+                text: flash?.info || 'Akun Kamu telah diperbarui oleh Admin. Silakan login kembali.',
                 icon: 'info',
                 confirmButtonText: 'Oke',
                 confirmButtonColor: 'var(--palette-limelight)',
@@ -44,7 +44,7 @@ export default function RealTimeMonitor() {
         }
 
         if (flash?.info && !lastUserRef.current) {
-             // Info is handled by SweetAlert for logout, but can be used for others
+            // Info is handled by SweetAlert for logout, but can be used for others
         }
     }, [flash]);
 

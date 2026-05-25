@@ -73,7 +73,7 @@ export default function MaterialSidebar({
 
         MySwal.fire({
             title: 'Konfirmasi Pengumpulan',
-            text: 'Apakah Anda yakin ingin mengumpulkan berkas ini? Pengumpulan hanya dapat dilakukan satu kali.',
+            text: 'Apakah Kamu yakin ingin mengumpulkan berkas ini? Pengumpulan hanya dapat dilakukan satu kali.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

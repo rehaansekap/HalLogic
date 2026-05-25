@@ -122,7 +122,7 @@ class MaterialController extends Controller
 
         $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
         if (! $groupMember) {
-            return redirect()->route('dashboard')->with('error', 'Anda belum memiliki kelompok untuk material ini!');
+            return redirect()->route('dashboard')->with('error', 'Kamu belum memiliki kelompok untuk material ini!');
         }
 
         if (! $groupMember->is_leader) {
@@ -135,7 +135,7 @@ class MaterialController extends Controller
             ->exists();
 
         if ($existingSubmission) {
-            return redirect()->back()->with('error', 'Kelompok Anda sudah mengirimkan berkas!');
+            return redirect()->back()->with('error', 'Kelompok Kamu sudah mengirimkan berkas!');
         }
 
         $filePaths = $this->submissionService->handleMultipleFileUploads($request, $groupMember->group_id);
@@ -155,12 +155,12 @@ class MaterialController extends Controller
 
         $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
         if (! $groupMember) {
-            return redirect()->back()->with('error', 'Anda belum memiliki kelompok untuk material ini!');
+            return redirect()->back()->with('error', 'Kamu belum memiliki kelompok untuk material ini!');
         }
 
         $existingReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'final');
         if ($existingReflection) {
-            return redirect()->back()->with('error', 'Anda sudah mengirim refleksi akhir untuk material ini.');
+            return redirect()->back()->with('error', 'Kamu sudah mengirim refleksi akhir untuk material ini.');
         }
 
         $validated = $request->validated();
@@ -193,7 +193,7 @@ class MaterialController extends Controller
 
         $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
         if (! $groupMember) {
-            return response()->json(['error' => 'Anda belum memiliki kelompok untuk material ini!'], 403);
+            return response()->json(['error' => 'Kamu belum memiliki kelompok untuk material ini!'], 403);
         }
 
         $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
@@ -208,7 +208,7 @@ class MaterialController extends Controller
         }
 
         if (empty($data['stdin']) && preg_match('/\b(scanf|gets|fgets|getchar)\b/', $data['code'])) {
-            return response()->json(['error' => 'Kode Anda membutuhkan input (seperti scanf). Silakan isi kolom input program (stdin) terlebih dahulu sebelum menjalankan.'], 400);
+            return response()->json(['error' => 'Kode Kamu membutuhkan input (seperti scanf). Silakan isi kolom input program (stdin) terlebih dahulu sebelum menjalankan.'], 400);
         }
 
         $result = $this->cRunner->run($data['code'], $data['stdin'] ?? null);

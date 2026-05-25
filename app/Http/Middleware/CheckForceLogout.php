@@ -25,7 +25,7 @@ class CheckForceLogout
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->with('info', 'Akun Anda telah diperbarui oleh Admin. Silakan login kembali untuk keamanan.');
+            return redirect()->route('login')->with('info', 'Akun Kamu telah diperbarui oleh Admin. Silakan login kembali untuk keamanan.');
         }
 
         return $next($request);

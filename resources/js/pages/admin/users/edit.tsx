@@ -136,7 +136,7 @@ export default function AdminUsersEdit({ user }: AdminUsersEditProps) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Periksa kembali form Anda.',
+                        text: 'Periksa kembali form Kamu.',
                         confirmButtonColor: '#ef4444',
                         customClass: {
                             popup: 'rounded-2xl border-none shadow-2xl',
