@@ -5,6 +5,8 @@ import { Form } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Send, Star } from 'lucide-react';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
+
 import { Button } from '@/components/ui/button';
 
 interface Phase3EvaluationProps {
@@ -113,6 +115,19 @@ export default function Phase3Evaluation({
                     <Form
                         method="post"
                         action={`/material/${materialSlug}/finish`}
+                        onSuccess={() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Selamat!',
+                                text: 'Anda telah menyelesaikan seluruh fase pada materi ini.',
+                                confirmButtonColor: '#10b981',
+                                customClass: {
+                                    popup: 'rounded-3xl border-none shadow-2xl',
+                                    confirmButton:
+                                        'rounded-xl px-8 py-3 font-bold uppercase tracking-wider transition-transform hover:scale-105 active:scale-95',
+                                },
+                            });
+                        }}
                     >
                         {({ errors, processing, wasSuccessful }) => (
                             <div className="space-y-6">

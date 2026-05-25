@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Lock, Play, CheckCircle2, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface Prerequisite {
     id: number;
@@ -96,7 +97,12 @@ export default function MaterialCard({
 
     return (
         <motion.div
-            className="cursor-pointer overflow-hidden rounded-xl border border-[--palette-chartreuse]/20 bg-white transition-all duration-200 hover:shadow-lg"
+            className={cn(
+                "overflow-hidden rounded-xl border transition-all duration-200",
+                status !== 'locked' 
+                    ? "cursor-pointer border-[--palette-chartreuse]/20 bg-white hover:shadow-lg" 
+                    : "cursor-not-allowed border-gray-200 bg-gray-50/80 opacity-80"
+            )}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -104,12 +110,12 @@ export default function MaterialCard({
                 duration: 0.4,
                 ease: 'easeOut',
             }}
-            whileHover={{
+            whileHover={status !== 'locked' ? {
                 scale: 1.02,
                 boxShadow: '0 20px 25px -5px rgba(212, 241, 0, 0.1)',
-            }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onClick}
+            } : {}}
+            whileTap={status !== 'locked' ? { scale: 0.98 } : {}}
+            onClick={status !== 'locked' ? onClick : undefined}
         >
             <div className="space-y-4 p-6">
                 {/* Header with Status */}
@@ -190,33 +196,38 @@ export default function MaterialCard({
                 {/* Locked Message */}
                 {status === 'locked' && prerequisiteLabel && (
                     <motion.div
-                        className="rounded-lg border border-[--palette-yellow-green]/20 bg-[--palette-yellow-green]/10 p-2"
+                        className="rounded-lg border border-gray-200 bg-gray-100 p-3 mt-2"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: delay + 0.2 }}
                     >
-                        <p className="text-xs text-[--palette-yellow-green]">
-                            <span className="font-semibold">Prerequisite:</span>{' '}
-                            {prerequisiteLabel}
+                        <p className="text-xs text-gray-500 leading-relaxed">
+                            <span className="font-bold flex items-center gap-1.5 mb-1 text-gray-700">
+                                <Lock className="w-3 h-3" />
+                                Materi Terkunci
+                            </span>{' '}
+                            Silakan selesaikan materi <span className="font-semibold text-gray-900">"{prerequisiteLabel}"</span> terlebih dahulu.
                         </p>
                     </motion.div>
                 )}
 
                 {/* Action Button */}
                 <motion.button
-                    className="mt-4 w-full rounded-lg px-4 py-2 text-sm font-medium transition-all"
-                    style={{
+                    className={cn(
+                        "mt-4 w-full rounded-lg px-4 py-2 text-sm font-bold transition-all",
+                        status === 'locked' && "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    )}
+                    style={status !== 'locked' ? {
                         background:
-                            status === 'locked'
-                                ? 'var(--palette-yellow-green)'
-                                : status === 'completed'
+                                status === 'completed'
                                   ? 'var(--palette-green)'
                                   : 'var(--palette-chartreuse)',
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    } : {}}
+                    whileHover={status !== 'locked' ? { scale: 1.05 } : {}}
+                    whileTap={status !== 'locked' ? { scale: 0.95 } : {}}
+                    disabled={status === 'locked'}
                 >
-                    <span className="font-semibold text-white">
+                    <span className={status === 'locked' ? "text-gray-500" : "text-white"}>
                         {status === 'locked'
                             ? 'Locked'
                             : status === 'completed'

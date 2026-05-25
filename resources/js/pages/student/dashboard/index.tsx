@@ -53,13 +53,22 @@ export default function StudentDashboard({
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading] = useState(false);
 
-    // Filter materials by teacher
+    // Filter and sort materials
     const filteredMaterials = useMemo(() => {
+        const sorted = [...materials].sort((a, b) => {
+            const aIsLocked = a.status === 'locked' ? 1 : 0;
+            const bIsLocked = b.status === 'locked' ? 1 : 0;
+            if (aIsLocked !== bIsLocked) {
+                return aIsLocked - bIsLocked;
+            }
+            return a.title.localeCompare(b.title);
+        });
+
         if (!selectedTeacher) {
-            return materials;
+            return sorted;
         }
 
-        return materials.filter(
+        return sorted.filter(
             (m) =>
                 m.teacher_name ===
                 teachers.find((t) => t.id === selectedTeacher)?.name,

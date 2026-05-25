@@ -10,7 +10,7 @@ interface FilterButtonProps {
         id: string | number;
         name: string;
     }>;
-    value?: string | number;
+    value?: string | number | null;
     onChange: (value: string | number | null) => void;
     placeholder?: string;
     color?: 'primary' | 'success' | 'warning';
