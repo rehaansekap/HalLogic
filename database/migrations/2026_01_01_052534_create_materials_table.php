@@ -36,6 +36,8 @@ return new class extends Migration
             $table->longText('case_narrative')->nullable();
 
             $table->string('material_pdf')->nullable();
+            $table->json('sub_materials')->nullable();
+            $table->json('code_examples')->nullable();
             $table->json('simulator_config')->nullable();
             $table->text('summary')->nullable();
             $table->json('learning_objectives')->nullable();

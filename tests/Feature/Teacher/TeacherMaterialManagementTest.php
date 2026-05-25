@@ -54,6 +54,20 @@ class TeacherMaterialManagementTest extends TestCase
                 'Hambatan apa yang kamu temukan?',
                 'Bagaimana cara kamu mengatasinya?',
             ],
+            'sub_materials' => [
+                [
+                    'title' => 'Sub Materi Awal',
+                    'content' => '<p>Konten sub materi awal</p>',
+                ],
+            ],
+            'code_examples' => [
+                [
+                    'title' => 'Contoh 1',
+                    'code' => 'int main() {}',
+                    'output' => 'Hello',
+                    'explanation' => 'Penjelasan contoh',
+                ],
+            ],
             'started_at' => now()->format('Y-m-d'),
             'finished_at' => now()->addDays(7)->format('Y-m-d'),
         ];
@@ -83,6 +97,10 @@ class TeacherMaterialManagementTest extends TestCase
             'Hambatan apa yang kamu temukan?',
             'Bagaimana cara kamu mengatasinya?',
         ], $material->post_reflection_questions);
+        $this->assertCount(1, $material->sub_materials);
+        $this->assertEquals('Sub Materi Awal', $material->sub_materials[0]['title']);
+        $this->assertCount(1, $material->code_examples);
+        $this->assertEquals('Contoh 1', $material->code_examples[0]['title']);
     }
 
     public function test_teacher_cannot_create_material_without_summary(): void
@@ -99,6 +117,12 @@ class TeacherMaterialManagementTest extends TestCase
             'case_narrative' => 'A valid case narrative description.',
             'learning_objectives' => [
                 'Objective 1',
+            ],
+            'sub_materials' => [
+                [
+                    'title' => 'Sub Materi Awal',
+                    'content' => '<p>Konten sub materi awal</p>',
+                ],
             ],
         ];
 
@@ -122,6 +146,12 @@ class TeacherMaterialManagementTest extends TestCase
             'case_narrative' => 'A valid case narrative description.',
             'summary' => 'This is a English summary.',
             'learning_objectives' => [], // Empty array
+            'sub_materials' => [
+                [
+                    'title' => 'Sub Materi Awal',
+                    'content' => '<p>Konten sub materi awal</p>',
+                ],
+            ],
         ];
 
         $response = $this->actingAs($teacher)
@@ -148,6 +178,20 @@ class TeacherMaterialManagementTest extends TestCase
             'learning_objectives' => ['Original Objective'],
             'pre_reflection_questions' => ['Original Pre Question'],
             'post_reflection_questions' => ['Original Post Question'],
+            'sub_materials' => [
+                [
+                    'title' => 'Original Sub Title',
+                    'content' => 'Original content',
+                ],
+            ],
+            'code_examples' => [
+                [
+                    'title' => 'Original Example Title',
+                    'code' => 'Original Code',
+                    'output' => 'Original Output',
+                    'explanation' => 'Original Explanation',
+                ],
+            ],
         ]);
 
         $payload = [
@@ -167,6 +211,20 @@ class TeacherMaterialManagementTest extends TestCase
             ],
             'post_reflection_questions' => [
                 'Updated Post Question 1',
+            ],
+            'sub_materials' => [
+                [
+                    'title' => 'Updated Sub Title',
+                    'content' => '<p>Updated content</p>',
+                ],
+            ],
+            'code_examples' => [
+                [
+                    'title' => 'Updated Example Title',
+                    'code' => 'Updated Code',
+                    'output' => 'Updated Output',
+                    'explanation' => 'Updated Explanation',
+                ],
             ],
         ];
 
@@ -193,5 +251,9 @@ class TeacherMaterialManagementTest extends TestCase
         $this->assertEquals([
             'Updated Post Question 1',
         ], $updatedMaterial->post_reflection_questions);
+        $this->assertCount(1, $updatedMaterial->sub_materials);
+        $this->assertEquals('Updated Sub Title', $updatedMaterial->sub_materials[0]['title']);
+        $this->assertCount(1, $updatedMaterial->code_examples);
+        $this->assertEquals('Updated Example Title', $updatedMaterial->code_examples[0]['title']);
     }
 }

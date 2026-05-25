@@ -100,7 +100,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::attendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:276
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:280
 * @route '/teacher/material/{material}/attendance'
 */
 export const attendance = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ attendance.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::attendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:276
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:280
 * @route '/teacher/material/{material}/attendance'
 */
 attendance.url = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -142,7 +142,7 @@ attendance.url = (args: { material: string | number } | [material: string | numb
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::attendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:276
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:280
 * @route '/teacher/material/{material}/attendance'
 */
 attendance.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -152,7 +152,7 @@ attendance.post = (args: { material: string | number } | [material: string | num
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::attendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:276
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:280
 * @route '/teacher/material/{material}/attendance'
 */
 const attendanceForm = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -162,7 +162,7 @@ const attendanceForm = (args: { material: string | number } | [material: string 
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::attendance
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:276
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:280
 * @route '/teacher/material/{material}/attendance'
 */
 attendanceForm.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -174,7 +174,7 @@ attendance.form = attendanceForm
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:306
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:310
 * @route '/teacher/material/{material}/update-groups'
 */
 export const updateGroups = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -189,7 +189,7 @@ updateGroups.definition = {
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:306
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:310
 * @route '/teacher/material/{material}/update-groups'
 */
 updateGroups.url = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -216,7 +216,7 @@ updateGroups.url = (args: { material: string | number } | [material: string | nu
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:306
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:310
 * @route '/teacher/material/{material}/update-groups'
 */
 updateGroups.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -226,7 +226,7 @@ updateGroups.post = (args: { material: string | number } | [material: string | n
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:306
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:310
 * @route '/teacher/material/{material}/update-groups'
 */
 const updateGroupsForm = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -236,7 +236,7 @@ const updateGroupsForm = (args: { material: string | number } | [material: strin
 
 /**
 * @see \App\Http\Controllers\Teacher\TeacherMaterialController::updateGroups
-* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:306
+* @see app/Http/Controllers/Teacher/TeacherMaterialController.php:310
 * @route '/teacher/material/{material}/update-groups'
 */
 updateGroupsForm.post = (args: { material: string | number } | [material: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

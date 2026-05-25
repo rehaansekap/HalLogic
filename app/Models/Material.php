@@ -31,6 +31,8 @@ class Material extends Model
         'learning_objectives',
         'pre_reflection_questions',
         'post_reflection_questions',
+        'sub_materials',
+        'code_examples',
     ];
 
     protected $casts = [
@@ -40,6 +42,8 @@ class Material extends Model
         'learning_objectives' => 'array',
         'pre_reflection_questions' => 'array',
         'post_reflection_questions' => 'array',
+        'sub_materials' => 'array',
+        'code_examples' => 'array',
     ];
 
     public function teacher(): BelongsTo

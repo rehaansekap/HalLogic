@@ -7,6 +7,8 @@ import {
     MessageSquare,
     ClipboardList,
     ChevronDown,
+    Play,
+    Link,
 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 
@@ -61,10 +63,10 @@ const AccordionSection = ({
         <motion.div
             className={cn(
                 "rounded-2xl border bg-white p-6 md:p-8 shadow-sm transition-all duration-300",
-                isOpen 
-                    ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5" 
-                    : hasError 
-                        ? "border-red-200 hover:border-red-300 bg-red-50/5" 
+                isOpen
+                    ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5"
+                    : hasError
+                        ? "border-red-200 hover:border-red-300 bg-red-50/5"
                         : "border-(--palette-limelight)/20 hover:border-(--palette-green)/20"
             )}
             variants={itemVariants}
@@ -77,8 +79,8 @@ const AccordionSection = ({
                 <div className="flex items-start gap-4 flex-1">
                     <div className={cn(
                         "rounded-xl border p-3.5 shadow-sm transition-colors",
-                        isOpen 
-                            ? "border-(--palette-green)/10 bg-(--palette-green)/8 text-(--palette-green)" 
+                        isOpen
+                            ? "border-(--palette-green)/10 bg-(--palette-green)/8 text-(--palette-green)"
                             : hasError
                                 ? "border-red-200 bg-red-50 text-red-500"
                                 : "border-(--palette-limelight)/20 bg-gray-50 text-muted-foreground group-hover:text-foreground"
@@ -139,7 +141,8 @@ export default function Step3Reflections({
     setFieldValue,
 }: Step3ReflectionsProps) {
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-        pre: true,
+        media: true,
+        pre: false,
         post: false,
     });
 
@@ -152,13 +155,17 @@ export default function Step3Reflections({
 
     const getError = (field: string) => errors[field]?.[0];
 
+    const hasMediaErrors = useMemo(() => !!errors.video_url || !!errors.case_narrative, [errors]);
     const hasPreErrors = useMemo(() => !!errors.pre_reflection_questions, [errors]);
     const hasPostErrors = useMemo(() => !!errors.post_reflection_questions, [errors]);
 
     useEffect(() => {
-        if (hasPreErrors || hasPostErrors) {
+        if (hasPreErrors || hasPostErrors || hasMediaErrors) {
             setOpenSections((prev) => {
                 const next = { ...prev };
+                if (hasMediaErrors) {
+                    next.media = true;
+                }
                 if (hasPreErrors) {
                     next.pre = true;
                 }
@@ -168,7 +175,7 @@ export default function Step3Reflections({
                 return next;
             });
         }
-    }, [errors, hasPreErrors, hasPostErrors]);
+    }, [errors, hasPreErrors, hasPostErrors, hasMediaErrors]);
 
     const handleAddPreQuestion = () => {
         const current = formData.pre_reflection_questions || [];
@@ -209,6 +216,90 @@ export default function Step3Reflections({
             initial="hidden"
             animate="visible"
         >
+            {/* Accordion 1: Media & Narasi Kasus */}
+            <AccordionSection
+                id="media"
+                title="Narasi Kasus & Media Pembelajaran"
+                description="Sertakan video kasus/narasi untuk menunjang aktivitas kelompok."
+                icon={Play}
+                isOpen={openSections.media}
+                onToggle={() => toggleSection('media')}
+                hasError={hasMediaErrors}
+            >
+                <div className="space-y-8">
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                        <div className="space-y-2">
+                            <Label
+                                htmlFor="case_narrative"
+                                className="flex items-center gap-2 text-sm font-bold text-foreground"
+                            >
+                                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                                Narasi Kasus / Masalah
+                            </Label>
+                            <div className="relative group">
+                                <textarea
+                                    id="case_narrative"
+                                    value={formData.case_narrative}
+                                    onChange={(e) =>
+                                        setFieldValue(
+                                            'case_narrative',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder="Deskripsikan kasus atau masalah yang akan dipelajari siswa..."
+                                    className={cn(
+                                        'min-h-[120px] w-full resize-none rounded-lg border border-(--palette-limelight)/20 bg-white px-4 py-3 pl-11 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
+                                        getError('case_narrative') &&
+                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                    )}
+                                    maxLength={1000}
+                                />
+                                <MessageSquare className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
+                                <div className="absolute bottom-3 right-3 text-[10px] font-bold tracking-tighter text-muted-foreground/50 uppercase">
+                                    {formData.case_narrative.length}/1000
+                                </div>
+                            </div>
+                            {getError('case_narrative') && (
+                                <p className="mt-1 text-xs font-medium text-red-500">
+                                    {getError('case_narrative')}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label
+                                htmlFor="video_url"
+                                className="flex items-center gap-2 text-sm font-bold text-foreground"
+                            >
+                                <Link className="h-4 w-4 text-muted-foreground" />
+                                URL Video YouTube
+                            </Label>
+                            <div className="relative group">
+                                <Input
+                                    id="video_url"
+                                    type="url"
+                                    value={formData.video_url}
+                                    onChange={(e) =>
+                                        setFieldValue('video_url', e.target.value)
+                                    }
+                                    placeholder="https://www.youtube.com/watch?v=..."
+                                    className={cn(
+                                        'h-12 rounded-lg border-(--palette-limelight)/20 px-4 pl-11 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
+                                        getError('video_url') &&
+                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                    )}
+                                />
+                                <Play className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
+                            </div>
+                            {getError('video_url') && (
+                                <p className="mt-1 text-xs font-medium text-red-500">
+                                    {getError('video_url')}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </AccordionSection>
             {/* Accordion 1: Refleksi Awal */}
             <AccordionSection
                 id="pre"
@@ -256,7 +347,7 @@ export default function Step3Reflections({
                                                 className={cn(
                                                     'h-12 rounded-lg border-(--palette-limelight)/20 px-4 pr-12 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
                                                     getError('pre_reflection_questions') && !question.trim() &&
-                                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                                    'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                                                 )}
                                                 maxLength={255}
                                             />
@@ -343,7 +434,7 @@ export default function Step3Reflections({
                                                 className={cn(
                                                     'h-12 rounded-lg border-(--palette-limelight)/20 px-4 pr-12 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
                                                     getError('post_reflection_questions') && !question.trim() &&
-                                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                                    'border-red-500 focus:border-red-500 focus:ring-red-500/20'
                                                 )}
                                                 maxLength={255}
                                             />

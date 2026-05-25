@@ -20,6 +20,17 @@ interface Material {
     summary?: string;
     pre_reflection_questions?: string[];
     post_reflection_questions?: string[];
+    sub_materials?: Array<{
+        title: string;
+        content: string;
+        image_path?: string;
+    }>;
+    code_examples?: Array<{
+        title: string;
+        code: string;
+        output: string;
+        explanation: string;
+    }>;
 }
 
 interface GroupMember {
@@ -134,10 +145,12 @@ export default function MaterialPage({
 
                             {/* Phase 2 */}
                             {activePhase === 2 && (
-                                <Phase2Investigation
-                                    materialSlug={material.slug}
-                                    currentStep={currentStep}
-                                />
+                                 <Phase2Investigation
+                                     material={material}
+                                     currentStep={currentStep}
+                                     groupMembers={groupMembers}
+                                     submission={submission}
+                                 />
                             )}
 
                             {/* Phase 3 - Evaluation */}

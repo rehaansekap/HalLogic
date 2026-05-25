@@ -1,18 +1,23 @@
 import { motion } from 'framer-motion';
 import {
-    BookOpen,
-    Calendar,
-    CheckCircle2,
-    Edit3,
+    AlertCircle,
+    Check,
     FileText,
+    Play,
+    User,
+    CheckCircle2,
+    Calendar,
+    Code2,
+    BookOpen,
+    Edit3,
     Info,
     Layers,
     Link,
     MessageSquare,
-    Play,
     Users,
     ClipboardList,
 } from 'lucide-react';
+import { Editor } from '@monaco-editor/react';
 
 import { Button } from '@/components/ui/button';
 import type { MaterialFormData } from '@/hooks/useMaterialForm';
@@ -215,56 +220,115 @@ export default function Step4Review({
                     {/* Learning Resources Section */}
                     <ReviewSection
                         icon={BookOpen}
-                        title="Sumber Pembelajaran"
+                        title="Sumber Pembelajaran & LKPD"
                         step={2}
                         onEditStep={onEditStep}
                     >
-                        <div className="grid grid-cols-1 gap-10">
-                            <div>
-                                <InfoRow
-                                    label="URL Video YouTube"
-                                    value={formData.video_url}
-                                    icon={Link}
-                                />
-                                {formData.video_url && (
-                                    <div className="min-w-full min-h-auto mt-4 flex aspect-video items-center justify-center rounded-2xl border-2 border-dashed border-(--palette-limelight)/20 bg-gray-50/50 text-muted-foreground transition-colors hover:bg-white hover:border-(--palette-green)/30">
-                                        <div className="flex flex-col items-center gap-3">
-                                            <div className="p-3 rounded-full bg-white shadow-sm border border-(--palette-limelight)/10 text-(--palette-green)">
-                                                <Play className="h-5 w-5 fill-current" />
+                        <div className="grid grid-cols-1 gap-8">
+                            {/* Sub Materials Review */}
+                            <div className="space-y-4">
+                                <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
+                                    <BookOpen className="h-4 w-4 text-(--palette-green)" />
+                                    <span>Materi Pembelajaran ({formData.sub_materials?.length || 0})</span>
+                                </h4>
+                                {formData.sub_materials && formData.sub_materials.length > 0 ? (
+                                    <div className="space-y-3 bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10">
+                                        {formData.sub_materials.map((sub, idx) => (
+                                            <div key={idx} className="flex gap-3 text-sm border-b border-gray-100 last:border-0 pb-3 last:pb-0">
+                                                <span className="text-(--palette-green) font-bold shrink-0">{idx + 1}.</span>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        <p className="font-bold text-slate-800">{sub.title}</p>
+                                                        {(sub.image || sub.image_path) && (
+                                                            <span className="inline-flex items-center gap-1 rounded bg-(--palette-green)/10 px-1.5 py-0.5 text-[9px] font-bold text-(--palette-green) uppercase">
+                                                                Ilustrasi Gambar
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                                        {sub.content ? sub.content.replace(/<[^>]*>?/gm, '') : 'Tidak ada konten.'}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <p className="text-[10px] font-bold uppercase tracking-widest">
-                                                Video Orientasi Tersedia
-                                            </p>
-                                        </div>
+                                        ))}
                                     </div>
+                                ) : (
+                                    <p className="text-sm font-semibold text-muted-foreground/45 italic pl-6">
+                                        Belum ada sub-materi yang ditambahkan
+                                    </p>
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <div>
-                                    <InfoRow
-                                        label="Dokumen PDF"
-                                        value={
-                                            formData.material_pdf?.name ||
-                                            formData.material_pdf_existing ||
-                                            'Tidak ada file'
-                                        }
-                                        icon={FileText}
-                                    />
-                                    {(formData.material_pdf || formData.material_pdf_existing) && (
-                                        <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-(--palette-green)/10 text-(--palette-green) text-[10px] font-bold uppercase tracking-wider border border-(--palette-green)/20">
-                                            <FileText className="h-3 w-3" />
-                                            <span>PDF Aktif</span>
-                                        </div>
-                                    )}
-                                </div>
+                            {/* Code Examples Review */}
+                            <div className="space-y-4">
+                                <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
+                                    <Code2 className="h-4 w-4 text-(--palette-green)" />
+                                    <span>Contoh Kode Program ({formData.code_examples?.length || 0})</span>
+                                </h4>
+                                {formData.code_examples && formData.code_examples.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {formData.code_examples.map((ex, idx) => (
+                                            <div key={idx} className="bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10 space-y-2">
+                                                <p className="font-bold text-xs text-slate-800 uppercase tracking-wider">{ex.title || `Contoh ${idx + 1}`}</p>
+                                                <div className="rounded overflow-hidden border border-(--palette-limelight)/10 min-h-[96px]">
+                                                    <Editor
+                                                        height="96px"
+                                                        language="c"
+                                                        theme="vs-dark"
+                                                        value={ex.code}
+                                                        options={{
+                                                            readOnly: true,
+                                                            minimap: { enabled: false },
+                                                            fontSize: 10,
+                                                            lineNumbers: 'on',
+                                                            scrollBeyondLastLine: false,
+                                                            wordWrap: 'on',
+                                                            padding: { top: 8, bottom: 8 },
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    <strong>Output:</strong> <code className="bg-slate-100 px-1 rounded font-mono text-[10px]">{ex.output}</code>
+                                                </div>
+                                                <div 
+                                                    className="text-xs text-slate-600 line-clamp-2 max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4"
+                                                    dangerouslySetInnerHTML={{ __html: ex.explanation }} 
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm font-semibold text-muted-foreground/45 italic pl-6">
+                                        Tidak ada contoh kode program yang ditambahkan
+                                    </p>
+                                )}
+                            </div>
 
-                                <div>
-                                    <InfoRow
-                                        label="Narasi Kasus"
-                                        value={formData.case_narrative}
-                                        icon={MessageSquare}
-                                    />
+                            {/* LKPD & Media Review */}
+                            <div className="space-y-4 border-t border-gray-100 pt-6">
+                                <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
+                                    <Play className="h-4 w-4 text-(--palette-green)" />
+                                    <span>LKPD & Media</span>
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">File LKPD</span>
+                                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
+                                            <FileText className="h-4 w-4 text-amber-600" />
+                                            <span className="truncate max-w-40">{formData.material_pdf?.name || formData.material_pdf_existing || 'Belum diunggah'}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Video YouTube</span>
+                                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
+                                            <Link className="h-4 w-4 text-blue-600" />
+                                            <span className="truncate max-w-40">{formData.video_url || 'Tidak disertakan'}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Narasi Kasus</span>
+                                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{formData.case_narrative || 'Tidak disertakan'}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

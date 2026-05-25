@@ -12,10 +12,23 @@ export interface MaterialFormData {
     case_narrative: string;
     material_pdf: File | null;
     material_pdf_existing?: string; // For edit mode - existing file path
+    remove_pdf?: boolean; // Flag to indicate existing pdf should be removed
     summary: string;
     learning_objectives: string[];
     pre_reflection_questions: string[];
     post_reflection_questions: string[];
+    sub_materials: Array<{
+        title: string;
+        content: string;
+        image: File | null;
+        image_path?: string;
+    }>;
+    code_examples: Array<{
+        title: string;
+        code: string;
+        output: string;
+        explanation: string;
+    }>;
 }
 
 export interface FormErrors {
@@ -36,12 +49,15 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
         case_narrative: initialData?.case_narrative ?? '',
         material_pdf: initialData?.material_pdf ?? null,
         material_pdf_existing: initialData?.material_pdf_existing ?? undefined,
+        remove_pdf: false,
         summary: initialData?.summary ?? '',
         learning_objectives: (initialData?.learning_objectives && initialData.learning_objectives.length > 0)
             ? initialData.learning_objectives
             : [''],
         pre_reflection_questions: initialData?.pre_reflection_questions ?? [],
         post_reflection_questions: initialData?.post_reflection_questions ?? [],
+        sub_materials: initialData?.sub_materials ?? [],
+        code_examples: initialData?.code_examples ?? [],
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
@@ -126,6 +142,26 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                 }
             }
         } else if (step === 2) {
+            // Sub materials validation
+            if (!formData.sub_materials || formData.sub_materials.length === 0) {
+                newErrors.sub_materials = ['Minimal harus mengisi satu sub-materi'];
+            } else {
+                const invalidSub = formData.sub_materials.some(sub => !sub.title?.trim() || !sub.content?.trim());
+                if (invalidSub) {
+                    newErrors.sub_materials = ['Setiap sub-materi wajib memiliki judul dan konten materi'];
+                }
+            }
+
+            // Code examples validation
+            if (formData.code_examples && formData.code_examples.length > 0) {
+                const invalidExample = formData.code_examples.some(
+                    ex => !ex.title?.trim() || !ex.code?.trim() || !ex.output?.trim() || !ex.explanation?.trim()
+                );
+                if (invalidExample) {
+                    newErrors.code_examples = ['Setiap contoh kode wajib memiliki judul, kode program, output, dan penjelasan'];
+                }
+            }
+        } else if (step === 3) {
             if (formData.video_url && !isValidYoutubeUrl(formData.video_url)) {
                 newErrors.video_url = ['URL harus dari YouTube'];
             }
@@ -135,7 +171,7 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
             ) {
                 newErrors.case_narrative = ['Narasi maksimal 1000 karakter'];
             }
-        } else if (step === 3) {
+
             if (formData.pre_reflection_questions && formData.pre_reflection_questions.length > 0) {
                 const emptyPre = formData.pre_reflection_questions.findIndex(q => !q.trim());
                 if (emptyPre !== -1) {

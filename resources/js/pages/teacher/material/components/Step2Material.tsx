@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     AlertCircle,
+    BookOpen,
     Check,
     FileText,
     Link,
@@ -9,8 +10,23 @@ import {
     Play,
     Upload,
     X,
+    Plus,
+    Trash2,
+    Bold,
+    Italic,
+    Underline,
+    List,
+    ListOrdered,
+    Eye,
+    Code2,
+    Image as ImageIcon,
+    ChevronDown,
 } from 'lucide-react';
-import { useState } from 'react';
+import { Editor } from '@monaco-editor/react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import UnderlineExtension from '@tiptap/extension-underline';
+import { useState, useMemo, useEffect } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,41 +55,298 @@ const itemVariants = {
     visible: { opacity: 1, y: 0 },
 };
 
-const SectionHeader = ({
-    icon: Icon,
-    title,
-    description,
-}: {
-    icon: any;
+interface AccordionSectionProps {
+    id: string;
     title: string;
     description: string;
-}) => (
-    <div className="mb-8 flex items-start gap-4">
-        <div className="rounded-xl border border-(--palette-green)/10 bg-(--palette-green)/8 p-4 shadow-sm">
-            <Icon className="h-6 w-6 text-(--palette-green)" />
+    icon: React.ComponentType<any>;
+    isOpen: boolean;
+    onToggle: () => void;
+    hasError?: boolean;
+    children: React.ReactNode;
+}
+
+const AccordionSection = ({
+    title,
+    description,
+    icon: Icon,
+    isOpen,
+    onToggle,
+    hasError,
+    children,
+}: AccordionSectionProps) => {
+    return (
+        <motion.div
+            className={cn(
+                "rounded-2xl border bg-white p-6 md:p-8 shadow-sm transition-all duration-300",
+                isOpen
+                    ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5"
+                    : hasError
+                        ? "border-red-200 hover:border-red-300 bg-red-50/5"
+                        : "border-(--palette-limelight)/20 hover:border-(--palette-green)/20"
+            )}
+            variants={itemVariants}
+        >
+            <button
+                type="button"
+                onClick={onToggle}
+                className="flex w-full items-start justify-between gap-4 text-left focus:outline-none group"
+            >
+                <div className="flex items-start gap-4 flex-1">
+                    <div className={cn(
+                        "rounded-xl border p-3.5 shadow-sm transition-colors",
+                        isOpen
+                            ? "border-(--palette-green)/10 bg-(--palette-green)/8 text-(--palette-green)"
+                            : hasError
+                                ? "border-red-200 bg-red-50 text-red-500"
+                                : "border-(--palette-limelight)/20 bg-gray-50 text-muted-foreground group-hover:text-foreground"
+                    )}>
+                        <Icon className="h-6 w-6 shrink-0" />
+                    </div>
+                    <div className="flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h3 className={cn(
+                                "text-lg md:text-xl font-bold tracking-tight",
+                                hasError ? "text-red-600" : "text-foreground"
+                            )}>
+                                {title}
+                            </h3>
+                            {hasError && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600 border border-red-100 uppercase tracking-wider animate-pulse">
+                                    Error
+                                </span>
+                            )}
+                        </div>
+                        <p className="mt-1 text-xs md:text-sm leading-relaxed text-muted-foreground">
+                            {description}
+                        </p>
+                    </div>
+                </div>
+                <div className="shrink-0 pt-2 text-muted-foreground/60 group-hover:text-foreground">
+                    <motion.div
+                        animate={{ rotate: isOpen ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <ChevronDown className="h-5 w-5" />
+                    </motion.div>
+                </div>
+            </button>
+
+            <AnimatePresence initial={false}>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                        className="overflow-visible"
+                    >
+                        <div className="mt-8 border-t border-gray-100 pt-8">
+                            {children}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
+    );
+};
+
+const RichTextEditor = ({
+    value,
+    onChange,
+    id,
+    placeholder,
+}: {
+    value: string;
+    onChange: (val: string) => void;
+    id: string;
+    placeholder?: string;
+}) => {
+    const editor = useEditor({
+        extensions: [
+            StarterKit,
+            UnderlineExtension,
+        ],
+        content: value,
+        onUpdate: ({ editor }) => {
+            onChange(editor.getHTML());
+        },
+        editorProps: {
+            attributes: {
+                class: 'w-full min-h-[140px] p-4 text-sm focus:outline-none bg-white [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1 [&_p]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2',
+            },
+        },
+    });
+
+    if (!editor) {
+        return null;
+    }
+
+    return (
+        <div className="rounded-xl border border-(--palette-limelight)/25 overflow-hidden bg-white shadow-sm focus-within:border-(--palette-green) focus-within:ring-2 focus-within:ring-(--palette-green)/10 transition-all">
+            {/* Toolbar */}
+            <div className="flex flex-wrap items-center justify-start border-b border-(--palette-limelight)/10 bg-gray-50 px-3 py-2 gap-1">
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    className={cn("p-1.5 rounded transition-colors", editor.isActive('bold') ? "bg-gray-200 text-slate-900" : "hover:bg-gray-200 text-slate-700")}
+                    title="Tebalkan (Bold)"
+                >
+                    <Bold size={15} />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    className={cn("p-1.5 rounded transition-colors", editor.isActive('italic') ? "bg-gray-200 text-slate-900" : "hover:bg-gray-200 text-slate-700")}
+                    title="Miring (Italic)"
+                >
+                    <Italic size={15} />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleUnderline().run()}
+                    className={cn("p-1.5 rounded transition-colors", editor.isActive('underline') ? "bg-gray-200 text-slate-900" : "hover:bg-gray-200 text-slate-700")}
+                    title="Garis Bawah (Underline)"
+                >
+                    <Underline size={15} />
+                </button>
+                <div className="w-px h-4 bg-gray-200 mx-1" />
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                    className={cn("p-1 rounded font-bold transition-colors text-xs px-2", editor.isActive('heading', { level: 3 }) ? "bg-gray-200 text-slate-900" : "hover:bg-gray-200 text-slate-700")}
+                    title="Heading 3"
+                >
+                    H3
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+                    className={cn("p-1.5 rounded transition-colors", editor.isActive('bulletList') ? "bg-gray-200 text-slate-900" : "hover:bg-gray-200 text-slate-700")}
+                    title="Daftar Poin (Bullet List)"
+                >
+                    <List size={15} />
+                </button>
+                <button
+                    type="button"
+                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                    className={cn("p-1.5 rounded transition-colors", editor.isActive('orderedList') ? "bg-gray-200 text-slate-900" : "hover:bg-gray-200 text-slate-700")}
+                    title="Daftar Angka (Numbered List)"
+                >
+                    <ListOrdered size={15} />
+                </button>
+            </div>
+
+            {/* Editor */}
+            <div onClick={() => editor.chain().focus().run()} className="cursor-text">
+                <EditorContent editor={editor} id={id} />
+            </div>
         </div>
-        <div className="flex-1">
-            <h3 className="text-xl font-bold text-foreground">{title}</h3>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                {description}
-            </p>
-        </div>
-    </div>
-);
+    );
+};
 
 export default function Step2Material({
     formData,
     errors,
     setFieldValue,
 }: Step2MaterialProps) {
+    const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+        materi: true,
+        contoh: false,
+        media: false,
+    });
     const [dragActive, setDragActive] = useState(false);
+
+    const toggleSection = (id: string) => {
+        setOpenSections((prev) => ({
+            ...prev,
+            [id]: !prev[id],
+        }));
+    };
 
     const getError = (field: string) => errors[field]?.[0];
 
+    const hasMateriErrors = useMemo(() => !!errors.sub_materials, [errors]);
+    const hasContohErrors = useMemo(() => !!errors.code_examples, [errors]);
+    const hasMediaErrors = useMemo(() => !!errors.video_url || !!errors.case_narrative || !!errors.material_pdf, [errors]);
+
+    useEffect(() => {
+        if (hasMateriErrors || hasContohErrors || hasMediaErrors) {
+            setOpenSections((prev) => {
+                const next = { ...prev };
+                if (hasMateriErrors) next.materi = true;
+                if (hasContohErrors) next.contoh = true;
+                if (hasMediaErrors) next.media = true;
+                return next;
+            });
+        }
+    }, [errors, hasMateriErrors, hasContohErrors, hasMediaErrors]);
+
+    // Sub-materials Handlers
+    const subMaterials = formData.sub_materials || [];
+
+    const handleAddSub = () => {
+        setFieldValue('sub_materials', [...subMaterials, { title: '', content: '', image: null }]);
+    };
+
+    const handleRemoveSub = (index: number) => {
+        const updated = subMaterials.filter((_, i) => i !== index);
+        setFieldValue('sub_materials', updated);
+    };
+
+    const handleSubChange = (index: number, field: string, value: any) => {
+        const updated = subMaterials.map((sub, i) => {
+            if (i === index) {
+                return { ...sub, [field]: value };
+            }
+            return sub;
+        });
+        setFieldValue('sub_materials', updated);
+    };
+
+    const handleSubFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files && files[0]) {
+            handleSubChange(index, 'image', files[0]);
+        }
+    };
+
+    const handleClearSubImage = (index: number) => {
+        const updated = subMaterials.map((sub, i) => {
+            if (i === index) {
+                return { ...sub, image: null, image_path: undefined };
+            }
+            return sub;
+        });
+        setFieldValue('sub_materials', updated);
+    };
+
+    // Code Examples Handlers
+    const codeExamples = formData.code_examples || [];
+
+    const handleAddExample = () => {
+        setFieldValue('code_examples', [...codeExamples, { title: '', code: '', output: '', explanation: '' }]);
+    };
+
+    const handleRemoveExample = (index: number) => {
+        const updated = codeExamples.filter((_, i) => i !== index);
+        setFieldValue('code_examples', updated);
+    };
+
+    const handleExampleChange = (index: number, field: string, value: string) => {
+        const updated = codeExamples.map((ex, i) => {
+            if (i === index) {
+                return { ...ex, [field]: value };
+            }
+            return ex;
+        });
+        setFieldValue('code_examples', updated);
+    };
+
+    // PDF Handlers
     const handleDrag = (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
-
         if (e.type === 'dragenter' || e.type === 'dragover') {
             setDragActive(true);
         } else if (e.type === 'dragleave') {
@@ -85,149 +358,304 @@ export default function Step2Material({
         e.preventDefault();
         e.stopPropagation();
         setDragActive(false);
-
         const files = e.dataTransfer.files;
-
-        if (files && files[0]) {
-            const file = files[0];
-
-            if (file.type === 'application/pdf') {
-                setFieldValue('material_pdf', file);
-            }
+        if (files && files[0] && files[0].type === 'application/pdf') {
+            setFieldValue('material_pdf', files[0]);
         }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
-
         if (files && files[0]) {
             setFieldValue('material_pdf', files[0]);
         }
     };
 
-    const removeFile = () => {
-        setFieldValue('material_pdf', null);
-    };
-
     const formatFileSize = (bytes: number) => {
-        if (bytes === 0) {
-            return '0 Bytes';
-        }
-
+        if (bytes === 0) return '0 Bytes';
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-        return (
-            Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
-        );
+        return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
     };
 
     return (
         <motion.div
-            className="space-y-10"
+            className="space-y-6"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
         >
-            <motion.div
-                className="rounded-2xl border border-(--palette-limelight)/20 bg-white p-8 shadow-sm"
-                variants={itemVariants}
+            {/* Section 1: Materi Pembelajaran */}
+            <AccordionSection
+                id="materi"
+                title="Materi Pembelajaran (Sub-Materi)"
+                description="Tulis sub-materi secara langsung yang dapat dipelajari siswa lengkap dengan gambar ilustrasi."
+                icon={BookOpen}
+                isOpen={openSections.materi}
+                onToggle={() => toggleSection('materi')}
+                hasError={hasMateriErrors}
             >
-                <div className="grid grid-cols-1 gap-12">
-                {/* Visual & Narrative */}
-                    <div className="space-y-8">
-                        <SectionHeader
-                            icon={Play}
-                            title="Video & Kasus"
-                            description="Sediakan video orientasi dan narasi kasus untuk membantu pemahaman siswa."
-                        />
-
-                        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                            <div className="space-y-2">
-                                <Label
-                                    htmlFor="case_narrative"
-                                    className="flex items-center gap-2 text-sm font-bold text-foreground"
-                                >
-                                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                                    Narasi Kasus / Masalah{' '}
-                                    <span className="ml-1 text-xs font-medium text-muted-foreground/60">
-                                        (Opsional)
-                                    </span>
-                                </Label>
-                                <div className="relative group">
-                                    <textarea
-                                        id="case_narrative"
-                                        value={formData.case_narrative}
-                                        onChange={(e) =>
-                                            setFieldValue(
-                                                'case_narrative',
-                                                e.target.value,
-                                            )
-                                        }
-                                        placeholder="Deskripsikan kasus atau masalah yang akan dipelajari siswa..."
-                                        className={cn(
-                                            'min-h-[120px] w-full resize-none rounded-lg border border-(--palette-limelight)/20 bg-white px-4 py-3 pl-11 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
-                                            getError('case_narrative') &&
-                                                'border-red-500 focus:border-red-500 focus:ring-red-500/20',
-                                        )}
-                                        maxLength={1000}
-                                    />
-                                    <MessageSquare className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
-                                    <div className="absolute bottom-3 right-3 text-[10px] font-bold tracking-tighter text-muted-foreground/50 uppercase">
-                                        {formData.case_narrative.length}/1000
-                                    </div>
-                                </div>
-                                {getError('case_narrative') && (
-                                    <p className="mt-1 text-xs font-medium text-red-500">
-                                        {getError('case_narrative')}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="space-y-2">
-                                <Label
-                                    htmlFor="video_url"
-                                    className="flex items-center gap-2 text-sm font-bold text-foreground"
-                                >
-                                    <Link className="h-4 w-4 text-muted-foreground" />
-                                    URL Video YouTube{' '}
-                                    <span className="ml-1 text-xs font-medium text-muted-foreground/60">
-                                        (Opsional)
-                                    </span>
-                                </Label>
-                                <div className="relative group">
-                                    <Input
-                                        id="video_url"
-                                        type="url"
-                                        value={formData.video_url}
-                                        onChange={(e) =>
-                                            setFieldValue('video_url', e.target.value)
-                                        }
-                                        placeholder="https://www.youtube.com/watch?v=..."
-                                        className={cn(
-                                            'h-12 rounded-lg border-(--palette-limelight)/20 px-4 pl-11 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
-                                            getError('video_url') &&
-                                                'border-red-500 focus:border-red-500 focus:ring-red-500/20',
-                                        )}
-                                    />
-                                    <Play className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
-                                </div>
-                                {getError('video_url') && (
-                                    <p className="mt-1 text-xs font-medium text-red-500">
-                                        {getError('video_url')}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
+                <div className="space-y-8">
+                    <div className="flex items-center justify-between">
+                        <Label className="text-sm font-bold text-foreground">
+                            Daftar Sub-Materi Pembelajaran
+                        </Label>
+                        <button
+                            type="button"
+                            onClick={handleAddSub}
+                            className="flex items-center gap-1.5 rounded-xl border border-(--palette-green)/20 bg-(--palette-green)/5 px-3.5 py-2 text-xs font-bold text-(--palette-green) transition-colors hover:bg-(--palette-green)/10 shadow-sm"
+                        >
+                            <Plus className="h-4 w-4" />
+                            Tambah Sub-Materi
+                        </button>
                     </div>
 
-                {/* PDF Upload Section */}
-                    <div className="space-y-8">
-                        <SectionHeader
-                            icon={FileText}
-                            title="Dokumen Materi"
-                            description="Unggah file PDF sebagai bahan bacaan utama atau modul praktikum."
-                        />
+                    {subMaterials.length > 0 ? (
+                        <div className="space-y-6">
+                            {subMaterials.map((sub, index) => (
+                                <div
+                                    key={index}
+                                    className="p-5 rounded-2xl border border-gray-150 bg-gray-50/20 space-y-4 relative group"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex px-3 py-1.5 items-center justify-center rounded-xl bg-(--palette-green)/10 text-xs font-black text-(--palette-green) border border-(--palette-green)/20 uppercase tracking-wider">
+                                                Sub Materi {index + 1}
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveSub(index)}
+                                            className="rounded-xl p-2 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                                            title="Hapus sub-materi"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-bold text-foreground">Judul Sub-Materi</Label>
+                                        <Input
+                                            value={sub.title}
+                                            onChange={(e) => handleSubChange(index, 'title', e.target.value)}
+                                            placeholder="Contoh: Mengapa Data Harus Dibedakan?"
+                                            className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="md:col-span-2 space-y-2">
+                                            <Label className="text-xs font-bold text-foreground">Konten Materi</Label>
+                                            <RichTextEditor
+                                                id={`sub-material-content-${index}`}
+                                                value={sub.content}
+                                                onChange={(val) => handleSubChange(index, 'content', val)}
+                                                placeholder="Tulis materi pembelajaran di sini... Gunakan toolbar untuk memformat teks."
+                                            />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold text-foreground">Gambar Konten (Opsional)</Label>
+                                            {sub.image || sub.image_path ? (
+                                                <div className="border border-gray-150 rounded-xl p-3 bg-white space-y-3">
+                                                    <div className="aspect-video w-full rounded-lg bg-gray-50 overflow-hidden flex items-center justify-center border border-gray-100">
+                                                        <img
+                                                            src={sub.image ? URL.createObjectURL(sub.image) : `/storage/${sub.image_path}`}
+                                                            alt={`Sub materi ${index + 1}`}
+                                                            className="object-contain h-full w-full"
+                                                        />
+                                                    </div>
+                                                    <div className="flex items-center justify-between text-xs">
+                                                        <span className="text-muted-foreground truncate max-w-40 font-medium">
+                                                            {sub.image ? sub.image.name : 'Gambar tersimpan'}
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleClearSubImage(index)}
+                                                            className="text-red-500 hover:text-red-700 font-bold"
+                                                        >
+                                                            Hapus
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    onClick={() => document.getElementById(`sub-img-file-${index}`)?.click()}
+                                                    className="border-2 border-dashed border-gray-200 hover:border-(--palette-green)/50 rounded-xl p-6 text-center cursor-pointer transition-colors bg-white flex flex-col items-center justify-center h-44"
+                                                >
+                                                    <input
+                                                        type="file"
+                                                        id={`sub-img-file-${index}`}
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={(e) => handleSubFileChange(index, e)}
+                                                    />
+                                                    <ImageIcon className="text-slate-400 mb-2 h-7 w-7" />
+                                                    <span className="text-[11px] font-bold text-slate-500">Pilih Gambar</span>
+                                                    <span className="text-[9px] text-muted-foreground mt-0.5">PNG, JPG, JPEG (Maks. 2MB)</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center bg-gray-50/50">
+                            <BookOpen className="mx-auto h-8 w-8 text-muted-foreground/30 mb-3" />
+                            <p className="text-sm font-bold text-muted-foreground/50">Belum ada sub-materi pembelajaran</p>
+                            <p className="text-xs text-muted-foreground/40 mt-1">Siswa wajib membaca setidaknya satu sub-materi sebelum masuk ke compiler.</p>
+                        </div>
+                    )}
+
+                    {getError('sub_materials') && (
+                        <p className="text-xs font-semibold text-red-500 bg-red-50/50 p-3 rounded-lg border border-red-100 flex items-center gap-2">
+                            <span>⚠️</span> {getError('sub_materials')}
+                        </p>
+                    )}
+                </div>
+            </AccordionSection>
+
+            {/* Section 2: Contoh Kode Program */}
+            <AccordionSection
+                id="contoh"
+                title="Contoh Kode Program"
+                description="Tambahkan beberapa contoh kode program yang berkaitan dengan materi agar dapat dipelajari oleh siswa."
+                icon={Code2}
+                isOpen={openSections.contoh}
+                onToggle={() => toggleSection('contoh')}
+                hasError={hasContohErrors}
+            >
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <Label className="text-sm font-bold text-foreground">
+                            Daftar Contoh Program C
+                        </Label>
+                        <button
+                            type="button"
+                            onClick={handleAddExample}
+                            className="flex items-center gap-1.5 rounded-xl border border-(--palette-green)/20 bg-(--palette-green)/5 px-3.5 py-2 text-xs font-bold text-(--palette-green) transition-colors hover:bg-(--palette-green)/10 shadow-sm"
+                        >
+                            <Plus className="h-4 w-4" />
+                            Tambah Contoh Kode
+                        </button>
+                    </div>
+
+                    {codeExamples.length > 0 ? (
+                        <div className="space-y-6">
+                            {codeExamples.map((ex, index) => (
+                                <div
+                                    key={index}
+                                    className="p-5 rounded-2xl border border-gray-150 bg-gray-50/20 space-y-4"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex h-7 w-auto px-3 items-center justify-center rounded-xl bg-(--palette-green)/10 text-xs font-black text-(--palette-green) border border-(--palette-green)/20">
+                                            Contoh {index + 1}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveExample(index)}
+                                            className="rounded-xl p-2 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                                            title="Hapus contoh kode"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-bold text-slate-700">Judul / Deskripsi Singkat Contoh</Label>
+                                        <Input
+                                            value={ex.title}
+                                            onChange={(e) => handleExampleChange(index, 'title', e.target.value)}
+                                            placeholder="Contoh: Contoh 1: Variabel & Tipe Data"
+                                            className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Left Side: C Code Editor */}
+                                        <div className="space-y-2 flex flex-col">
+                                            <Label className="text-xs font-bold text-slate-700">Kode Program C</Label>
+                                            <div className="rounded-xl overflow-hidden border border-gray-250 min-h-[200px]">
+                                                <Editor
+                                                    height="200px"
+                                                    language="c"
+                                                    theme="vs-dark"
+                                                    value={ex.code}
+                                                    onChange={(value) => handleExampleChange(index, 'code', value || '')}
+                                                    options={{
+                                                        minimap: { enabled: false },
+                                                        fontSize: 13,
+                                                        lineNumbers: 'on',
+                                                        scrollBeyondLastLine: false,
+                                                        wordWrap: 'on',
+                                                        padding: { top: 16, bottom: 16 },
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Right Side: Output and Explanation */}
+                                        <div className="space-y-4 flex flex-col justify-between">
+                                            <div className="space-y-2">
+                                                <Label className="text-xs font-bold text-slate-700">Contoh Output Program</Label>
+                                                <textarea
+                                                    value={ex.output}
+                                                    onChange={(e) => handleExampleChange(index, 'output', e.target.value)}
+                                                    placeholder="Nama : Raka&#10;Umur : 16&#10;Aktif: True"
+                                                    className="w-full h-20 rounded-lg border border-gray-250 p-3 font-mono text-xs focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 resize-none bg-white"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2 flex-1 flex flex-col">
+                                                <Label className="text-xs font-bold text-slate-700">Penjelasan Kode</Label>
+                                                <RichTextEditor
+                                                    id={`explanation-${index}`}
+                                                    value={ex.explanation}
+                                                    onChange={(val) => handleExampleChange(index, 'explanation', val)}
+                                                    placeholder="Jelaskan detail dari kode program di atas agar mudah dimengerti siswa..."
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center bg-gray-50/50">
+                            <Code2 className="mx-auto h-8 w-8 text-muted-foreground/30 mb-3" />
+                            <p className="text-sm font-bold text-muted-foreground/50">Belum ada contoh program yang dibuat</p>
+                            <p className="text-xs text-muted-foreground/40 mt-1">Anda bisa menambahkan contoh-contoh program C sebagai materi referensi tambahan siswa.</p>
+                        </div>
+                    )}
+
+                    {getError('code_examples') && (
+                        <p className="text-xs font-semibold text-red-500 bg-red-50/50 p-3 rounded-lg border border-red-100 flex items-center gap-2">
+                            <span>⚠️</span> {getError('code_examples')}
+                        </p>
+                    )}
+                </div>
+            </AccordionSection>
+
+            {/* Section 3: LKPD & Media */}
+            <AccordionSection
+                id="media"
+                title="LKPD & Media Pembelajaran"
+                description="Unggah file Lembar Kerja Siswa (LKPD) dan sertakan video kasus/narasi untuk menunjang aktivitas kelompok."
+                icon={Play}
+                isOpen={openSections.media}
+                onToggle={() => toggleSection('media')}
+                hasError={hasMediaErrors}
+            >
+                <div className="space-y-8">
+
+                    {/* PDF (LKPD) Upload Block */}
+                    <div className="space-y-4">
+                        <Label className="flex items-center gap-2 text-sm font-bold text-foreground">
+                            <FileText className="h-4 w-4 text-muted-foreground" />
+                            Dokumen LKPD (PDF)
+                        </Label>
 
                         <div className="space-y-6">
                             <AnimatePresence mode="wait">
@@ -251,13 +679,13 @@ export default function Step2Material({
                                                         {formatFileSize(formData.material_pdf.size)}
                                                     </span>
                                                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                                                        PDF Siap diunggah
+                                                        PDF LKPD Siap diunggah
                                                     </span>
                                                 </div>
                                             </div>
                                         </div>
                                         <button
-                                            onClick={removeFile}
+                                            onClick={() => setFieldValue('material_pdf', null)}
                                             className="p-3 rounded-full text-red-400 hover:text-red-600 hover:bg-red-50 transition-all active:scale-90"
                                             type="button"
                                             title="Hapus file"
@@ -277,16 +705,29 @@ export default function Step2Material({
                                             </div>
                                             <div>
                                                 <p className="font-bold text-foreground">
-                                                    File Saat Ini
+                                                    LKPD Saat Ini
                                                 </p>
                                                 <p className="text-sm text-muted-foreground truncate max-w-50 md:max-w-md mt-0.5">
                                                     {formData.material_pdf_existing}
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-2 bg-(--palette-green) text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-(--palette-green)/20">
-                                            <Check size={14} className="stroke-3" />
-                                            <span>Tersimpan</span>
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-2 bg-(--palette-green) text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-(--palette-green)/20">
+                                                <Check size={14} className="stroke-3" />
+                                                <span>Tersimpan</span>
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    setFieldValue('remove_pdf', true);
+                                                    setFieldValue('material_pdf_existing', undefined);
+                                                }}
+                                                className="p-1.5 rounded-full text-red-400 hover:text-red-600 hover:bg-red-50 transition-all active:scale-90"
+                                                type="button"
+                                                title="Hapus file"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
                                         </div>
                                     </motion.div>
                                 ) : null}
@@ -308,7 +749,7 @@ export default function Step2Material({
                                 <input
                                     id="material_pdf"
                                     type="file"
-                                    accept=".pdf"
+                                    accept=".pdf,.doc,.docx"
                                     onChange={handleFileChange}
                                     className="hidden"
                                 />
@@ -327,10 +768,10 @@ export default function Step2Material({
                                     <h4 className="text-lg font-bold text-foreground mb-1">
                                         {dragActive
                                             ? 'Lepaskan file sekarang'
-                                            : 'Klik untuk unggah atau seret file'}
+                                            : 'Klik untuk unggah atau seret file LKPD'}
                                     </h4>
                                     <p className="text-sm text-muted-foreground font-medium">
-                                        Format PDF (Maksimal 50MB)
+                                        Format PDF, DOC, DOCX (Maksimal 50MB)
                                     </p>
                                 </div>
                             </div>
@@ -343,9 +784,8 @@ export default function Step2Material({
                             )}
                         </div>
                     </div>
-            </div>
-
-            </motion.div>
+                </div>
+            </AccordionSection>
 
             {/* Tips/Info Footer */}
             <motion.div
@@ -360,10 +800,7 @@ export default function Step2Material({
                         Tip Pembelajaran
                     </p>
                     <p className="text-muted-foreground">
-                        Sediakan video yang interaktif dan narasi kasus yang
-                        menantang untuk meningkatkan keterlibatan siswa dalam
-                        pembelajaran mandiri. Pastikan file PDF yang diunggah
-                        terbaca dengan jelas.
+                        Tulis sub-materi yang padat dan mudah dipahami siswa langsung di dalam web. Anda dapat menyertakan kode program C beserta contoh output yang diharapkan dan narasi kasus pemecahan masalah agar siswa siap bereksperimen di compiler.
                     </p>
                 </div>
             </motion.div>

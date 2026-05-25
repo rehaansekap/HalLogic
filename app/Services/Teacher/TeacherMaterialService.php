@@ -21,6 +21,8 @@ class TeacherMaterialService
             $pdfPath = $data['material_pdf']->store('materials', 'public');
         }
 
+        $subMaterials = $this->processSubMaterials($data['sub_materials'] ?? []);
+
         $slug = $this->generateUniqueSlug($data['title']);
 
         $material = Material::create([
@@ -41,6 +43,8 @@ class TeacherMaterialService
             'learning_objectives' => $data['learning_objectives'] ?? null,
             'pre_reflection_questions' => $data['pre_reflection_questions'] ?? null,
             'post_reflection_questions' => $data['post_reflection_questions'] ?? null,
+            'sub_materials' => $subMaterials,
+            'code_examples' => $data['code_examples'] ?? null,
         ]);
 
         return $material;
@@ -53,6 +57,14 @@ class TeacherMaterialService
     {
 
         $pdfPath = $material->material_pdf;
+
+        if (isset($data['remove_pdf']) && $data['remove_pdf']) {
+            if ($material->material_pdf) {
+                Storage::disk('public')->delete($material->material_pdf);
+            }
+            $pdfPath = null;
+        }
+
         if (isset($data['material_pdf']) && $data['material_pdf'] instanceof UploadedFile) {
 
             if ($material->material_pdf) {
@@ -61,6 +73,8 @@ class TeacherMaterialService
 
             $pdfPath = $data['material_pdf']->store('materials', 'public');
         }
+
+        $subMaterials = $this->processSubMaterials($data['sub_materials'] ?? [], $material->sub_materials);
 
         $slug = $material->slug;
         if ($data['title'] !== $material->title) {
@@ -83,6 +97,8 @@ class TeacherMaterialService
             'learning_objectives' => $data['learning_objectives'] ?? null,
             'pre_reflection_questions' => $data['pre_reflection_questions'] ?? null,
             'post_reflection_questions' => $data['post_reflection_questions'] ?? null,
+            'sub_materials' => $subMaterials,
+            'code_examples' => $data['code_examples'] ?? null,
         ]);
 
         return $material->fresh();
@@ -95,6 +111,14 @@ class TeacherMaterialService
     {
         if ($material->material_pdf) {
             Storage::disk('public')->delete($material->material_pdf);
+        }
+
+        if ($material->sub_materials) {
+            foreach ($material->sub_materials as $sub) {
+                if (! empty($sub['image_path'])) {
+                    Storage::disk('public')->delete($sub['image_path']);
+                }
+            }
         }
 
         DB::table('grades')
@@ -411,5 +435,47 @@ class TeacherMaterialService
         }
 
         return $slug;
+    }
+
+    /**
+     * Process sub materials and handle image uploads
+     */
+    private function processSubMaterials(array $subMaterialsData, ?array $existingSubMaterials = null): array
+    {
+        $processed = [];
+        $existingImages = [];
+        if ($existingSubMaterials) {
+            foreach ($existingSubMaterials as $existing) {
+                if (! empty($existing['image_path'])) {
+                    $existingImages[] = $existing['image_path'];
+                }
+            }
+        }
+
+        foreach ($subMaterialsData as $sub) {
+            $imagePath = $sub['image_path'] ?? null;
+            if (isset($sub['image']) && $sub['image'] instanceof UploadedFile) {
+                // If there was an old image replaced, we delete it
+                if (! empty($sub['image_path']) && $sub['image_path'] !== $imagePath) {
+                    Storage::disk('public')->delete($sub['image_path']);
+                }
+                $imagePath = $sub['image']->store('materials/sub_materials', 'public');
+            }
+            $processed[] = [
+                'title' => $sub['title'] ?? '',
+                'content' => $sub['content'] ?? '',
+                'image_path' => $imagePath,
+            ];
+        }
+
+        // Clean up orphaned images that were removed entirely
+        $newImages = collect($processed)->pluck('image_path')->filter()->toArray();
+        foreach ($existingImages as $oldImage) {
+            if (! in_array($oldImage, $newImages)) {
+                Storage::disk('public')->delete($oldImage);
+            }
+        }
+
+        return $processed;
     }
 }

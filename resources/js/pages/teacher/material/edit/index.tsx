@@ -32,6 +32,8 @@ interface EditMaterialProps {
         learning_objectives?: string[] | null;
         pre_reflection_questions?: string[] | null;
         post_reflection_questions?: string[] | null;
+        sub_materials?: any[] | null;
+        code_examples?: any[] | null;
     };
     classrooms: Classroom[];
     ownMaterials: MaterialOption[];
@@ -63,6 +65,8 @@ export default function EditMaterial({
         learning_objectives: material.learning_objectives || [''],
         pre_reflection_questions: material.pre_reflection_questions || [],
         post_reflection_questions: material.post_reflection_questions || [],
+        sub_materials: material.sub_materials || [],
+        code_examples: material.code_examples || [],
     };
 
     const handleSubmit = useCallback(

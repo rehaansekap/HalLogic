@@ -1,37 +1,137 @@
-import { LightBulbIcon } from '@heroicons/react/24/outline';
 import { Editor } from '@monaco-editor/react';
-import { motion } from 'framer-motion';
-import { Code2, Copy, Play, Download, Keyboard } from 'lucide-react';
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    Code2,
+    Copy,
+    Play,
+    Download,
+    Keyboard,
+    BookOpen,
+    FileText,
+    FileUp,
+    CheckCircle2,
+    Loader2,
+    X,
+    Lock,
+    ChevronDown,
+    Check,
+} from 'lucide-react';
+import { useState, useRef } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
 import { Button } from '@/components/ui/button';
+import { savePhase3 } from '@/actions/App/Http/Controllers/Student/MaterialController';
+import { cn } from '@/lib/utils';
+
+const MySwal = withReactContent(Swal);
 
 interface Phase2InvestigationProps {
-    materialSlug: string;
+    material: {
+        id: number;
+        title: string;
+        slug: string;
+        description: string;
+        difficulty_level: string;
+        material_pdf?: string;
+        video_url?: string;
+        case_narrative?: string;
+        sub_materials?: Array<{
+            title: string;
+            content: string;
+            image_path?: string;
+        }>;
+        code_examples?: Array<{
+            title: string;
+            code: string;
+            output: string;
+            explanation: string;
+        }>;
+    };
     currentStep: number;
+    groupMembers: Array<{
+        user_id: number;
+        name: string;
+        username: string;
+        is_leader: boolean;
+        avatar?: string;
+    }>;
+    submission?: {
+        files: string[] | null;
+        submitted_at: string | null;
+    } | null;
 }
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+            delayChildren: 0.2,
+        },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
+};
+
 export default function Phase2Investigation({
-    materialSlug,
+    material,
     currentStep,
+    groupMembers,
+    submission,
 }: Phase2InvestigationProps) {
+    const [activeTab, setActiveTab] = useState<'materi' | 'contoh' | 'editor' | 'tugas'>('materi');
+
+    // Accordion expansion states
+    const [expandedSubIndices, setExpandedSubIndices] = useState<number[]>([0]);
+    const [expandedExampleIndices, setExpandedExampleIndices] = useState<number[]>([0]);
+
+    const toggleSubIndex = (index: number) => {
+        setExpandedSubIndices(prev => 
+            prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+        );
+    };
+
+    const toggleExampleIndex = (index: number) => {
+        setExpandedExampleIndices(prev => 
+            prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+        );
+    };
+
+    // C compiler states
     const [code, setCode] = useState(`#include <stdio.h>
 
 int main() {
     printf("Hello, World!\\n");
     return 0;
 }`);
-
     const [codeOutput, setCodeOutput] = useState('');
     const [stdin, setStdin] = useState('');
     const [isRunning, setIsRunning] = useState(false);
 
+    // File submission states (relocated from sidebar)
+    const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const { auth } = usePage<any>().props;
+    const isLeader = groupMembers.find(m => m.user_id === auth.user.id)?.is_leader;
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        files: [] as File[],
+    });
+
     const isPhaseActive = currentStep >= 2;
 
+    // Actions
     const handleRunCode = async () => {
         setIsRunning(true);
-
         try {
-            const response = await fetch(`/material/${materialSlug}/run-code`, {
+            const response = await fetch(`/material/${material.slug}/run-code`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,16 +144,13 @@ int main() {
             });
 
             const data = await response.json();
-            
             let outputResult = '';
 
             if (data.status) {
                 outputResult += `[Status: ${data.status}]\n`;
-
                 if (data.time !== null && data.time !== undefined) {
                     outputResult += `Execution Time: ${data.time}ms\n`;
                 }
-
                 outputResult += `----------------------------------------\n\n`;
             }
             
@@ -83,10 +180,41 @@ int main() {
         }
     };
 
-
-
     const handleCopyCode = () => {
         navigator.clipboard.writeText(code);
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Kode disalin ke clipboard',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    };
+
+    const handleCopyExampleCode = (exampleCode: string) => {
+        navigator.clipboard.writeText(exampleCode);
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Contoh kode disalin',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    };
+
+    const handleApplyExampleToEditor = (exampleCode: string) => {
+        setCode(exampleCode);
+        setActiveTab('editor');
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Kode dimuat ke Editor',
+            showConfirmButton: false,
+            timer: 1500
+        });
     };
 
     const handleExportCode = () => {
@@ -101,21 +229,58 @@ int main() {
         URL.revokeObjectURL(url);
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2,
-            },
-        },
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const newFiles = Array.from(e.target.files);
+            setData('files', [...data.files, ...newFiles]);
+        }
     };
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 10 },
-        visible: { opacity: 1, y: 0 },
+    const removeFile = (index: number) => {
+        setData('files', data.files.filter((_, i) => i !== index));
     };
+
+    const handleSubmitSubmission = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!isLeader) return;
+
+        MySwal.fire({
+            title: 'Konfirmasi Pengumpulan',
+            text: 'Apakah Anda yakin ingin mengumpulkan berkas ini? Pengumpulan hanya dapat dilakukan satu kali.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Kirim!',
+            cancelButtonText: 'Batal',
+            background: '#ffffff',
+            customClass: {
+                title: 'text-lg font-bold text-slate-800',
+                htmlContainer: 'text-sm text-slate-600',
+                confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg',
+                cancelButton: 'bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                post(savePhase3.url({ slug: material.slug }), {
+                    forceFormData: true,
+                    onSuccess: () => {
+                        reset();
+                        MySwal.fire({
+                            title: 'Berhasil!',
+                            text: 'Berkas berhasil dikirim.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    },
+                });
+            }
+        });
+    };
+
+    const isSubmitted = !!submission?.files && submission.files.length > 0;
+    const submittedFiles = submission?.files || [];
 
     if (!isPhaseActive) {
         return (
@@ -148,157 +313,631 @@ int main() {
             initial="hidden"
             animate="visible"
         >
-            {/* Header */}
-            <motion.div
-                className="rounded-xl border border-(--palette-limelight)/20 bg-white p-8"
+            {/* Tab Navigation Menu */}
+            <motion.div 
+                className="flex flex-wrap md:flex-nowrap gap-1.5 rounded-xl border border-(--palette-limelight)/20 bg-(--palette-limelight)/5 p-1 mb-6"
                 variants={itemVariants}
             >
-                <div className="flex items-start gap-4">
-                    <div className="rounded-lg bg-(--palette-chartreuse)/8 p-4">
-                        <Code2 className="h-6 w-6 text-(--palette-green)" />
-                    </div>
-                    <div className="flex-1">
-                        <h2 className="mb-2 text-2xl font-bold text-foreground">
-                            Fase 2: Penyelidikan
-                        </h2>
-                        <p className="text-muted-foreground">
-                            Tulis dan jalankan kode C Anda untuk menyelesaikan tantangan yang diberikan.
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* Code Editor */}
-            <motion.div
-                className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white"
-                variants={itemVariants}
-            >
-                <div className="flex items-center justify-between border-b border-(--palette-limelight)/20 bg-(--palette-limelight)/10 px-6 py-3">
-                    <div className="flex items-center gap-2">
-                        <Code2 className="h-4 w-4 text-(--palette-green)" />
-                        <span className="font-semibold text-foreground">
-                            Editor Kode C
-                        </span>
-                    </div>
-                    <div className="flex gap-2">
-                        <motion.button
-                            onClick={handleCopyCode}
-                            className="flex items-center gap-1 rounded bg-(--palette-limelight)/20 px-2 py-1 text-xs text-foreground transition-colors hover:bg-(--palette-limelight)/30"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <Copy className="h-3 w-3" />
-                            Salin
-                        </motion.button>
-                        <motion.button
-                            onClick={handleExportCode}
-                            className="flex items-center gap-1 rounded bg-(--palette-limelight)/20 px-2 py-1 text-xs text-foreground transition-colors hover:bg-(--palette-limelight)/30"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <Download className="h-3 w-3" />
-                            Export
-                        </motion.button>
-                    </div>
-                </div>
-
-                <div className="h-125 w-full border-t border-(--palette-limelight)/20">
-                    <Editor
-                        height="100%"
-                        language="c"
-                        theme="vs-dark"
-                        value={code}
-                        onChange={(value) => setCode(value || '')}
-                        options={{
-                            minimap: { enabled: false },
-                            fontSize: 14,
-                            scrollBeyondLastLine: false,
-                            padding: { top: 16, bottom: 16 },
-                            wordWrap: "on",
-                        }}
-                    />
-                </div>
-            </motion.div>
-
-            {/* Control Buttons */}
-            <motion.div className="flex gap-3" variants={itemVariants}>
-                <Button
-                    onClick={handleRunCode}
-                    disabled={isRunning}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 font-semibold text-white transition-all hover:bg-blue-700 disabled:opacity-50"
-                >
-                    {isRunning ? (
-                        <>
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                            Menjalankan...
-                        </>
-                    ) : (
-                        <>
-                            <Play className="h-5 w-5" />
-                            Jalankan Kode
-                        </>
+                <button
+                    type="button"
+                    onClick={() => setActiveTab('materi')}
+                    className={cn(
+                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
+                        activeTab === 'materi'
+                            ? "bg-white text-(--palette-green) shadow-sm"
+                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
                     )}
-                </Button>
+                >
+                    <BookOpen className="h-4 w-4" />
+                    <span>Materi</span>
+                    {activeTab === 'materi' && (
+                        <motion.div
+                            className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
+                            layoutId="activePhase2Tab"
+                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        />
+                    )}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setActiveTab('contoh')}
+                    className={cn(
+                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
+                        activeTab === 'contoh'
+                            ? "bg-white text-(--palette-green) shadow-sm"
+                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                    )}
+                >
+                    <Code2 className="h-4 w-4" />
+                    <span>Contoh</span>
+                    {activeTab === 'contoh' && (
+                        <motion.div
+                            className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
+                            layoutId="activePhase2Tab"
+                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        />
+                    )}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setActiveTab('editor')}
+                    className={cn(
+                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
+                        activeTab === 'editor'
+                            ? "bg-white text-(--palette-green) shadow-sm"
+                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                    )}
+                >
+                    <Keyboard className="h-4 w-4" />
+                    <span>Compiler</span>
+                    {activeTab === 'editor' && (
+                        <motion.div
+                            className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
+                            layoutId="activePhase2Tab"
+                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        />
+                    )}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setActiveTab('tugas')}
+                    className={cn(
+                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
+                        activeTab === 'tugas'
+                            ? "bg-white text-(--palette-green) shadow-sm"
+                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                    )}
+                >
+                    <FileText className="h-4 w-4" />
+                    <span>Tugas</span>
+                    {activeTab === 'tugas' && (
+                        <motion.div
+                            className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
+                            layoutId="activePhase2Tab"
+                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        />
+                    )}
+                </button>
             </motion.div>
 
-            {/* Standard Input */}
-            <motion.div
-                className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white"
-                variants={itemVariants}
-            >
-                <div className="flex items-center gap-2 border-b border-(--palette-limelight)/20 bg-(--palette-limelight)/10 px-6 py-3">
-                    <Keyboard className="h-4 w-4 text-(--palette-green)" />
-                    <span className="font-semibold text-foreground">
-                        Input Program (stdin)
-                    </span>
-                </div>
-                <div className="p-4">
-                    <textarea
-                        value={stdin}
-                        onChange={(e) => setStdin(e.target.value)}
-                        placeholder="Masukkan input untuk program (opsional)"
-                        className="w-full min-h-25 rounded-lg border border-gray-200 p-3 text-sm font-mono focus:border-(--palette-green) focus:outline-none focus:ring-1 focus:ring-(--palette-green)"
-                    />
-                </div>
-            </motion.div>
+            {/* TAB CONTENT PANELS */}
+            <AnimatePresence mode="wait">
+                {activeTab === 'materi' && (
+                    <motion.div
+                        key="materi"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-4"
+                    >
+                        {material.sub_materials && material.sub_materials.length > 0 ? (
+                            material.sub_materials.map((sub, index) => {
+                                const isOpen = expandedSubIndices.includes(index);
+                                return (
+                                    <div
+                                        key={index}
+                                        className={cn(
+                                            "rounded-2xl border bg-white p-5 md:p-6 shadow-sm transition-all duration-300",
+                                            isOpen ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5" : "border-slate-200 hover:border-slate-300"
+                                        )}
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                toggleSubIndex(index);
+                                            }}
+                                            className="flex w-full items-center justify-between text-left focus:outline-none group"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className={cn(
+                                                    "flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black transition-colors border",
+                                                    isOpen
+                                                        ? "bg-(--palette-green)/10 text-(--palette-green) border-(--palette-green)/20"
+                                                        : "bg-gray-50 text-slate-400 border-slate-200 group-hover:text-slate-600"
+                                                )}>
+                                                    {index + 1}
+                                                </div>
+                                                <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight uppercase group-hover:text-(--palette-green) transition-colors">
+                                                    {sub.title}
+                                                </h3>
+                                            </div>
+                                            <motion.div
+                                                animate={{ rotate: isOpen ? 180 : 0 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="text-slate-400 group-hover:text-slate-600"
+                                            >
+                                                <ChevronDown size={18} />
+                                            </motion.div>
+                                        </button>
 
-            {/* Code Output */}
-            <motion.div
-                className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white"
-                variants={itemVariants}
-            >
-                <div className="flex items-center gap-2 border-b border-(--palette-limelight)/20 bg-(--palette-limelight)/10 px-6 py-3">
-                    <Play className="h-4 w-4 text-(--palette-green)" />
-                    <span className="font-semibold text-foreground">
-                        Output Program
-                    </span>
-                </div>
-                <pre className="overflow-auto bg-gray-900 p-6 font-mono text-sm text-green-400">
-                    {codeOutput || 'Output akan ditampilkan di sini...'}
-                </pre>
-            </motion.div>
+                                        {isOpen && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: "auto", opacity: 1 }}
+                                                transition={{ duration: 0.25 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="mt-5 border-t border-slate-100 pt-5 flex flex-col md:flex-row gap-6 items-start">
+                                                    <div
+                                                        className="flex-1 text-slate-700 text-sm leading-relaxed max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1 [&_p]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2 [&_strong]:text-slate-900"
+                                                        dangerouslySetInnerHTML={{ __html: sub.content }}
+                                                    />
+                                                    {sub.image_path && (
+                                                        <div className="w-full md:w-80 shrink-0 border border-slate-100 p-3 rounded-2xl bg-slate-50 flex items-center justify-center">
+                                                            <img
+                                                                src={`/storage/${sub.image_path}`}
+                                                                alt={sub.title}
+                                                                className="rounded-xl max-h-56 object-contain cursor-pointer transition-transform hover:scale-105"
+                                                                onClick={() => {
+                                                                    MySwal.fire({
+                                                                        imageUrl: `/storage/${sub.image_path}`,
+                                                                        imageAlt: sub.title,
+                                                                        width: 'auto',
+                                                                        showConfirmButton: false,
+                                                                        showCloseButton: true,
+                                                                        background: 'transparent',
+                                                                        backdrop: `rgba(0,0,0,0.8)`,
+                                                                        customClass: {
+                                                                            image: 'max-h-[85vh] object-contain rounded-xl',
+                                                                            popup: 'p-0 bg-transparent',
+                                                                            closeButton: 'text-white hover:text-gray-300'
+                                                                        }
+                                                                    });
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
+                                <BookOpen className="mx-auto h-8 w-8 text-muted-foreground/30 mb-3" />
+                                <p className="text-sm font-bold text-muted-foreground">Tidak ada materi pembelajaran</p>
+                                <p className="text-xs text-muted-foreground/70 mt-1">Guru belum menambahkan materi untuk pembelajaran ini.</p>
+                            </div>
+                        )}
+                    </motion.div>
+                )}
 
-            {/* Tips */}
-            <motion.div
-                className="rounded-lg border border-(--palette-limelight)/20 bg-(--palette-limelight)/10 p-4"
-                variants={itemVariants}
-            >
-                <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <LightBulbIcon className="h-4 w-4" />
-                    Tips Coding
-                </p>
-                <ul className="space-y-1 text-xs text-muted-foreground">
-                    <li>
-                        • Gunakan fitur "Jalankan Kode" untuk menguji logika
-                        Anda
-                    </li>
-                    <li>
-                        • Kode yang disimpan akan dibawa ke fase pengumpulan
-                        final
-                    </li>
-                    <li>• Pastikan kode dapat dikompilasi sebelum menyimpan</li>
-                </ul>
-            </motion.div>
+                {activeTab === 'contoh' && (
+                    <motion.div
+                        key="contoh"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-4"
+                    >
+                        {material.code_examples && material.code_examples.length > 0 ? (
+                            material.code_examples.map((ex, index) => {
+                                const isOpen = expandedExampleIndices.includes(index);
+                                return (
+                                    <div
+                                        key={index}
+                                        className={cn(
+                                            "rounded-2xl border bg-white p-5 md:p-6 shadow-sm transition-all duration-300",
+                                            isOpen ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5" : "border-slate-200 hover:border-slate-300"
+                                        )}
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                toggleExampleIndex(index);
+                                            }}
+                                            className="flex w-full items-center justify-between text-left focus:outline-none group"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className={cn(
+                                                    "flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black transition-colors border",
+                                                    isOpen
+                                                        ? "bg-(--palette-green)/10 text-(--palette-green) border-(--palette-green)/20"
+                                                        : "bg-gray-50 text-slate-400 border-slate-200 group-hover:text-slate-600"
+                                                )}>
+                                                    C{index + 1}
+                                                </div>
+                                                <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight uppercase group-hover:text-(--palette-green) transition-colors">
+                                                    {ex.title}
+                                                </h3>
+                                            </div>
+                                            <motion.div
+                                                animate={{ rotate: isOpen ? 180 : 0 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="text-slate-400 group-hover:text-slate-600"
+                                            >
+                                                <ChevronDown size={18} />
+                                            </motion.div>
+                                        </button>
+
+                                        {isOpen && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: "auto", opacity: 1 }}
+                                                transition={{ duration: 0.25 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="mt-5 border-t border-slate-100 pt-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                                    {/* Code Block Container */}
+                                                    <div className="flex flex-col rounded-xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner">
+                                                        <div className="flex items-center justify-between bg-slate-900 px-4 py-2 border-b border-slate-800">
+                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">program.c</span>
+                                                            <div className="flex gap-2">
+                                                                <button
+                                                                    onClick={() => handleCopyExampleCode(ex.code)}
+                                                                    className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                                                                    title="Salin kode"
+                                                                >
+                                                                    <Copy size={13} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleApplyExampleToEditor(ex.code)}
+                                                                    className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-(--palette-green)/20 text-(--palette-green) hover:bg-(--palette-green)/30 transition-colors border border-(--palette-green)/30"
+                                                                    title="Gunakan di Compiler"
+                                                                >
+                                                                    <Play size={9} />
+                                                                    Coba
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <Editor
+                                                            height="300px"
+                                                            language="c"
+                                                            theme="vs-dark"
+                                                            value={ex.code}
+                                                            options={{
+                                                                readOnly: true,
+                                                                minimap: { enabled: false },
+                                                                fontSize: 12,
+                                                                lineNumbers: 'on',
+                                                                scrollBeyondLastLine: false,
+                                                                wordWrap: 'on',
+                                                                padding: { top: 16, bottom: 16 },
+                                                            }}
+                                                        />
+                                                    </div>
+
+                                                    {/* Right Panel: Output & Explanation */}
+                                                    <div className="space-y-4 flex flex-col">
+                                                        <div className="rounded-xl border border-slate-150 p-4 bg-slate-50 shadow-sm flex-1">
+                                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Penjelasan Kode</h4>
+                                                            <div 
+                                                                className="text-sm text-slate-700 leading-relaxed max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1 [&_p]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2 [&_strong]:text-slate-900"
+                                                                dangerouslySetInnerHTML={{ __html: ex.explanation }} 
+                                                            />
+                                                        </div>
+
+                                                        <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 flex-1">
+                                                            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Output Program</h4>
+                                                            <pre className="font-mono text-xs text-slate-200 whitespace-pre-wrap">
+                                                                {ex.output}
+                                                            </pre>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
+                                <Code2 className="mx-auto h-8 w-8 text-muted-foreground/30 mb-3" />
+                                <p className="text-sm font-bold text-muted-foreground">Tidak ada contoh kode program</p>
+                                <p className="text-xs text-muted-foreground/70 mt-1">Guru belum mengkonfigurasi contoh program.</p>
+                            </div>
+                        )}
+                    </motion.div>
+                )}
+
+                {activeTab === 'editor' && (
+                    <motion.div
+                        key="editor"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-6"
+                    >
+                        {/* Editor Window */}
+                        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                            <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-3">
+                                <div className="flex items-center gap-2">
+                                    <Code2 className="h-4 w-4 text-(--palette-green)" />
+                                    <span className="font-bold text-foreground text-sm tracking-tight">
+                                        Editor C Misi Anda
+                                    </span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handleCopyCode}
+                                        className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 shadow-sm"
+                                    >
+                                        <Copy className="h-3.5 w-3.5" />
+                                        Salin
+                                    </button>
+                                    <button
+                                        onClick={handleExportCode}
+                                        className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 shadow-sm"
+                                    >
+                                        <Download className="h-3.5 w-3.5" />
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="h-125 w-full border-t border-slate-100">
+                                <Editor
+                                    height="100%"
+                                    language="c"
+                                    theme="vs-dark"
+                                    value={code}
+                                    onChange={(value) => setCode(value || '')}
+                                    options={{
+                                        minimap: { enabled: false },
+                                        fontSize: 14,
+                                        scrollBeyondLastLine: false,
+                                        padding: { top: 16, bottom: 16 },
+                                        wordWrap: "on",
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <Button
+                                onClick={handleRunCode}
+                                disabled={isRunning}
+                                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 font-bold text-white transition-all hover:bg-blue-700 disabled:opacity-50 h-12 shadow-lg shadow-blue-200/50 hover:scale-[1.01] active:scale-[0.99]"
+                            >
+                                {isRunning ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        Menjalankan...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Play className="h-4 w-4 fill-current" />
+                                        Jalankan Kode Program
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+
+                        {/* Stdin Panel */}
+                        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                            <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-6 py-3">
+                                <Keyboard className="h-4 w-4 text-(--palette-green)" />
+                                <span className="font-bold text-foreground text-sm">
+                                    Input Program (stdin)
+                                </span>
+                            </div>
+                            <div className="p-4">
+                                <textarea
+                                    value={stdin}
+                                    onChange={(e) => setStdin(e.target.value)}
+                                    placeholder="Masukkan input data di sini jika program Anda menggunakan input (scanf, gets, dsb)..."
+                                    className="w-full min-h-24 rounded-xl border border-slate-200 p-4 text-sm font-mono focus:border-(--palette-green) focus:outline-none focus:ring-2 focus:ring-(--palette-green)/10 bg-slate-50/20"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Console stdout Panel */}
+                        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                            <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-6 py-3">
+                                <Play className="h-4 w-4 text-(--palette-green)" />
+                                <span className="font-bold text-foreground text-sm">
+                                    Terminal Output
+                                </span>
+                            </div>
+                            <pre className="overflow-auto bg-slate-950 p-6 font-mono text-sm text-emerald-400 min-h-32 max-h-80 leading-relaxed shadow-inner">
+                                {codeOutput || 'Output program Anda akan dimunculkan di sini setelah dieksekusi.'}
+                            </pre>
+                        </div>
+                    </motion.div>
+                )}
+
+                {activeTab === 'tugas' && (
+                    <motion.div
+                        key="tugas"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-6"
+                    >
+                        {/* Section 1: Download LKPD */}
+                        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <div className="flex items-start gap-4">
+                                <div className="rounded-xl bg-amber-55 bg-amber-50 p-3.5 text-amber-600 border border-amber-100">
+                                    <FileText className="h-6 w-6" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-lg font-bold text-slate-800 tracking-tight">Unduh Lembar Kerja Peserta Didik (LKPD)</h3>
+                                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                                        Unduh berkas LKPD PDF berikut, diskusikan di dalam kelompok Anda, selesaikan tugas pemrograman yang diinstruksikan, kemudian unggah jawaban Anda di formulir bawah.
+                                    </p>
+                                    {material.material_pdf ? (
+                                        <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-150">
+                                            <div className="flex items-center gap-3">
+                                                <FileText className="h-8 w-8 text-red-500" />
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-800">LKPD_{material.title}</p>
+                                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Dokumen Kerja Resmi</p>
+                                                </div>
+                                            </div>
+                                            <Button
+                                                variant="outline"
+                                                className="border-amber-200 bg-white font-bold text-amber-700 hover:bg-amber-50 hover:text-amber-800 shrink-0 self-start sm:self-center"
+                                                asChild
+                                            >
+                                                <a href={`/storage/${material.material_pdf}`} target="_blank" rel="noopener noreferrer">
+                                                    <Download className="mr-2 h-4 w-4" />
+                                                    Download LKPD
+                                                </a>
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="mt-4 p-4 rounded-xl border-2 border-dashed border-gray-150 text-center bg-gray-50/50">
+                                            <p className="text-xs text-muted-foreground italic">Lembar kerja belum diunggah oleh Guru.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Section 2: Task Submission Form */}
+                        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <div className="flex items-start gap-4">
+                                <div className="rounded-xl bg-blue-50 p-3.5 text-blue-600 border border-blue-100">
+                                    <FileUp className="h-6 w-6" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 className="text-lg font-bold text-slate-800 tracking-tight">Kumpulkan Jawaban Kelompok</h3>
+                                        {isSubmitted && (
+                                            <div className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-55 bg-green-50 border border-green-200 px-3 py-1 rounded-full">
+                                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                                <span>Tugas Terkirim</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                                        Pengiriman hanya dapat dilakukan oleh Ketua Kelompok, dan hanya dapat dikirimkan satu kali.
+                                    </p>
+
+                                    {isSubmitted ? (
+                                        <div className="mt-6 space-y-4">
+                                            <div className="rounded-xl border border-green-200 bg-green-50/30 p-4">
+                                                <p className="text-xs font-bold text-green-800 mb-2">Berkas yang berhasil diunggah:</p>
+                                                <div className="space-y-2">
+                                                    {submittedFiles.map((file, idx) => (
+                                                        <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                                                            <FileText className="h-4 w-4 text-blue-500" />
+                                                            <span className="truncate">{file.split('/').pop()}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <Button
+                                                disabled
+                                                className="bg-green-600 font-bold text-white opacity-100 disabled:opacity-100 px-6 h-11 rounded-xl"
+                                            >
+                                                <CheckCircle2 className="mr-2 h-4 w-4" />
+                                                Tugas Telah Dikumpulkan
+                                            </Button>
+                                        </div>
+                                    ) : !isLeader ? (
+                                        <div className="mt-6 rounded-2xl border border-amber-100 bg-amber-50/30 p-6 text-center">
+                                            <Lock className="mx-auto mb-3 h-10 w-10 text-amber-500/40" />
+                                            <p className="text-sm font-bold text-amber-800">Hanya Ketua Kelompok yang Dapat Mengunggah</p>
+                                            <p className="mt-1 text-xs leading-relaxed text-amber-700/70 max-w-md mx-auto">
+                                                Anggota kelompok tidak memiliki wewenang untuk mengirimkan berkas investigasi ini. Silakan hubungi ketua kelompok Anda.
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <form onSubmit={handleSubmitSubmission} className="mt-6 space-y-4">
+                                            <div
+                                                onDragOver={(e) => {
+                                                    e.preventDefault();
+                                                    setIsDragging(true);
+                                                }}
+                                                onDragLeave={() => setIsDragging(false)}
+                                                onDrop={(e) => {
+                                                    e.preventDefault();
+                                                    setIsDragging(false);
+                                                    if (e.dataTransfer.files) {
+                                                        setData('files', [...data.files, ...Array.from(e.dataTransfer.files)]);
+                                                    }
+                                                }}
+                                                onClick={() => fileInputRef.current?.click()}
+                                                className={cn(
+                                                    "relative cursor-pointer rounded-2xl border-2 border-dashed p-8 transition-all duration-300",
+                                                    isDragging
+                                                        ? "border-blue-400 bg-blue-50/50 scale-[1.01]"
+                                                        : "border-slate-200 bg-slate-50/20 hover:border-blue-300 hover:bg-slate-50/50"
+                                                )}
+                                            >
+                                                <input
+                                                    type="file"
+                                                    id="file-upload"
+                                                    aria-label="Unggah berkas jawaban kelompok"
+                                                    ref={fileInputRef}
+                                                    onChange={handleFileChange}
+                                                    multiple
+                                                    accept=".pdf,.doc,.docx,.txt,.c"
+                                                    className="hidden"
+                                                />
+                                                <div className="text-center">
+                                                    <FileUp className="mx-auto mb-3 h-8 w-8 text-slate-400" />
+                                                    <p className="text-sm font-bold text-slate-700">
+                                                        Seret berkas di sini atau <span className="text-blue-600">pilih dari komputer</span>
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground mt-1">
+                                                        Mendukung format PDF, Word, Txt, atau kode sumber C.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {data.files.length > 0 && (
+                                                <div className="space-y-2">
+                                                    {data.files.map((file, idx) => (
+                                                        <div key={idx} className="flex items-center justify-between rounded-xl bg-slate-50 border border-slate-150 p-3 text-xs font-semibold text-slate-700">
+                                                            <div className="flex items-center gap-2 truncate">
+                                                                <FileText className="h-4 w-4 text-blue-500" />
+                                                                <span className="truncate">{file.name}</span>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                title="Hapus berkas"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    removeFile(idx);
+                                                                }}
+                                                                className="text-slate-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-slate-200 transition-colors"
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {Object.keys(errors).length > 0 && (
+                                                <div className="space-y-1">
+                                                    {Object.entries(errors).map(([key, error]) => (
+                                                        <p key={key} className="text-xs font-bold text-red-500">
+                                                            • {error}
+                                                        </p>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            <Button
+                                                type="submit"
+                                                disabled={processing || data.files.length === 0}
+                                                className="w-full bg-blue-600 font-bold text-white hover:bg-blue-700 h-12 rounded-xl shadow-lg shadow-blue-200/50 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                                            >
+                                                {processing ? (
+                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <FileUp className="mr-2 h-4 w-4" />
+                                                )}
+                                                Kirim Berkas Jawaban
+                                            </Button>
+                                        </form>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 }
