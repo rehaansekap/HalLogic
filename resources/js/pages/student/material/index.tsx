@@ -16,6 +16,8 @@ interface Material {
     difficulty_level: 'easy' | 'medium' | 'hard';
     video_url?: string;
     material_pdf?: string;
+    learning_objectives?: string[];
+    summary?: string;
     pre_reflection_questions?: string[];
     post_reflection_questions?: string[];
 }
@@ -123,13 +125,10 @@ export default function MaterialPage({
                             {/* Phase 1 */}
                             {activePhase === 1 && (
                                 <Phase1Orientation
-                                    materialId={material.id}
-                                    materialSlug={material.slug}
+                                    material={material}
                                     hasInitialReflection={!!initialReflection}
                                     initialReflectionText={initialReflection}
                                     groupExists={groupMembers.length > 0}
-                                    videoUrl={material.video_url}
-                                    questions={material.pre_reflection_questions}
                                 />
                             )}
 
