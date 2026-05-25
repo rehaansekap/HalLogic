@@ -38,8 +38,8 @@ export default function Phase1Orientation({
     const [activeTab, setActiveTab] = useState<'materi' | 'refleksi'>('materi');
     const [reflection, setReflection] = useState(initialReflectionText ?? '');
     const [answers, setAnswers] = useState<string[]>(
-        material.pre_reflection_questions && material.pre_reflection_questions.length > 0 
-            ? material.pre_reflection_questions.map(() => '') 
+        material.pre_reflection_questions && material.pre_reflection_questions.length > 0
+            ? material.pre_reflection_questions.map(() => '')
             : ['']
     );
 
@@ -87,7 +87,7 @@ export default function Phase1Orientation({
             animate="visible"
         >
             {/* Tabs Navigation */}
-            <motion.div 
+            <motion.div
                 className="flex gap-1.5 rounded-xl border border-(--palette-limelight)/20 bg-(--palette-limelight)/5 p-1 mb-8"
                 variants={itemVariants}
             >
@@ -229,7 +229,7 @@ export default function Phase1Orientation({
                                             <CheckCircleSolid className="h-6 w-6 text-(--palette-green)" />
                                         </h2>
                                         <p className="text-sm text-muted-foreground">
-                                            Refleksi Anda telah direkam, silakan lanjut ke fase berikutnya
+                                            Refleksi Kamu telah direkam, silakan lanjut ke fase berikutnya
                                         </p>
                                     </div>
                                 </div>
@@ -253,8 +253,8 @@ export default function Phase1Orientation({
                                     {parsedReflection ? (
                                         <div className="space-y-4">
                                             {parsedReflection.map((answer, index) => {
-                                                const questionText = material.pre_reflection_questions && material.pre_reflection_questions[index] 
-                                                    ? material.pre_reflection_questions[index] 
+                                                const questionText = material.pre_reflection_questions && material.pre_reflection_questions[index]
+                                                    ? material.pre_reflection_questions[index]
                                                     : `Pertanyaan ${index + 1}`;
                                                 return (
                                                     <div key={index} className="border-l-2 border-(--palette-green) pl-4 py-1">
@@ -275,10 +275,10 @@ export default function Phase1Orientation({
                                     <div className="rounded-lg border border-(--palette-limelight)/20 bg-(--palette-limelight)/10 p-4">
                                         <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
                                             <MapPinIcon className="h-4 w-4" />
-                                            Kelompok Anda Sudah Terbentuk
+                                            Kelompok Kamu Sudah Terbentuk
                                         </p>
                                         <p className="text-sm text-muted-foreground">
-                                            Guru telah membentuk kelompok Anda. Sekarang Anda dapat melanjutkan ke Fase 2 untuk mengatur peran kelompok!
+                                            Guru telah membentuk kelompok Kamu. Sekarang Kamu dapat melanjutkan ke Fase 2 untuk mengatur peran kelompok!
                                         </p>
                                     </div>
                                 ) : (
@@ -288,7 +288,7 @@ export default function Phase1Orientation({
                                             Menunggu Pembentukan Kelompok
                                         </p>
                                         <p className="text-sm text-muted-foreground">
-                                            Refleksi Anda disimpan! Guru akan membentuk kelompok dan Anda dapat melanjutkan ke fase berikutnya.
+                                            Refleksi Kamu disimpan! Guru akan membentuk kelompok dan Kamu dapat melanjutkan ke fase berikutnya.
                                         </p>
                                     </div>
                                 )}
@@ -305,7 +305,7 @@ export default function Phase1Orientation({
                                             Fase 1: Orientasi & Refleksi Awal
                                         </h2>
                                         <p className="text-muted-foreground">
-                                            Tuliskan pemikiran awal Anda tentang material ini sebelum memulai. Refleksi ini akan membantu Anda melihat perkembangan pemahaman seiring waktu.
+                                            Tuliskan pemikiran awal Kamu tentang material ini sebelum memulai. Refleksi ini akan membantu Kamu melihat perkembangan pemahaman seiring waktu.
                                         </p>
                                     </div>
                                 </div>
@@ -349,7 +349,7 @@ export default function Phase1Orientation({
                                                                     newAnswers[index] = e.target.value;
                                                                     setAnswers(newAnswers);
                                                                 }}
-                                                                placeholder="Tuliskan jawaban refleksi Anda..."
+                                                                placeholder="Tuliskan jawaban refleksi Kamu..."
                                                                 className="resize-vertical min-h-24 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
                                                                 required
                                                             />
@@ -363,13 +363,13 @@ export default function Phase1Orientation({
                                                 ) : (
                                                     <div className="space-y-2">
                                                         <label className="block text-sm font-semibold text-foreground">
-                                                            Refleksi Awal Anda <span className="text-red-500">*</span>
+                                                            Refleksi Awal Kamu <span className="text-red-500">*</span>
                                                         </label>
                                                         <textarea
                                                             name="reflection"
                                                             value={reflection}
                                                             onChange={(e) => setReflection(e.target.value)}
-                                                            placeholder="Tuliskan pemikiran dan harapan Anda mengenai material ini..."
+                                                            placeholder="Tuliskan pemikiran dan harapan Kamu mengenai material ini..."
                                                             className="resize-vertical min-h-50 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
                                                             required
                                                         />
@@ -390,11 +390,10 @@ export default function Phase1Orientation({
                                                             {answers.filter(ans => ans.trim().length >= 5).length} dari {material.pre_reflection_questions!.length} pertanyaan dijawab
                                                         </p>
                                                         <p
-                                                            className={`flex items-center gap-1 text-xs font-semibold ${
-                                                                answers.some(ans => ans.trim().length < 5)
-                                                                    ? 'text-red-500'
-                                                                    : 'text-(--palette-green)'
-                                                            }`}
+                                                            className={`flex items-center gap-1 text-xs font-semibold ${answers.some(ans => ans.trim().length < 5)
+                                                                ? 'text-red-500'
+                                                                : 'text-(--palette-green)'
+                                                                }`}
                                                         >
                                                             {answers.some(ans => ans.trim().length < 5) ? (
                                                                 <>
@@ -415,13 +414,12 @@ export default function Phase1Orientation({
                                                             {reflection.length} karakter
                                                         </p>
                                                         <p
-                                                            className={`flex items-center gap-1 text-xs font-semibold ${
-                                                                reflection.length < 50
-                                                                    ? 'text-red-500'
-                                                                    : reflection.length < 100
-                                                                      ? 'text-yellow-500'
-                                                                      : 'text-(--palette-green)'
-                                                            }`}
+                                                            className={`flex items-center gap-1 text-xs font-semibold ${reflection.length < 50
+                                                                ? 'text-red-500'
+                                                                : reflection.length < 100
+                                                                    ? 'text-yellow-500'
+                                                                    : 'text-(--palette-green)'
+                                                                }`}
                                                         >
                                                             {reflection.length < 50 ? (
                                                                 <>
@@ -446,10 +444,10 @@ export default function Phase1Orientation({
                                                     Tips Menulis Refleksi
                                                 </p>
                                                 <ul className="space-y-1 text-xs text-muted-foreground">
-                                                    <li>• Apa yang sudah Anda ketahui tentang topik ini?</li>
-                                                    <li>• Apa harapan Anda dari material ini?</li>
-                                                    <li>• Apa tantangan yang Anda antisipasi?</li>
-                                                    <li>• Bagaimana Anda akan mengukur keberhasilan?</li>
+                                                    <li>• Apa yang sudah Kamu ketahui tentang topik ini?</li>
+                                                    <li>• Apa harapan Kamu dari material ini?</li>
+                                                    <li>• Apa tantangan yang Kamu antisipasi?</li>
+                                                    <li>• Bagaimana Kamu akan mengukur keberhasilan?</li>
                                                 </ul>
                                             </div>
 

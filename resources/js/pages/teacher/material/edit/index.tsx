@@ -82,7 +82,7 @@ export default function EditMaterial({
                     await Swal.fire({
                         icon: 'success',
                         title: 'Material Berhasil Diperbarui!',
-                        text: 'Perubahan material Anda telah disimpan.',
+                        text: 'Perubahan material Kamu telah disimpan.',
                         confirmButtonColor: '#10b981', // --palette-green
                         customClass: {
                             popup: 'rounded-3xl border-none shadow-2xl',

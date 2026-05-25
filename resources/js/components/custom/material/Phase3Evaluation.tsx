@@ -74,7 +74,7 @@ export default function Phase3Evaluation({
                             Fase 3: Evaluasi & Refleksi
                         </h2>
                         <p className="text-muted-foreground">
-                            Berikan refleksi akhir Anda mengenai pembelajaran yang telah dilakukan
+                            Berikan refleksi akhir Kamu mengenai pembelajaran yang telah dilakukan
                         </p>
                     </div>
                 </div>
@@ -119,7 +119,7 @@ export default function Phase3Evaluation({
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Selamat!',
-                                text: 'Anda telah menyelesaikan seluruh fase pada materi ini.',
+                                text: 'Kamu telah menyelesaikan seluruh fase pada materi ini.',
                                 confirmButtonColor: '#10b981',
                                 customClass: {
                                     popup: 'rounded-3xl border-none shadow-2xl',
@@ -145,7 +145,7 @@ export default function Phase3Evaluation({
                                                     newAnswers[index] = e.target.value;
                                                     setAnswers(newAnswers);
                                                 }}
-                                                placeholder="Tuliskan jawaban refleksi Anda..."
+                                                placeholder="Tuliskan jawaban refleksi Kamu..."
                                                 className="resize-vertical min-h-24 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
                                                 required
                                             />
@@ -159,7 +159,7 @@ export default function Phase3Evaluation({
                                 ) : (
                                     <div className="space-y-2">
                                         <label className="block text-sm font-semibold text-foreground">
-                                            Refleksi Akhir Anda <span className="text-red-500">*</span>
+                                            Refleksi Akhir Kamu <span className="text-red-500">*</span>
                                         </label>
                                         <textarea
                                             name="final_reflection"
@@ -191,8 +191,8 @@ export default function Phase3Evaluation({
                                         (isQuestionsMode
                                             ? answers.some(ans => ans.trim().length < 5)
                                             : reflection.length < 50)
-                                                ? 'text-red-500 font-semibold'
-                                                : 'text-(--palette-green) font-semibold'
+                                            ? 'text-red-500 font-semibold'
+                                            : 'text-(--palette-green) font-semibold'
                                     }>
                                         {isQuestionsMode ? (
                                             answers.some(ans => ans.trim().length < 5)

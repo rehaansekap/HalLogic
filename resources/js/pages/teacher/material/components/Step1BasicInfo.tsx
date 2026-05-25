@@ -79,10 +79,10 @@ const AccordionSection = ({
         <motion.div
             className={cn(
                 "rounded-2xl border bg-white p-6 md:p-8 shadow-sm transition-all duration-300",
-                isOpen 
-                    ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5" 
-                    : hasError 
-                        ? "border-red-200 hover:border-red-300 bg-red-50/5" 
+                isOpen
+                    ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5"
+                    : hasError
+                        ? "border-red-200 hover:border-red-300 bg-red-50/5"
                         : "border-(--palette-limelight)/20 hover:border-(--palette-green)/20"
             )}
             variants={itemVariants}
@@ -95,8 +95,8 @@ const AccordionSection = ({
                 <div className="flex items-start gap-4 flex-1">
                     <div className={cn(
                         "rounded-xl border p-3.5 shadow-sm transition-colors",
-                        isOpen 
-                            ? "border-(--palette-green)/10 bg-(--palette-green)/8 text-(--palette-green)" 
+                        isOpen
+                            ? "border-(--palette-green)/10 bg-(--palette-green)/8 text-(--palette-green)"
                             : hasError
                                 ? "border-red-200 bg-red-50 text-red-500"
                                 : "border-(--palette-limelight)/20 bg-gray-50 text-muted-foreground group-hover:text-foreground"
@@ -312,7 +312,7 @@ export default function Step1BasicInfo({
                                     className={cn(
                                         'h-12 rounded-lg border-(--palette-limelight)/20 px-4 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
                                         getError('title') &&
-                                            'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                                     )}
                                     maxLength={255}
                                 />
@@ -348,7 +348,7 @@ export default function Step1BasicInfo({
                                     className={cn(
                                         'min-h-12 min-w-full rounded-lg border-(--palette-limelight)/20 px-4 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
                                         getError('classroom_id') &&
-                                            'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                                     )}
                                 >
                                     <SelectValue placeholder="Pilih kelas..." />
@@ -418,7 +418,7 @@ export default function Step1BasicInfo({
                             className={cn(
                                 'min-h-36 w-full resize-none rounded-lg border border-(--palette-limelight)/20 bg-white px-4 py-3 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
                                 getError('description') &&
-                                    'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                             )}
                             maxLength={5000}
                         />
@@ -451,7 +451,7 @@ export default function Step1BasicInfo({
                             className={cn(
                                 'min-h-32 w-full resize-none rounded-lg border border-(--palette-limelight)/20 bg-white px-4 py-3 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
                                 getError('summary') &&
-                                    'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                             )}
                             maxLength={2000}
                         />
@@ -473,7 +473,7 @@ export default function Step1BasicInfo({
             <AccordionSection
                 id="objectives"
                 title="Tujuan Pembelajaran"
-                description="Buat tujuan pembelajaran yang spesifik untuk material ini. Jumlahnya dapat disesuaikan dengan kebutuhan Anda secara dinamis."
+                description="Buat tujuan pembelajaran yang spesifik untuk material ini. Jumlahnya dapat disesuaikan dengan kebutuhan Kamu secara dinamis."
                 icon={Lightbulb}
                 isOpen={openSections.objectives}
                 onToggle={() => toggleSection('objectives')}
@@ -508,7 +508,7 @@ export default function Step1BasicInfo({
                                         className={cn(
                                             'h-12 rounded-lg border-(--palette-limelight)/20 px-4 pr-12 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
                                             getError('learning_objectives') && !objective.trim() &&
-                                                'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                            'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                                         )}
                                         maxLength={255}
                                     />
@@ -707,7 +707,7 @@ export default function Step1BasicInfo({
                                 className={cn(
                                     'h-12 rounded-lg border-(--palette-limelight)/20 pl-11 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
                                     getError('started_at') &&
-                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                    'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                                 )}
                             />
                             <Calendar className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
@@ -737,7 +737,7 @@ export default function Step1BasicInfo({
                                 className={cn(
                                     'h-12 rounded-lg border-(--palette-limelight)/20 pl-11 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
                                     getError('finished_at') &&
-                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                    'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                                 )}
                             />
                             <Calendar className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />

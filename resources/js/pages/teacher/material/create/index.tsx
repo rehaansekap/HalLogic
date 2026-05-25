@@ -41,7 +41,7 @@ export default function CreateMaterial({
                 await Swal.fire({
                     icon: 'success',
                     title: 'Material Berhasil Dibuat!',
-                    text: 'Material Anda telah disimpan dan siap digunakan oleh siswa.',
+                    text: 'Material Kamu telah disimpan dan siap digunakan oleh siswa.',
                     confirmButtonColor: '#10b981', // --palette-green
                     customClass: {
                         popup: 'rounded-3xl border-none shadow-2xl',
@@ -98,7 +98,7 @@ export default function CreateMaterial({
 
                 <PageHeader
                     title="Buat Material Baru"
-                    subtitle="Rancang pengalaman belajar yang interaktif untuk siswa Anda"
+                    subtitle="Rancang pengalaman belajar yang interaktif untuk siswa Kamu"
                     icon={<PlusCircle className="h-6 w-6" />}
                     role="teacher"
                     userName={user.name}

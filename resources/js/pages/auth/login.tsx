@@ -28,12 +28,12 @@ const features = [
     {
         icon: BookOpen,
         title: 'Materi Interaktif',
-        description: 'Pelajari konsep pemrograman lewat studi kasus nyata yang menantang.',
+        description: 'Pelajari konsep pemrograman melalui materi singkat, visual, dan mudah dipahami.',
     },
     {
         icon: Brain,
-        title: 'Refleksi Mendalam',
-        description: 'Kembangkan pemahaman dengan pertanyaan refleksi di setiap fase belajar.',
+        title: 'Refleksi Belajar',
+        description: 'Kembangkan pemahaman dengan pertanyaan reflektif di setiap fase belajar.',
     },
     {
         icon: Code2,
@@ -42,8 +42,8 @@ const features = [
     },
     {
         icon: GraduationCap,
-        title: 'Pantau Kemajuan',
-        description: 'Guru dapat memantau progres dan memberikan umpan balik real-time.',
+        title: 'Progress Belajar',
+        description: 'Pantau progres belajar dengan mudah dan dapatkan umpan balik.',
     },
 ];
 
@@ -144,8 +144,7 @@ export default function Login({ status, canResetPassword, canRegister }: Props) 
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4, duration: 0.6 }}
                         >
-                            Kuasai konsep logika pemrograman melalui pendekatan berbasis masalah yang
-                            terstruktur dan reflektif.
+                            Belajar logika pemrograman jadi lebih mudah lewat latihan interaktif, studi kasus nyata, dan pemecahan masalah.
                         </motion.p>
 
                         {/* Feature list */}
@@ -182,10 +181,9 @@ export default function Login({ status, canResetPassword, canRegister }: Props) 
                         transition={{ delay: 0.9, duration: 0.6 }}
                     >
                         <p className="text-sm italic text-muted-foreground">
-                            "Pendidikan bukan persiapan untuk kehidupan; pendidikan adalah kehidupan itu
-                            sendiri."
+                            "Programming isn’t about what you know, it’s about what you can figure out."
                         </p>
-                        <p className="mt-1 text-xs text-muted-foreground/70">— John Dewey</p>
+                        <p className="mt-1 text-xs text-muted-foreground/70">— Chris Pine</p>
                     </motion.div>
                 </motion.div>
 
@@ -212,7 +210,7 @@ export default function Login({ status, canResetPassword, canRegister }: Props) 
                             </div>
                             <h2 className="text-2xl font-bold text-gray-900">Selamat Datang Kembali!</h2>
                             <p className="mt-1 text-sm text-gray-500">
-                                Masuk dengan username atau email dan password Anda
+                                Masuk untuk melanjutkan perjalanan belajarmu di HalLogic
                             </p>
                         </div>
 
@@ -286,7 +284,7 @@ export default function Login({ status, canResetPassword, canRegister }: Props) 
                                                 required
                                                 tabIndex={2}
                                                 autoComplete="current-password"
-                                                placeholder="Masukkan password Anda"
+                                                placeholder="Masukkan password"
                                                 className="h-11 pl-10 focus-visible:ring-[var(--palette-green)]/30 focus-visible:ring-offset-0 focus-visible:border-[var(--palette-green)]"
                                             />
                                         </div>

@@ -626,7 +626,7 @@ export default function Step2Material({
                         <div className="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center bg-gray-50/50">
                             <Code2 className="mx-auto h-8 w-8 text-muted-foreground/30 mb-3" />
                             <p className="text-sm font-bold text-muted-foreground/50">Belum ada contoh program yang dibuat</p>
-                            <p className="text-xs text-muted-foreground/40 mt-1">Anda bisa menambahkan contoh-contoh program C sebagai materi referensi tambahan siswa.</p>
+                            <p className="text-xs text-muted-foreground/40 mt-1">Kamu bisa menambahkan contoh-contoh program C sebagai materi referensi tambahan siswa.</p>
                         </div>
                     )}
 
@@ -800,7 +800,7 @@ export default function Step2Material({
                         Tip Pembelajaran
                     </p>
                     <p className="text-muted-foreground">
-                        Tulis sub-materi yang padat dan mudah dipahami siswa langsung di dalam web. Anda dapat menyertakan kode program C beserta contoh output yang diharapkan dan narasi kasus pemecahan masalah agar siswa siap bereksperimen di compiler.
+                        Tulis sub-materi yang padat dan mudah dipahami siswa langsung di dalam web. Kamu dapat menyertakan kode program C beserta contoh output yang diharapkan dan narasi kasus pemecahan masalah agar siswa siap bereksperimen di compiler.
                     </p>
                 </div>
             </motion.div>

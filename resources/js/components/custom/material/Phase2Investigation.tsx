@@ -92,13 +92,13 @@ export default function Phase2Investigation({
     const [expandedExampleIndices, setExpandedExampleIndices] = useState<number[]>([0]);
 
     const toggleSubIndex = (index: number) => {
-        setExpandedSubIndices(prev => 
+        setExpandedSubIndices(prev =>
             prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
         );
     };
 
     const toggleExampleIndex = (index: number) => {
-        setExpandedExampleIndices(prev => 
+        setExpandedExampleIndices(prev =>
             prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
         );
     };
@@ -153,7 +153,7 @@ int main() {
                 }
                 outputResult += `----------------------------------------\n\n`;
             }
-            
+
             if (data.compile_output) {
                 outputResult += `[Compilation Output]\n${data.compile_output}\n\n`;
             }
@@ -165,7 +165,7 @@ int main() {
             if (data.stdout) {
                 outputResult += `${data.stdout}\n`;
             }
-            
+
             if (!data.compile_output && !data.stderr && !data.stdout) {
                 outputResult += data.error || 'Tidak ada output dari program.';
             }
@@ -246,7 +246,7 @@ int main() {
 
         MySwal.fire({
             title: 'Konfirmasi Pengumpulan',
-            text: 'Apakah Anda yakin ingin mengumpulkan berkas ini? Pengumpulan hanya dapat dilakukan satu kali.',
+            text: 'Apakah Kamu yakin ingin mengumpulkan berkas ini? Pengumpulan hanya dapat dilakukan satu kali.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -314,7 +314,7 @@ int main() {
             animate="visible"
         >
             {/* Tab Navigation Menu */}
-            <motion.div 
+            <motion.div
                 className="flex flex-wrap md:flex-nowrap gap-1.5 rounded-xl border border-(--palette-limelight)/20 bg-(--palette-limelight)/5 p-1 mb-6"
                 variants={itemVariants}
             >
@@ -606,9 +606,9 @@ int main() {
                                                     <div className="space-y-4 flex flex-col">
                                                         <div className="rounded-xl border border-slate-150 p-4 bg-slate-50 shadow-sm flex-1">
                                                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Penjelasan Kode</h4>
-                                                            <div 
+                                                            <div
                                                                 className="text-sm text-slate-700 leading-relaxed max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1 [&_p]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2 [&_strong]:text-slate-900"
-                                                                dangerouslySetInnerHTML={{ __html: ex.explanation }} 
+                                                                dangerouslySetInnerHTML={{ __html: ex.explanation }}
                                                             />
                                                         </div>
 
@@ -650,7 +650,7 @@ int main() {
                                 <div className="flex items-center gap-2">
                                     <Code2 className="h-4 w-4 text-(--palette-green)" />
                                     <span className="font-bold text-foreground text-sm tracking-tight">
-                                        Editor C Misi Anda
+                                        Editor C Misi Kamu
                                     </span>
                                 </div>
                                 <div className="flex gap-2">
@@ -721,7 +721,7 @@ int main() {
                                 <textarea
                                     value={stdin}
                                     onChange={(e) => setStdin(e.target.value)}
-                                    placeholder="Masukkan input data di sini jika program Anda menggunakan input (scanf, gets, dsb)..."
+                                    placeholder="Masukkan input data di sini jika program Kamu menggunakan input (scanf, gets, dsb)..."
                                     className="w-full min-h-24 rounded-xl border border-slate-200 p-4 text-sm font-mono focus:border-(--palette-green) focus:outline-none focus:ring-2 focus:ring-(--palette-green)/10 bg-slate-50/20"
                                 />
                             </div>
@@ -736,7 +736,7 @@ int main() {
                                 </span>
                             </div>
                             <pre className="overflow-auto bg-slate-950 p-6 font-mono text-sm text-emerald-400 min-h-32 max-h-80 leading-relaxed shadow-inner">
-                                {codeOutput || 'Output program Anda akan dimunculkan di sini setelah dieksekusi.'}
+                                {codeOutput || 'Output program Kamu akan dimunculkan di sini setelah dieksekusi.'}
                             </pre>
                         </div>
                     </motion.div>
@@ -760,7 +760,7 @@ int main() {
                                 <div className="flex-1 min-w-0">
                                     <h3 className="text-lg font-bold text-slate-800 tracking-tight">Unduh Lembar Kerja Peserta Didik (LKPD)</h3>
                                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                                        Unduh berkas LKPD PDF berikut, diskusikan di dalam kelompok Anda, selesaikan tugas pemrograman yang diinstruksikan, kemudian unggah jawaban Anda di formulir bawah.
+                                        Unduh berkas LKPD PDF berikut, diskusikan di dalam kelompok Kamu, selesaikan tugas pemrograman yang diinstruksikan, kemudian unggah jawaban Kamu di formulir bawah.
                                     </p>
                                     {material.material_pdf ? (
                                         <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-150">
@@ -837,7 +837,7 @@ int main() {
                                             <Lock className="mx-auto mb-3 h-10 w-10 text-amber-500/40" />
                                             <p className="text-sm font-bold text-amber-800">Hanya Ketua Kelompok yang Dapat Mengunggah</p>
                                             <p className="mt-1 text-xs leading-relaxed text-amber-700/70 max-w-md mx-auto">
-                                                Anggota kelompok tidak memiliki wewenang untuk mengirimkan berkas investigasi ini. Silakan hubungi ketua kelompok Anda.
+                                                Anggota kelompok tidak memiliki wewenang untuk mengirimkan berkas investigasi ini. Silakan hubungi ketua kelompok Kamu.
                                             </p>
                                         </div>
                                     ) : (
