@@ -29,6 +29,8 @@ class Material extends Model
         'simulator_config',
         'summary',
         'learning_objectives',
+        'pre_reflection_questions',
+        'post_reflection_questions',
     ];
 
     protected $casts = [
@@ -36,6 +38,8 @@ class Material extends Model
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
         'learning_objectives' => 'array',
+        'pre_reflection_questions' => 'array',
+        'post_reflection_questions' => 'array',
     ];
 
     public function teacher(): BelongsTo

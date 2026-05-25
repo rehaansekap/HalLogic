@@ -11,6 +11,7 @@ import {
     MessageSquare,
     Play,
     Users,
+    ClipboardList,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -98,7 +99,7 @@ const InfoRow = ({
     </div>
 );
 
-interface Step3ReviewProps {
+interface Step4ReviewProps {
     formData: MaterialFormData;
     classrooms: Classroom[];
     prerequisites: MaterialOption[];
@@ -106,13 +107,13 @@ interface Step3ReviewProps {
     onEditStep: (step: number) => void;
 }
 
-export default function Step3Review({
+export default function Step4Review({
     formData,
     classrooms,
     prerequisites,
     difficultyLevels,
     onEditStep,
-}: Step3ReviewProps) {
+}: Step4ReviewProps) {
     const classroomName =
         classrooms.find((c) => c.id === formData.classroom_id)?.name ||
         'Tidak terpilih';
@@ -122,6 +123,10 @@ export default function Step3Review({
     const prerequisiteTitle =
         prerequisites.find((p) => p.id === formData.prerequisite_material_id)
             ?.title || 'Tidak Ada';
+
+    const hasReflections = 
+        (formData.pre_reflection_questions && formData.pre_reflection_questions.length > 0) ||
+        (formData.post_reflection_questions && formData.post_reflection_questions.length > 0);
 
     return (
         <motion.div
@@ -135,7 +140,7 @@ export default function Step3Review({
                 variants={itemVariants}
             >
                 <div className="grid grid-cols-1 gap-8">
-                {/* Basic Info Section */}
+                    {/* Basic Info Section */}
                     <ReviewSection
                         icon={Info}
                         title="Informasi Dasar"
@@ -207,7 +212,7 @@ export default function Step3Review({
                         </div>
                     </ReviewSection>
 
-                {/* Learning Resources Section */}
+                    {/* Learning Resources Section */}
                     <ReviewSection
                         icon={BookOpen}
                         title="Sumber Pembelajaran"
@@ -263,6 +268,66 @@ export default function Step3Review({
                                 </div>
                             </div>
                         </div>
+                    </ReviewSection>
+
+                    {/* Reflections Section (NEW) */}
+                    <ReviewSection
+                        icon={MessageSquare}
+                        title="Refleksi Pembelajaran"
+                        step={3}
+                        onEditStep={onEditStep}
+                    >
+                        {hasReflections ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {/* Refleksi Awal */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2 font-bold text-sm text-foreground">
+                                        <MessageSquare className="h-4 w-4 text-(--palette-green)" />
+                                        <span>Refleksi Awal ({formData.pre_reflection_questions?.length || 0})</span>
+                                    </div>
+                                    {formData.pre_reflection_questions && formData.pre_reflection_questions.length > 0 ? (
+                                        <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10">
+                                            {formData.pre_reflection_questions.map((question, idx) => (
+                                                <div key={idx} className="flex gap-2 text-sm font-semibold text-foreground">
+                                                    <span className="text-(--palette-green) font-bold shrink-0">{idx + 1}.</span>
+                                                    <p className="leading-relaxed">{question}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm font-semibold text-muted-foreground/45 italic pl-6">
+                                            Tidak ada pertanyaan refleksi awal yang dikonfigurasi
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Refleksi Akhir */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2 font-bold text-sm text-foreground">
+                                        <ClipboardList className="h-4 w-4 text-(--palette-green)" />
+                                        <span>Refleksi Akhir ({formData.post_reflection_questions?.length || 0})</span>
+                                    </div>
+                                    {formData.post_reflection_questions && formData.post_reflection_questions.length > 0 ? (
+                                        <div className="space-y-2 bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10">
+                                            {formData.post_reflection_questions.map((question, idx) => (
+                                                <div key={idx} className="flex gap-2 text-sm font-semibold text-foreground">
+                                                    <span className="text-(--palette-green) font-bold shrink-0">{idx + 1}.</span>
+                                                    <p className="leading-relaxed">{question}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm font-semibold text-muted-foreground/45 italic pl-6">
+                                            Tidak ada pertanyaan refleksi akhir yang dikonfigurasi
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <p className="text-sm font-semibold text-muted-foreground/40 italic">
+                                Tidak ada pertanyaan refleksi yang dikonfigurasi
+                            </p>
+                        )}
                     </ReviewSection>
                 </div>
             </motion.div>

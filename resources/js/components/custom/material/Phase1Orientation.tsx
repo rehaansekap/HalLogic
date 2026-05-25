@@ -19,6 +19,7 @@ interface Phase1OrientationProps {
     groupExists: boolean;
     videoUrl?: string | null;
     materialId?: number;
+    questions?: string[];
 }
 
 export default function Phase1Orientation({
@@ -27,8 +28,27 @@ export default function Phase1Orientation({
     initialReflectionText = '',
     groupExists,
     videoUrl,
+    questions = [],
 }: Phase1OrientationProps) {
     const [reflection, setReflection] = useState(initialReflectionText ?? '');
+    const [answers, setAnswers] = useState<string[]>(
+        questions && questions.length > 0 ? questions.map(() => '') : ['']
+    );
+
+    const parsedReflection = (() => {
+        if (!initialReflectionText) return null;
+        try {
+            const parsed = JSON.parse(initialReflectionText);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+        } catch (e) {
+            // fallback to string
+        }
+        return null;
+    })();
+
+    const isQuestionsMode = questions && questions.length > 0;
 
     const embedUrl = videoUrl ? (() => {
         const match = videoUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
@@ -98,12 +118,26 @@ export default function Phase1Orientation({
                 )}
 
                 <motion.div
-                    className="mb-6 rounded-lg border border-(--palette-green)/20 bg-(--palette-green)/10 p-4"
+                    className="mb-6 rounded-lg border border-(--palette-green)/20 bg-(--palette-green)/10 p-5 space-y-4"
                     variants={itemVariants}
                 >
-                    <p className="leading-relaxed text-foreground">
-                        {initialReflectionText}
-                    </p>
+                    {parsedReflection ? (
+                        <div className="space-y-4">
+                            {parsedReflection.map((answer, index) => {
+                                const questionText = questions && questions[index] ? questions[index] : `Pertanyaan ${index + 1}`;
+                                return (
+                                    <div key={index} className="border-l-2 border-(--palette-green) pl-4 py-1">
+                                        <p className="text-xs font-bold text-muted-foreground/80 mb-1">{questionText}</p>
+                                        <p className="text-sm font-semibold text-foreground leading-relaxed">{answer}</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="leading-relaxed text-foreground font-semibold">
+                            {initialReflectionText}
+                        </p>
+                    )}
                 </motion.div>
 
                 {groupExists ? (
@@ -199,54 +233,112 @@ export default function Phase1Orientation({
                         animate="visible"
                     >
                         {/* Text Area */}
-                        <motion.div variants={itemVariants}>
-                            <label className="mb-3 block text-sm font-semibold text-foreground">
-                                Refleksi Awal Anda *
-                            </label>
-                            <textarea
-                                name="reflection"
-                                value={reflection}
-                                onChange={(e) => setReflection(e.target.value)}
-                                placeholder="Tuliskan pemikiran dan harapan Anda mengenai material ini..."
-                                className="resize-vertical min-h-50 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
-                                required
-                            />
-                            {errors.reflection && (
-                                <p className="mt-2 text-sm text-red-500">
-                                    {errors.reflection}
-                                </p>
+                        <motion.div variants={itemVariants} className="space-y-6">
+                            {isQuestionsMode ? (
+                                questions.map((qText, index) => (
+                                    <div key={index} className="space-y-2">
+                                        <label className="block text-sm font-semibold text-foreground leading-relaxed">
+                                            {index + 1}. {qText} <span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            name={`reflection[${index}]`}
+                                            value={answers[index] || ''}
+                                            onChange={(e) => {
+                                                const newAnswers = [...answers];
+                                                newAnswers[index] = e.target.value;
+                                                setAnswers(newAnswers);
+                                            }}
+                                            placeholder="Tuliskan jawaban refleksi Anda..."
+                                            className="resize-vertical min-h-24 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
+                                            required
+                                        />
+                                        {errors[`reflection.${index}`] && (
+                                            <p className="mt-1 text-xs font-semibold text-red-500">
+                                                {errors[`reflection.${index}`]}
+                                            </p>
+                                        )}
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-semibold text-foreground">
+                                        Refleksi Awal Anda <span className="text-red-500">*</span>
+                                    </label>
+                                    <textarea
+                                        name="reflection"
+                                        value={reflection}
+                                        onChange={(e) => setReflection(e.target.value)}
+                                        placeholder="Tuliskan pemikiran dan harapan Anda mengenai material ini..."
+                                        className="resize-vertical min-h-50 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
+                                        required
+                                    />
+                                    {errors.reflection && (
+                                        <p className="mt-2 text-sm text-red-500">
+                                            {errors.reflection}
+                                        </p>
+                                    )}
+                                </div>
                             )}
                         </motion.div>
 
-                        {/* Character Count */}
+                        {/* Character/Question Status */}
                         <motion.div
                             className="flex items-center justify-between"
                             variants={itemVariants}
                         >
-                            <p className="text-xs text-muted-foreground">
-                                {reflection.length} karakter
-                            </p>
-                            <p
-                                className={`flex items-center gap-1 text-xs font-semibold ${
-                                    reflection.length < 50
-                                        ? 'text-red-500'
-                                        : reflection.length < 100
-                                          ? 'text-yellow-500'
-                                          : 'text-(--palette-green)'
-                                }`}
-                            >
-                                {reflection.length < 50 ? (
-                                    <>
-                                        <PencilIcon className="h-3.5 w-3.5" />
-                                        Minimal 50 karakter
-                                    </>
-                                ) : (
-                                    <>
-                                        <CheckCircleIcon className="h-3.5 w-3.5" />
-                                        {reflection.length < 100 ? 'Baik' : 'Lengkap'}
-                                    </>
-                                )}
-                            </p>
+                            {isQuestionsMode ? (
+                                <>
+                                    <p className="text-xs text-muted-foreground">
+                                        {answers.filter(ans => ans.trim().length >= 5).length} dari {questions.length} pertanyaan dijawab
+                                    </p>
+                                    <p
+                                        className={`flex items-center gap-1 text-xs font-semibold ${
+                                            answers.some(ans => ans.trim().length < 5)
+                                                ? 'text-red-500'
+                                                : 'text-(--palette-green)'
+                                        }`}
+                                    >
+                                        {answers.some(ans => ans.trim().length < 5) ? (
+                                            <>
+                                                <PencilIcon className="h-3.5 w-3.5" />
+                                                Setiap jawaban minimal 5 karakter
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircleIcon className="h-3.5 w-3.5" />
+                                                Semua pertanyaan terisi
+                                            </>
+                                        )}
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="text-xs text-muted-foreground">
+                                        {reflection.length} karakter
+                                    </p>
+                                    <p
+                                        className={`flex items-center gap-1 text-xs font-semibold ${
+                                            reflection.length < 50
+                                                ? 'text-red-500'
+                                                : reflection.length < 100
+                                                  ? 'text-yellow-500'
+                                                  : 'text-(--palette-green)'
+                                        }`}
+                                    >
+                                        {reflection.length < 50 ? (
+                                            <>
+                                                <PencilIcon className="h-3.5 w-3.5" />
+                                                Minimal 50 karakter
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircleIcon className="h-3.5 w-3.5" />
+                                                {reflection.length < 100 ? 'Baik' : 'Lengkap'}
+                                            </>
+                                        )}
+                                    </p>
+                                </>
+                            )}
                         </motion.div>
 
                         {/* Tips */}
@@ -280,8 +372,10 @@ export default function Phase1Orientation({
                                 type="submit"
                                 disabled={
                                     processing ||
-                                    reflection.length < 50 ||
-                                    wasSuccessful
+                                    wasSuccessful ||
+                                    (isQuestionsMode
+                                        ? answers.some((ans) => ans.trim().length < 5)
+                                        : reflection.length < 50)
                                 }
                                 className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-3 font-semibold transition-all ${
                                     wasSuccessful

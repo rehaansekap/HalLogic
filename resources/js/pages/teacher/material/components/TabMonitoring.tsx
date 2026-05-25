@@ -17,6 +17,7 @@ import EmptyState from '@/components/custom/common/EmptyState';
 import { Button } from '@/components/ui/button';
 
 import SubmissionDetailModal from './SubmissionDetailModal';
+import ReflectionDetailModal from './ReflectionDetailModal';
 
 interface GroupMember {
     id: number;
@@ -78,6 +79,8 @@ interface AllReflection {
 interface TabMonitoringProps {
     groupsMonitoring: MonitoringGroup[];
     allReflections: AllReflection[];
+    preQuestions?: string[];
+    postQuestions?: string[];
 }
 
 const statusConfig: Record<
@@ -109,10 +112,19 @@ const stepLabels = ['Orientasi', 'Investigasi', 'Presentasi'];
 export default function TabMonitoring({
     groupsMonitoring,
     allReflections,
+    preQuestions = [],
+    postQuestions = [],
 }: TabMonitoringProps) {
     const [selectedGroup, setSelectedGroup] = useState<MonitoringGroup | null>(
         null,
     );
+    const [selectedReflection, setSelectedReflection] = useState<{
+        studentName: string;
+        reflectionType: 'pre' | 'post';
+        questions: string[];
+        answerText: string | null;
+        submittedAt?: string | null;
+    } | null>(null);
 
     const openSubmission = useCallback((group: MonitoringGroup) => {
         setSelectedGroup(group);
@@ -139,46 +151,67 @@ export default function TabMonitoring({
     const initialReflections = allReflections.filter((r) => r.type === 'initial');
     const finalReflections = allReflections.filter((r) => r.type === 'final');
 
-    const renderReflectionList = (reflections: AllReflection[], delayOffset: number) => (
-        <div className="space-y-3 p-4">
-            {reflections.length > 0 ? (
-                reflections.map((reflection, idx) => (
-                    <motion.div
-                        key={idx}
-                        className="rounded-lg border border-(--palette-limelight)/10 p-3 hover:bg-(--palette-limelight)/5 transition-colors"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: delayOffset + idx * 0.03 }}
-                    >
-                        <div className="mb-1.5 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-(--palette-green)/10 text-[10px] font-bold text-(--palette-green)">
+    const renderReflectionList = (
+        reflections: AllReflection[],
+        type: 'pre' | 'post',
+        questions: string[],
+        delayOffset: number
+    ) => (
+        <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/10 bg-white">
+            <div className="min-w-full divide-y divide-gray-150">
+                {reflections.length > 0 ? (
+                    reflections.map((reflection, idx) => (
+                        <motion.div
+                            key={idx}
+                            className="flex items-center justify-between p-4 hover:bg-gray-50/50 transition-colors"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: delayOffset + idx * 0.03 }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-(--palette-green)/10 text-xs font-extrabold text-(--palette-green) border border-(--palette-green)/10">
                                     {reflection.user_name.charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-sm font-semibold text-foreground">
-                                    {reflection.user_name}
-                                </span>
-                                {reflection.group_name && (
-                                    <span className="rounded-full bg-(--palette-limelight)/10 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                                        {reflection.group_name}
-                                    </span>
-                                )}
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-bold text-foreground">
+                                            {reflection.user_name}
+                                        </span>
+                                        {reflection.group_name && (
+                                            <span className="rounded-full bg-(--palette-limelight)/10 px-2 py-0.5 text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+                                                {reflection.group_name}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-1.5 mt-0.5 text-[10px] font-medium text-muted-foreground">
+                                        <Clock className="h-3 w-3 opacity-60" />
+                                        <span>Dikirim: {new Date(reflection.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                                <Clock className="h-3 w-3" />
-                                {new Date(reflection.created_at).toLocaleDateString('id-ID')}
-                            </div>
-                        </div>
-                        <p className="text-sm leading-relaxed text-muted-foreground">
-                            {reflection.content}
-                        </p>
-                    </motion.div>
-                ))
-            ) : (
-                <div className="py-8 text-center text-sm text-muted-foreground italic">
-                    Belum ada refleksi untuk kategori ini.
-                </div>
-            )}
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-9 px-4 text-xs font-bold border-(--palette-green)/20 text-(--palette-green) bg-(--palette-green)/5 hover:bg-(--palette-green)/10 hover:text-(--palette-green) rounded-xl transition-all"
+                                onClick={() => setSelectedReflection({
+                                    studentName: reflection.user_name,
+                                    reflectionType: type,
+                                    questions,
+                                    answerText: reflection.content,
+                                    submittedAt: reflection.created_at,
+                                })}
+                            >
+                                <Eye className="mr-1.5 h-3.5 w-3.5" />
+                                Detail
+                            </Button>
+                        </motion.div>
+                    ))
+                ) : (
+                    <div className="py-12 text-center text-sm text-muted-foreground italic font-semibold">
+                        Belum ada refleksi untuk kategori ini.
+                    </div>
+                )}
+            </div>
         </div>
     );
 
@@ -369,8 +402,8 @@ export default function TabMonitoring({
                                 exit={{ height: 0, opacity: 0 }}
                                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                             >
-                                <div className="max-h-80 overflow-y-auto border-t border-(--palette-limelight)/10">
-                                    {renderReflectionList(initialReflections, 0.5)}
+                                <div className="max-h-80 overflow-y-auto border-t border-(--palette-limelight)/10 p-4">
+                                    {renderReflectionList(initialReflections, 'pre', preQuestions, 0.5)}
                                 </div>
                             </motion.div>
                         )}
@@ -408,8 +441,8 @@ export default function TabMonitoring({
                                 exit={{ height: 0, opacity: 0 }}
                                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                             >
-                                <div className="max-h-80 overflow-y-auto border-t border-(--palette-limelight)/10">
-                                    {renderReflectionList(finalReflections, 0.5)}
+                                <div className="max-h-80 overflow-y-auto border-t border-(--palette-limelight)/10 p-4">
+                                    {renderReflectionList(finalReflections, 'post', postQuestions, 0.5)}
                                 </div>
                             </motion.div>
                         )}
@@ -427,6 +460,19 @@ export default function TabMonitoring({
                     submission={selectedGroup.submission}
                     existingGrade={selectedGroup.grade}
                     submissionId={selectedGroup.submission_id}
+                />
+            )}
+
+            {/* Reflection Detail Modal */}
+            {selectedReflection && (
+                <ReflectionDetailModal
+                    isOpen={!!selectedReflection}
+                    onClose={() => setSelectedReflection(null)}
+                    studentName={selectedReflection.studentName}
+                    reflectionType={selectedReflection.reflectionType}
+                    questions={selectedReflection.questions}
+                    answerText={selectedReflection.answerText}
+                    submittedAt={selectedReflection.submittedAt}
                 />
             )}
         </motion.div>

@@ -20,24 +20,28 @@ class ReflectionService
     /**
      * Save or update user reflection
      */
-    public function saveReflection(int $userId, int $materialId, string $content): void
+    public function saveReflection(int $userId, int $materialId, array|string $content): void
     {
+        $contentStr = is_array($content) ? json_encode($content) : $content;
+
         Reflection::updateOrCreate(
             ['user_id' => $userId, 'material_id' => $materialId, 'type' => 'initial'],
-            ['content' => $content]
+            ['content' => $contentStr]
         );
     }
 
     /**
      * Save final reflection
      */
-    public function saveFinalReflection(int $userId, int $materialId, string $content): void
+    public function saveFinalReflection(int $userId, int $materialId, array|string $content): void
     {
+        $contentStr = is_array($content) ? json_encode($content) : $content;
+
         Reflection::create([
             'user_id' => $userId,
             'material_id' => $materialId,
             'type' => 'final',
-            'content' => $content,
+            'content' => $contentStr,
         ]);
     }
 }

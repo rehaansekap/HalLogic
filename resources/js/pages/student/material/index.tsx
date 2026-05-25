@@ -16,6 +16,8 @@ interface Material {
     difficulty_level: 'easy' | 'medium' | 'hard';
     video_url?: string;
     material_pdf?: string;
+    pre_reflection_questions?: string[];
+    post_reflection_questions?: string[];
 }
 
 interface GroupMember {
@@ -127,6 +129,7 @@ export default function MaterialPage({
                                     initialReflectionText={initialReflection}
                                     groupExists={groupMembers.length > 0}
                                     videoUrl={material.video_url}
+                                    questions={material.pre_reflection_questions}
                                 />
                             )}
 
@@ -143,6 +146,7 @@ export default function MaterialPage({
                                 <Phase3Evaluation
                                     materialSlug={material.slug}
                                     finalReflection={finalReflection}
+                                    questions={material.post_reflection_questions}
                                 />
                             )}
 

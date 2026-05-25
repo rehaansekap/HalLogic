@@ -39,6 +39,8 @@ return new class extends Migration
             $table->json('simulator_config')->nullable();
             $table->text('summary')->nullable();
             $table->json('learning_objectives')->nullable();
+            $table->json('pre_reflection_questions')->nullable();
+            $table->json('post_reflection_questions')->nullable();
 
             $table->timestamps();
         });

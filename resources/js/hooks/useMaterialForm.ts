@@ -14,6 +14,8 @@ export interface MaterialFormData {
     material_pdf_existing?: string; // For edit mode - existing file path
     summary: string;
     learning_objectives: string[];
+    pre_reflection_questions: string[];
+    post_reflection_questions: string[];
 }
 
 export interface FormErrors {
@@ -38,6 +40,8 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
         learning_objectives: (initialData?.learning_objectives && initialData.learning_objectives.length > 0)
             ? initialData.learning_objectives
             : [''],
+        pre_reflection_questions: initialData?.pre_reflection_questions ?? [],
+        post_reflection_questions: initialData?.post_reflection_questions ?? [],
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
@@ -131,6 +135,29 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
             ) {
                 newErrors.case_narrative = ['Narasi maksimal 1000 karakter'];
             }
+        } else if (step === 3) {
+            if (formData.pre_reflection_questions && formData.pre_reflection_questions.length > 0) {
+                const emptyPre = formData.pre_reflection_questions.findIndex(q => !q.trim());
+                if (emptyPre !== -1) {
+                    newErrors.pre_reflection_questions = ['Pertanyaan refleksi awal tidak boleh kosong'];
+                } else {
+                    const longPre = formData.pre_reflection_questions.findIndex(q => q.length > 255);
+                    if (longPre !== -1) {
+                        newErrors.pre_reflection_questions = ['Pertanyaan refleksi awal maksimal 255 karakter'];
+                    }
+                }
+            }
+            if (formData.post_reflection_questions && formData.post_reflection_questions.length > 0) {
+                const emptyPost = formData.post_reflection_questions.findIndex(q => !q.trim());
+                if (emptyPost !== -1) {
+                    newErrors.post_reflection_questions = ['Pertanyaan refleksi akhir tidak boleh kosong'];
+                } else {
+                    const longPost = formData.post_reflection_questions.findIndex(q => q.length > 255);
+                    if (longPost !== -1) {
+                        newErrors.post_reflection_questions = ['Pertanyaan refleksi akhir maksimal 255 karakter'];
+                    }
+                }
+            }
         }
 
         setErrors(newErrors);
@@ -144,7 +171,7 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
 
     const nextStep = (): boolean => {
         if (validateStep(currentStep)) {
-            setCurrentStep((prev) => Math.min(prev + 1, 3));
+            setCurrentStep((prev) => Math.min(prev + 1, 4));
             return true;
         }
         return false;

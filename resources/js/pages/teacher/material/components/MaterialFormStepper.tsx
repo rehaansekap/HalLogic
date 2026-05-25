@@ -7,6 +7,7 @@ import {
     Info,
     Layers,
     Save,
+    MessageSquare,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,8 @@ import { cn } from '@/lib/utils';
 
 import Step1BasicInfo from './Step1BasicInfo';
 import Step2Material from './Step2Material';
-import Step3Review from './Step3Review';
+import Step3Reflections from './Step3Reflections';
+import Step4Review from './Step4Review';
 
 export interface Classroom {
     id: number;
@@ -90,7 +92,8 @@ export default function MaterialFormStepper({
     const steps = [
         { number: 1, title: 'Informasi Dasar', icon: Info },
         { number: 2, title: 'Materi Pembelajaran', icon: BookOpen },
-        { number: 3, title: 'Review & Simpan', icon: Layers },
+        { number: 3, title: 'Refleksi Pembelajaran', icon: MessageSquare },
+        { number: 4, title: 'Review & Simpan', icon: Layers },
     ];
 
     return (
@@ -212,7 +215,15 @@ export default function MaterialFormStepper({
                             )}
 
                             {currentStep === 3 && (
-                                <Step3Review
+                                <Step3Reflections
+                                    formData={formData}
+                                    errors={errors}
+                                    setFieldValue={setFieldValue}
+                                />
+                            )}
+
+                            {currentStep === 4 && (
+                                <Step4Review
                                     formData={formData}
                                     classrooms={classrooms}
                                     prerequisites={prerequisites}
@@ -234,7 +245,7 @@ export default function MaterialFormStepper({
                                 </Button>
 
                                 <div className="sm:ml-auto w-full sm:w-auto">
-                                    {currentStep < 3 ? (
+                                    {currentStep < 4 ? (
                                         <Button
                                             onClick={handleNextStep}
                                             disabled={isSubmitting}

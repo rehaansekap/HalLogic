@@ -34,6 +34,10 @@ class StoreMaterialRequest extends FormRequest
             'summary' => ['required', 'string', 'max:2000'],
             'learning_objectives' => ['required', 'array', 'min:1'],
             'learning_objectives.*' => ['required', 'string', 'max:255'],
+            'pre_reflection_questions' => ['nullable', 'array'],
+            'pre_reflection_questions.*' => ['required', 'string', 'max:255'],
+            'post_reflection_questions' => ['nullable', 'array'],
+            'post_reflection_questions.*' => ['required', 'string', 'max:255'],
         ];
     }
 

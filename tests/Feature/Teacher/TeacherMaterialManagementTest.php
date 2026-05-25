@@ -46,6 +46,14 @@ class TeacherMaterialManagementTest extends TestCase
                 'Understand logical gerbang AND',
                 'Design a basic circuit logic diagram',
             ],
+            'pre_reflection_questions' => [
+                'Apa yang kamu ketahui tentang gerbang logika?',
+                'Bagaimana kamu menguji kebenaran sirkuit?',
+            ],
+            'post_reflection_questions' => [
+                'Hambatan apa yang kamu temukan?',
+                'Bagaimana cara kamu mengatasinya?',
+            ],
             'started_at' => now()->format('Y-m-d'),
             'finished_at' => now()->addDays(7)->format('Y-m-d'),
         ];
@@ -67,6 +75,14 @@ class TeacherMaterialManagementTest extends TestCase
             'Understand logical gerbang AND',
             'Design a basic circuit logic diagram',
         ], $material->learning_objectives);
+        $this->assertEquals([
+            'Apa yang kamu ketahui tentang gerbang logika?',
+            'Bagaimana kamu menguji kebenaran sirkuit?',
+        ], $material->pre_reflection_questions);
+        $this->assertEquals([
+            'Hambatan apa yang kamu temukan?',
+            'Bagaimana cara kamu mengatasinya?',
+        ], $material->post_reflection_questions);
     }
 
     public function test_teacher_cannot_create_material_without_summary(): void
@@ -130,6 +146,8 @@ class TeacherMaterialManagementTest extends TestCase
             'case_narrative' => 'Original case narrative',
             'summary' => 'Original summary',
             'learning_objectives' => ['Original Objective'],
+            'pre_reflection_questions' => ['Original Pre Question'],
+            'post_reflection_questions' => ['Original Post Question'],
         ]);
 
         $payload = [
@@ -143,6 +161,12 @@ class TeacherMaterialManagementTest extends TestCase
             'learning_objectives' => [
                 'New Objective 1',
                 'New Objective 2',
+            ],
+            'pre_reflection_questions' => [
+                'Updated Pre Question 1',
+            ],
+            'post_reflection_questions' => [
+                'Updated Post Question 1',
             ],
         ];
 
@@ -163,5 +187,11 @@ class TeacherMaterialManagementTest extends TestCase
             'New Objective 1',
             'New Objective 2',
         ], $updatedMaterial->learning_objectives);
+        $this->assertEquals([
+            'Updated Pre Question 1',
+        ], $updatedMaterial->pre_reflection_questions);
+        $this->assertEquals([
+            'Updated Post Question 1',
+        ], $updatedMaterial->post_reflection_questions);
     }
 }

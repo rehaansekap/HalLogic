@@ -39,6 +39,8 @@ class TeacherMaterialService
             'finished_at' => $data['finished_at'] ?? null,
             'summary' => $data['summary'] ?? null,
             'learning_objectives' => $data['learning_objectives'] ?? null,
+            'pre_reflection_questions' => $data['pre_reflection_questions'] ?? null,
+            'post_reflection_questions' => $data['post_reflection_questions'] ?? null,
         ]);
 
         return $material;
@@ -79,6 +81,8 @@ class TeacherMaterialService
             'finished_at' => $data['finished_at'] ?? null,
             'summary' => $data['summary'] ?? null,
             'learning_objectives' => $data['learning_objectives'] ?? null,
+            'pre_reflection_questions' => $data['pre_reflection_questions'] ?? null,
+            'post_reflection_questions' => $data['post_reflection_questions'] ?? null,
         ]);
 
         return $material->fresh();

@@ -107,6 +107,8 @@ interface MaterialDetailProps {
         description: string;
         difficulty_level: string;
         slug: string;
+        pre_reflection_questions?: string[];
+        post_reflection_questions?: string[];
     };
     classroom: Classroom;
     students: Student[];
@@ -182,6 +184,8 @@ export default function MaterialDetail({
                         <TabMonitoring
                             groupsMonitoring={groupsMonitoring}
                             allReflections={allReflections}
+                            preQuestions={material.pre_reflection_questions}
+                            postQuestions={material.post_reflection_questions}
                         />
                     )}
                 </motion.div>

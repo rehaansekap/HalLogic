@@ -30,6 +30,8 @@ interface EditMaterialProps {
         finished_at: string | null;
         summary?: string | null;
         learning_objectives?: string[] | null;
+        pre_reflection_questions?: string[] | null;
+        post_reflection_questions?: string[] | null;
     };
     classrooms: Classroom[];
     ownMaterials: MaterialOption[];
@@ -59,6 +61,8 @@ export default function EditMaterial({
         material_pdf_existing: material.material_pdf || undefined,
         summary: material.summary || '',
         learning_objectives: material.learning_objectives || [''],
+        pre_reflection_questions: material.pre_reflection_questions || [],
+        post_reflection_questions: material.post_reflection_questions || [],
     };
 
     const handleSubmit = useCallback(
