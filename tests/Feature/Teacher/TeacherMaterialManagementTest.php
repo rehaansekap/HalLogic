@@ -103,6 +103,43 @@ class TeacherMaterialManagementTest extends TestCase
         $this->assertEquals('Contoh 1', $material->code_examples[0]['title']);
     }
 
+    public function test_teacher_can_create_material_with_google_drive_video_url(): void
+    {
+        $teacher = $this->createTeacher();
+        $classroom = $this->createClassroom($teacher);
+
+        $payload = [
+            'classroom_id' => $classroom->id,
+            'title' => 'Material with GDrive Video',
+            'description' => 'A valid material description text here.',
+            'difficulty_level' => 2,
+            'video_url' => 'https://drive.google.com/file/d/1234567890abcdefghijklmnopqrstuvwxyz/view?usp=sharing',
+            'case_narrative' => 'A valid case narrative description.',
+            'summary' => 'Ini adalah ringkasan materi dengan video Google Drive.',
+            'learning_objectives' => [
+                'Understand Google Drive video embed support',
+            ],
+            'sub_materials' => [
+                [
+                    'title' => 'Sub Materi GDrive',
+                    'content' => '<p>Konten sub materi</p>',
+                ],
+            ],
+            'started_at' => now()->format('Y-m-d'),
+            'finished_at' => now()->addDays(7)->format('Y-m-d'),
+        ];
+
+        $response = $this->actingAs($teacher)
+            ->post(route('teacher.materials.store'), $payload);
+
+        $response->assertRedirect(route('teacher.dashboard'));
+
+        $this->assertDatabaseHas('materials', [
+            'title' => 'Material with GDrive Video',
+            'video_url' => 'https://drive.google.com/file/d/1234567890abcdefghijklmnopqrstuvwxyz/view?usp=sharing',
+        ]);
+    }
+
     public function test_teacher_cannot_create_material_without_summary(): void
     {
         $teacher = $this->createTeacher();

@@ -163,8 +163,8 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                 }
             }
         } else if (step === 3) {
-            if (formData.video_url && !isValidYoutubeUrl(formData.video_url)) {
-                newErrors.video_url = ['URL harus dari YouTube'];
+            if (formData.video_url && !isValidVideoUrl(formData.video_url)) {
+                newErrors.video_url = ['URL harus dari YouTube atau Google Drive'];
             }
             if (
                 formData.case_narrative &&
@@ -201,9 +201,9 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
         return Object.keys(newErrors).length === 0;
     };
 
-    const isValidYoutubeUrl = (url: string): boolean => {
+    const isValidVideoUrl = (url: string): boolean => {
         if (!url) return true; // Optional field
-        return /youtube\.com|youtu\.be/.test(url);
+        return /youtube\.com|youtu\.be|drive\.google\.com/.test(url);
     };
 
     const nextStep = (): boolean => {

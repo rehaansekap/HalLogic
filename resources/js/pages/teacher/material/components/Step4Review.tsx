@@ -319,7 +319,7 @@ export default function Step4Review({
                                         </div>
                                     </div>
                                     <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Video YouTube</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Video (YouTube / Google Drive)</span>
                                         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
                                             <Link className="h-4 w-4 text-blue-600" />
                                             <span className="truncate max-w-40">{formData.video_url || 'Tidak disertakan'}</span>

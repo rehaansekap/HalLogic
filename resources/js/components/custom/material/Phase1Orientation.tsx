@@ -44,8 +44,16 @@ export default function Phase1Orientation({
     );
 
     const embedUrl = material.video_url ? (() => {
-        const match = material.video_url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
-        return match && match[2].length === 11 ? `https://www.youtube.com/embed/${match[2]}` : null;
+        const ytMatch = material.video_url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+        if (ytMatch && ytMatch[2].length === 11) {
+            return `https://www.youtube.com/embed/${ytMatch[2]}`;
+        }
+        const gdMatch = material.video_url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) || 
+                        material.video_url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+        if (gdMatch) {
+            return `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
+        }
+        return null;
     })() : null;
 
     const parsedReflection = (() => {

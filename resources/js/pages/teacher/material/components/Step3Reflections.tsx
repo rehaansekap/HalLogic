@@ -272,7 +272,7 @@ export default function Step3Reflections({
                                 className="flex items-center gap-2 text-sm font-bold text-foreground"
                             >
                                 <Link className="h-4 w-4 text-muted-foreground" />
-                                URL Video YouTube
+                                URL Video (YouTube / Google Drive)
                             </Label>
                             <div className="relative group">
                                 <Input
@@ -282,7 +282,7 @@ export default function Step3Reflections({
                                     onChange={(e) =>
                                         setFieldValue('video_url', e.target.value)
                                     }
-                                    placeholder="https://www.youtube.com/watch?v=..."
+                                    placeholder="https://www.youtube.com/watch?v=... atau https://drive.google.com/file/d/..."
                                     className={cn(
                                         'h-12 rounded-lg border-(--palette-limelight)/20 px-4 pl-11 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
                                         getError('video_url') &&
