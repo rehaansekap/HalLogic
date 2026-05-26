@@ -142,6 +142,11 @@ export default function MaterialSidebar({
                         <p className={`text-sm font-black ${attendance?.is_present ? 'text-green-600' : attendance ? 'text-red-600' : 'text-amber-600'}`}>
                             {attendance?.is_present ? 'Hadir' : attendance ? 'Tidak Hadir' : 'Belum Diverifikasi Guru'}
                         </p>
+                        {(!attendance || !attendance.is_present) && (
+                            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                                {attendance ? 'Kehadiran Anda tidak disetujui oleh guru.' : 'Pastikan kehadiranmu diverifikasi oleh guru.'}
+                            </p>
+                        )}
                     </div>
                 </div>
             </motion.div>

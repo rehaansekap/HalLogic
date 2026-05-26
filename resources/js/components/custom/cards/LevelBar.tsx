@@ -40,7 +40,7 @@ export default function LevelBar({
                         </div>
                         <div>
                             <p className="text-xs font-medium text-muted-foreground">
-                                Current Level
+                                Level Saat Ini
                             </p>
                             <p className="text-2xl font-bold text-foreground">
                                 {level}
@@ -65,7 +65,7 @@ export default function LevelBar({
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-muted-foreground">
-                            Progress to Level {level + 1}
+                            Progress ke Level {level + 1}
                         </span>
                         <span className="text-xs font-bold text-(--palette-chartreuse)">
                             {progressPercent.toFixed(0)}%
@@ -89,7 +89,7 @@ export default function LevelBar({
                         <span className="font-semibold text-(--palette-green)">
                             {xpNeeded.toLocaleString()}
                         </span>{' '}
-                        XP needed for next level
+                        XP lagi untuk naik level
                     </p>
                 </div>
 
@@ -103,7 +103,7 @@ export default function LevelBar({
                     >
                         <div className="text-center">
                             <p className="text-xs text-muted-foreground">
-                                Current Level
+                                Level Saat Ini
                             </p>
                             <p className="text-lg font-bold text-(--palette-green)">
                                 {level}
@@ -111,7 +111,7 @@ export default function LevelBar({
                         </div>
                         <div className="border-r border-l border-(--palette-limelight)/10 text-center">
                             <p className="text-xs text-muted-foreground">
-                                Current XP
+                                XP Saat Ini
                             </p>
                             <p className="text-lg font-bold text-(--palette-chartreuse)">
                                 {(currentXp / 1000).toFixed(1)}k

@@ -71,10 +71,10 @@ export default function Phase3Evaluation({
                     </div>
                     <div className="flex-1">
                         <h2 className="mb-2 text-2xl font-bold text-foreground">
-                            Fase 3: Evaluasi & Refleksi
+                            Setelah Belajar
                         </h2>
                         <p className="text-muted-foreground">
-                            Berikan refleksi akhir Kamu mengenai pembelajaran yang telah dilakukan
+                            Tuliskan pendapatmu setelah mempelajari materi ini.
                         </p>
                     </div>
                 </div>
@@ -118,13 +118,29 @@ export default function Phase3Evaluation({
                         onSuccess={() => {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Selamat!',
-                                text: 'Kamu telah menyelesaikan seluruh fase pada materi ini.',
+                                title: '<span class="text-2xl font-bold text-slate-800">Keren! 🥳</span>',
+                                html: `
+                                    <div class="space-y-4 mt-2">
+                                        <p class="text-sm text-slate-600">Kamu telah menyelesaikan semua tahap pada materi ini.</p>
+                                        <div class="rounded-xl border border-green-150 bg-green-50/50 p-4 text-left flex items-start gap-3">
+                                            <div class="rounded-lg bg-green-100 p-2 text-green-700 shrink-0">
+                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-bold text-green-800">Terus semangat belajarnya!</p>
+                                                <p class="text-xs text-green-700/80 mt-0.5">Jangan lupa terapkan yang sudah kamu pelajari.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `,
                                 confirmButtonColor: '#10b981',
+                                confirmButtonText: 'OK',
                                 customClass: {
-                                    popup: 'rounded-3xl border-none shadow-2xl',
+                                    popup: 'rounded-3xl border-none shadow-2xl p-6',
                                     confirmButton:
-                                        'rounded-xl px-8 py-3 font-bold uppercase tracking-wider transition-transform hover:scale-105 active:scale-95',
+                                        'rounded-xl px-8 py-2.5 font-bold transition-transform hover:scale-105 active:scale-95 bg-emerald-600 text-white',
                                 },
                             });
                         }}
@@ -145,7 +161,7 @@ export default function Phase3Evaluation({
                                                     newAnswers[index] = e.target.value;
                                                     setAnswers(newAnswers);
                                                 }}
-                                                placeholder="Tuliskan jawaban refleksi Kamu..."
+                                                placeholder="Tulis jawabanmu di sini..."
                                                 className="resize-vertical min-h-24 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
                                                 required
                                             />
@@ -167,7 +183,7 @@ export default function Phase3Evaluation({
                                             onChange={(e) =>
                                                 setReflection(e.target.value)
                                             }
-                                            placeholder="Tuliskan pengalaman, pembelajaran, dan hal yang dapat ditingkatkan..."
+                                            placeholder="Tulis jawabanmu di sini..."
                                             className="resize-vertical min-h-50 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
                                             required
                                         />
@@ -225,7 +241,7 @@ export default function Phase3Evaluation({
                                     ) : (
                                         <>
                                             <Send className="h-5 w-5" />
-                                            Kirim Refleksi Akhir
+                                            Kirim Jawaban
                                         </>
                                     )}
                                 </Button>

@@ -31,12 +31,12 @@ export function AppSidebar() {
     if (userRole === 'admin') {
         mainNavItems.push(
             {
-                title: 'Classrooms',
+                title: 'Kelas',
                 href: admin.classrooms.index.url(),
                 icon: School,
             },
             {
-                title: 'Users',
+                title: 'Pengguna',
                 href: admin.users.index.url(),
                 icon: Users,
             },

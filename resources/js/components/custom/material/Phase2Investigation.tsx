@@ -15,8 +15,13 @@ import {
     Lock,
     ChevronDown,
     Check,
+    Star,
+    Lightbulb,
+    ClipboardCheck,
+    Monitor,
+    PartyPopper,
 } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -104,15 +109,30 @@ export default function Phase2Investigation({
     };
 
     // C compiler states
-    const [code, setCode] = useState(`#include <stdio.h>
+    const localStorageKey = `compiler_code_${material.slug}`;
+    const defaultCode = `#include <stdio.h>
 
 int main() {
     printf("Hello, World!\\n");
     return 0;
-}`);
+}`;
+
+    const [code, setCode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem(localStorageKey);
+            if (saved) return saved;
+        }
+        return defaultCode;
+    });
     const [codeOutput, setCodeOutput] = useState('');
     const [stdin, setStdin] = useState('');
     const [isRunning, setIsRunning] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem(localStorageKey, code);
+        }
+    }, [code, localStorageKey]);
 
     // File submission states (relocated from sidebar)
     const [isDragging, setIsDragging] = useState(false);
@@ -240,25 +260,54 @@ int main() {
         setData('files', data.files.filter((_, i) => i !== index));
     };
 
+    const formatSubmittedDate = (dateString: string | null | undefined) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        }) + ', ' + date.toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).replace('.', ':');
+    };
+
     const handleSubmitSubmission = (e: React.FormEvent) => {
         e.preventDefault();
         if (!isLeader) return;
 
         MySwal.fire({
-            title: 'Konfirmasi Pengumpulan',
-            text: 'Apakah Kamu yakin ingin mengumpulkan berkas ini? Pengumpulan hanya dapat dilakukan satu kali.',
+            title: '<span class="text-xl font-bold text-slate-900">Konfirmasi Pengumpulan</span>',
+            html: `
+                <div class="space-y-4 text-center mt-2">
+                    <p class="text-sm text-slate-600">
+                        Apakah kamu yakin ingin mengumpulkan berkas ini?<br/>
+                        Pengumpulan hanya dapat dilakukan satu kali.
+                    </p>
+                    <div class="rounded-xl border border-amber-200 bg-amber-50/50 p-3 text-left flex items-start gap-2.5">
+                        <div class="text-amber-600 mt-0.5 shrink-0">
+                            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-amber-900 leading-relaxed font-semibold">
+                            Pastikan file yang diunggah sudah lengkap dan sesuai sebelum kamu mengirimnya.
+                        </p>
+                    </div>
+                </div>
+            `,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Kirim!',
-            cancelButtonText: 'Batal',
-            background: '#ffffff',
+            confirmButtonText: '<span class="flex items-center gap-1.5"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>Ya, Kirim!</span>',
+            cancelButtonText: '<span class="flex items-center gap-1.5"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>Batal</span>',
+            buttonsStyling: false,
+            reverseButtons: true,
             customClass: {
-                title: 'text-lg font-bold text-slate-800',
-                htmlContainer: 'text-sm text-slate-600',
-                confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg',
-                cancelButton: 'bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg'
+                popup: 'rounded-2xl p-6',
+                confirmButton: 'bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-lg flex items-center gap-2 shadow-sm transition-all text-sm',
+                cancelButton: 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold py-2.5 px-5 rounded-lg flex items-center gap-2 shadow-sm transition-all text-sm mr-3'
             }
         }).then((result) => {
             if (result.isConfirmed) {
@@ -349,7 +398,7 @@ int main() {
                     )}
                 >
                     <Code2 className="h-4 w-4" />
-                    <span>Contoh</span>
+                    <span>Contoh Kasus</span>
                     {activeTab === 'contoh' && (
                         <motion.div
                             className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
@@ -368,8 +417,8 @@ int main() {
                             : "text-muted-foreground hover:text-foreground hover:bg-white/50"
                     )}
                 >
-                    <Keyboard className="h-4 w-4" />
-                    <span>Compiler</span>
+                    <Monitor className="h-4 w-4" />
+                    <span>Coba Kode</span>
                     {activeTab === 'editor' && (
                         <motion.div
                             className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
@@ -388,7 +437,7 @@ int main() {
                             : "text-muted-foreground hover:text-foreground hover:bg-white/50"
                     )}
                 >
-                    <FileText className="h-4 w-4" />
+                    <ClipboardCheck className="h-4 w-4" />
                     <span>Tugas</span>
                     {activeTab === 'tugas' && (
                         <motion.div
@@ -439,7 +488,7 @@ int main() {
                                                 )}>
                                                     {index + 1}
                                                 </div>
-                                                <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight uppercase group-hover:text-(--palette-green) transition-colors">
+                                                <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight group-hover:text-(--palette-green) transition-colors">
                                                     {sub.title}
                                                 </h3>
                                             </div>
@@ -542,7 +591,7 @@ int main() {
                                                 )}>
                                                     C{index + 1}
                                                 </div>
-                                                <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight uppercase group-hover:text-(--palette-green) transition-colors">
+                                                <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight group-hover:text-(--palette-green) transition-colors">
                                                     {ex.title}
                                                 </h3>
                                             </div>
@@ -644,14 +693,35 @@ int main() {
                         transition={{ duration: 0.2 }}
                         className="space-y-6"
                     >
+                        {/* Banner */}
+                        <div className="rounded-2xl border border-green-200 bg-green-50/30 p-5 flex items-center justify-between gap-6 shadow-sm">
+                            <div className="flex-1 space-y-1">
+                                <h3 className="text-lg font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                                    <Code2 className="h-5 w-5 text-green-600" />
+                                    Coba Kode
+                                </h3>
+                                <p className="text-sm text-slate-600">
+                                    Ubah kode di editor, lalu jalankan untuk melihat hasilnya. Eksplorasi dan pahami bagaimana program bekerja!
+                                </p>
+                            </div>
+                            <div className="hidden sm:flex shrink-0 h-16 w-16 items-center justify-center rounded-2xl bg-green-100 text-green-600">
+                                <Keyboard className="h-8 w-8" />
+                            </div>
+                        </div>
+
                         {/* Editor Window */}
                         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                             <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-3">
                                 <div className="flex items-center gap-2">
                                     <Code2 className="h-4 w-4 text-(--palette-green)" />
-                                    <span className="font-bold text-foreground text-sm tracking-tight">
-                                        Editor C Misi Kamu
-                                    </span>
+                                    <div>
+                                        <span className="font-bold text-foreground text-sm tracking-tight block">
+                                            Editor Kode
+                                        </span>
+                                        <span className="text-[10px] text-muted-foreground">
+                                            Tulis atau ubah kode program di sini
+                                        </span>
+                                    </div>
                                 </div>
                                 <div className="flex gap-2">
                                     <button
@@ -659,14 +729,14 @@ int main() {
                                         className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 shadow-sm"
                                     >
                                         <Copy className="h-3.5 w-3.5" />
-                                        Salin
+                                        Salin Kode
                                     </button>
                                     <button
                                         onClick={handleExportCode}
                                         className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 shadow-sm"
                                     >
                                         <Download className="h-3.5 w-3.5" />
-                                        Export
+                                        Unduh Kode
                                     </button>
                                 </div>
                             </div>
@@ -703,25 +773,34 @@ int main() {
                                 ) : (
                                     <>
                                         <Play className="h-4 w-4 fill-current" />
-                                        Jalankan Kode Program
+                                        Jalankan Kode
                                     </>
                                 )}
                             </Button>
                         </div>
 
+                        {/* Alert box */}
+                        <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-4 flex items-center gap-3 text-sm text-blue-700 font-semibold shadow-sm">
+                            <Lightbulb className="h-5 w-5 text-blue-500 shrink-0" />
+                            <p>Cobalah ubah kode di atas, lalu jalankan kembali untuk melihat perubahan output!</p>
+                        </div>
+
                         {/* Stdin Panel */}
                         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                            <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-6 py-3">
-                                <Keyboard className="h-4 w-4 text-(--palette-green)" />
-                                <span className="font-bold text-foreground text-sm">
-                                    Input Program (stdin)
+                            <div className="flex flex-col border-b border-slate-100 bg-slate-50 px-6 py-3">
+                                <span className="font-bold text-foreground text-sm flex items-center gap-2">
+                                    <Keyboard className="h-4 w-4 text-(--palette-green)" />
+                                    Masukkan Input
+                                </span>
+                                <span className="text-[10px] text-muted-foreground ml-6">
+                                    Tulis input di sini jika programmu membutuhkan data tambahan.
                                 </span>
                             </div>
                             <div className="p-4">
                                 <textarea
                                     value={stdin}
                                     onChange={(e) => setStdin(e.target.value)}
-                                    placeholder="Masukkan input data di sini jika program Kamu menggunakan input (scanf, gets, dsb)..."
+                                    placeholder="Contoh: masukkan angka, teks, atau data lainnya..."
                                     className="w-full min-h-24 rounded-xl border border-slate-200 p-4 text-sm font-mono focus:border-(--palette-green) focus:outline-none focus:ring-2 focus:ring-(--palette-green)/10 bg-slate-50/20"
                                 />
                             </div>
@@ -729,15 +808,29 @@ int main() {
 
                         {/* Console stdout Panel */}
                         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                            <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-6 py-3">
-                                <Play className="h-4 w-4 text-(--palette-green)" />
-                                <span className="font-bold text-foreground text-sm">
-                                    Terminal Output
+                            <div className="flex flex-col border-b border-slate-100 bg-slate-50 px-6 py-3">
+                                <span className="font-bold text-foreground text-sm flex items-center gap-2">
+                                    <Play className="h-4 w-4 text-(--palette-green)" />
+                                    Hasil Program
+                                </span>
+                                <span className="text-[10px] text-muted-foreground ml-6">
+                                    Output programmu akan tampil di sini setelah dijalankan.
                                 </span>
                             </div>
                             <pre className="overflow-auto bg-slate-950 p-6 font-mono text-sm text-emerald-400 min-h-32 max-h-80 leading-relaxed shadow-inner">
-                                {codeOutput || 'Output program Kamu akan dimunculkan di sini setelah dieksekusi.'}
+                                {codeOutput || 'Hasil program akan muncul di sini.'}
                             </pre>
+                        </div>
+
+                        {/* Tips Card */}
+                        <div className="rounded-2xl border border-green-200 bg-green-50/30 p-5 flex items-start gap-3 shadow-sm">
+                            <Star className="h-5 w-5 text-green-600 shrink-0 mt-0.5 fill-current" />
+                            <div className="space-y-1">
+                                <h4 className="text-sm font-bold text-green-800">Tips Belajar</h4>
+                                <p className="text-xs font-semibold text-green-700 leading-relaxed">
+                                    Cobalah berbagai perubahan pada kode dan input untuk memahami cara kerja program!
+                                </p>
+                            </div>
                         </div>
                     </motion.div>
                 )}
@@ -751,24 +844,26 @@ int main() {
                         transition={{ duration: 0.2 }}
                         className="space-y-6"
                     >
-                        {/* Section 1: Download LKPD */}
+                        {/* Section 1: Unduh Lembar Kerja */}
                         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                             <div className="flex items-start gap-4">
-                                <div className="rounded-xl bg-amber-55 bg-amber-50 p-3.5 text-amber-600 border border-amber-100">
+                                <div className="rounded-xl bg-amber-50 p-3.5 text-amber-500 border border-amber-100 shrink-0">
                                     <FileText className="h-6 w-6" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-lg font-bold text-slate-800 tracking-tight">Unduh Lembar Kerja Peserta Didik (LKPD)</h3>
+                                    <h3 className="text-lg font-bold text-slate-800 tracking-tight">Unduh Lembar Kerja</h3>
                                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                                        Unduh berkas LKPD PDF berikut, diskusikan di dalam kelompok Kamu, selesaikan tugas pemrograman yang diinstruksikan, kemudian unggah jawaban Kamu di formulir bawah.
+                                        Unduh lembar kerja berikut, diskusikan bersama kelompokmu, lalu kerjakan tugas sesuai instruksi.
                                     </p>
                                     {material.material_pdf ? (
                                         <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-150">
                                             <div className="flex items-center gap-3">
-                                                <FileText className="h-8 w-8 text-red-500" />
+                                                <div className="rounded-lg bg-red-50 p-2.5 text-red-500 shrink-0">
+                                                    <FileText className="h-8 w-8 text-red-500" />
+                                                </div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-800">LKPD_{material.title}</p>
-                                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Dokumen Kerja Resmi</p>
+                                                    <p className="text-sm font-bold text-slate-800">Lembar Kerja - {material.title}</p>
+                                                    <p className="text-xs font-semibold text-slate-400 mt-1">File Tugas (PDF) • 3.2 MB</p>
                                                 </div>
                                             </div>
                                             <Button
@@ -778,7 +873,7 @@ int main() {
                                             >
                                                 <a href={`/storage/${material.material_pdf}`} target="_blank" rel="noopener noreferrer">
                                                     <Download className="mr-2 h-4 w-4" />
-                                                    Download LKPD
+                                                    Unduh LKPD
                                                 </a>
                                             </Button>
                                         </div>
@@ -791,53 +886,79 @@ int main() {
                             </div>
                         </div>
 
-                        {/* Section 2: Task Submission Form */}
+                        {/* Section 2: Upload Jawaban Kelompok */}
                         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                             <div className="flex items-start gap-4">
-                                <div className="rounded-xl bg-blue-50 p-3.5 text-blue-600 border border-blue-100">
+                                <div className="rounded-xl bg-blue-50 p-3.5 text-blue-600 border border-blue-100 shrink-0">
                                     <FileUp className="h-6 w-6" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between flex-wrap gap-2">
-                                        <h3 className="text-lg font-bold text-slate-800 tracking-tight">Kumpulkan Jawaban Kelompok</h3>
+                                        <h3 className="text-lg font-bold text-slate-800 tracking-tight">Upload Jawaban Kelompok</h3>
                                         {isSubmitted && (
-                                            <div className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-55 bg-green-50 border border-green-200 px-3 py-1 rounded-full">
+                                            <div className="flex items-center gap-1.5 text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-3 py-1 rounded-full">
                                                 <CheckCircle2 className="h-3.5 w-3.5" />
-                                                <span>Tugas Terkirim</span>
+                                                <span>Tugas Berhasil Dikumpulkan</span>
                                             </div>
                                         )}
                                     </div>
                                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                                        Pengiriman hanya dapat dilakukan oleh Ketua Kelompok, dan hanya dapat dikirimkan satu kali.
+                                        {isSubmitted
+                                            ? "Jawaban tugas dikirim oleh ketua kelompok dan hanya dapat dikirim satu kali."
+                                            : "Unggah jawaban tugas yang sudah dikerjakan bersama kelompok."}
                                     </p>
 
                                     {isSubmitted ? (
                                         <div className="mt-6 space-y-4">
-                                            <div className="rounded-xl border border-green-200 bg-green-50/30 p-4">
-                                                <p className="text-xs font-bold text-green-800 mb-2">Berkas yang berhasil diunggah:</p>
-                                                <div className="space-y-2">
-                                                    {submittedFiles.map((file, idx) => (
-                                                        <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-slate-700">
-                                                            <FileText className="h-4 w-4 text-blue-500" />
-                                                            <span className="truncate">{file.split('/').pop()}</span>
-                                                        </div>
-                                                    ))}
+                                            <div className="rounded-xl border border-green-200 bg-green-50/10 p-4">
+                                                <div className="flex items-center gap-2 text-xs font-bold text-green-800 mb-3">
+                                                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                                                    <span>File yang telah dikirim:</span>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    {submittedFiles.map((file, idx) => {
+                                                        const fileName = file.split('/').pop() || '';
+                                                        const ext = fileName.split('.').pop()?.toUpperCase() || 'FILE';
+                                                        return (
+                                                            <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                                                                <FileText className="h-8 w-8 text-blue-500 shrink-0" />
+                                                                <div>
+                                                                    <p className="text-sm font-semibold text-slate-800 leading-none truncate max-w-md">{fileName}</p>
+                                                                    <p className="text-[11px] text-muted-foreground mt-1.5">
+                                                                        {ext} • 1.24 MB • {formatSubmittedDate(submission?.submitted_at)}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
-                                            <Button
-                                                disabled
-                                                className="bg-green-600 font-bold text-white opacity-100 disabled:opacity-100 px-6 h-11 rounded-xl"
-                                            >
-                                                <CheckCircle2 className="mr-2 h-4 w-4" />
-                                                Tugas Telah Dikumpulkan
-                                            </Button>
+
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl border border-green-200 bg-green-50/10 p-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="rounded-full bg-green-100 p-2 text-green-700 shrink-0">
+                                                        <PartyPopper className="h-5 w-5" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-green-800">Jawaban Sudah Dikirim!</p>
+                                                        <p className="text-xs text-green-700 mt-0.5">Terima kasih, tugas kelompokmu telah berhasil dikumpulkan.</p>
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    disabled
+                                                    className="bg-green-600 font-bold text-white opacity-100 disabled:opacity-100 px-4 py-2 h-10 rounded-lg flex items-center gap-2 hover:bg-green-600 shrink-0 self-start sm:self-center"
+                                                >
+                                                    <Check className="h-4 w-4" />
+                                                    Jawaban Sudah Dikirim
+                                                </Button>
+                                            </div>
                                         </div>
                                     ) : !isLeader ? (
-                                        <div className="mt-6 rounded-2xl border border-amber-100 bg-amber-50/30 p-6 text-center">
-                                            <Lock className="mx-auto mb-3 h-10 w-10 text-amber-500/40" />
-                                            <p className="text-sm font-bold text-amber-800">Hanya Ketua Kelompok yang Dapat Mengunggah</p>
-                                            <p className="mt-1 text-xs leading-relaxed text-amber-700/70 max-w-md mx-auto">
-                                                Anggota kelompok tidak memiliki wewenang untuk mengirimkan berkas investigasi ini. Silakan hubungi ketua kelompok Kamu.
+                                        <div className="mt-4 rounded-xl border border-dashed border-amber-200 bg-amber-50/30 p-6 text-center">
+                                            <Lock className="mx-auto mb-2.5 h-6 w-6 text-amber-600/85" />
+                                            <p className="text-sm font-bold text-amber-900">Hanya ketua kelompok yang dapat mengunggah jawaban.</p>
+                                            <p className="text-xs text-amber-700/80 mt-1">
+                                                Silakan hubungi ketua kelompok untuk mengirim jawaban tugas.
                                             </p>
                                         </div>
                                     ) : (
@@ -928,7 +1049,7 @@ int main() {
                                                 ) : (
                                                     <FileUp className="mr-2 h-4 w-4" />
                                                 )}
-                                                Kirim Berkas Jawaban
+                                                Kirim Jawaban
                                             </Button>
                                         </form>
                                     )}

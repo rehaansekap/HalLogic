@@ -21,14 +21,14 @@ export default function PageHeader({
         const hour = new Date().getHours();
 
         if (hour < 12) {
-            return 'Good morning';
+            return 'Selamat pagi';
         }
 
         if (hour < 18) {
-            return 'Good afternoon';
+            return 'Selamat siang';
         }
 
-        return 'Good evening';
+        return 'Selamat malam';
     }, []);
 
     const roleColors = {
@@ -92,8 +92,8 @@ export default function PageHeader({
                                         {greeting}
                                     </p>
                                     {role && (
-                                        <p className="text-xs text-muted-foreground/70 capitalize">
-                                            {role} dashboard
+                                        <p className="text-xs text-muted-foreground/70 font-semibold">
+                                            {role === 'student' ? 'Dashboard Siswa' : role === 'teacher' ? 'Dashboard Guru' : 'Dashboard Admin'}
                                         </p>
                                     )}
                                 </div>
@@ -136,8 +136,11 @@ export default function PageHeader({
                                     })}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                    {new Date().toLocaleDateString('en-US', {
+                                    {new Date().toLocaleDateString('id-ID', {
                                         weekday: 'short',
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric',
                                     })}
                                 </p>
                             </div>

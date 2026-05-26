@@ -13,9 +13,18 @@ export default function MaterialProgress({
     onPhaseChange,
 }: MaterialProgressProps) {
     const steps = [
-        'Orientasi',
-        'Penyelidikan',
-        'Evaluasi',
+        {
+            title: 'Mulai Belajar',
+            subtitle: 'Pahami konsep dasar',
+        },
+        {
+            title: 'Cari Solusi',
+            subtitle: currentStep >= 2 ? 'Pelajari dan pahami materi' : 'Pecahkan masalah',
+        },
+        {
+            title: 'Cek Pemahaman',
+            subtitle: 'Uji pemahamanmu',
+        },
     ];
 
     return (
@@ -107,13 +116,13 @@ export default function MaterialProgress({
                                     </span>
                                 </div>
                                 <div className="mt-1 flex flex-col items-start text-left">
-                                    <span className="text-xs font-semibold text-muted-foreground">
-                                        Fase {stepNumber}
-                                    </span>
                                     <span
                                         className={`text-base font-bold ${isActive ? 'text-foreground' : 'text-slate-700'}`}
                                     >
-                                        {step}
+                                        {step.title}
+                                    </span>
+                                    <span className="text-xs font-medium text-muted-foreground mt-0.5">
+                                        {step.subtitle}
                                     </span>
                                 </div>
                             </motion.button>

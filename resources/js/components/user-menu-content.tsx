@@ -41,7 +41,7 @@ export function UserMenuContent({ user }: Props) {
                         onClick={cleanup}
                     >
                         <Settings className="h-4 w-4" />
-                        <span className="font-semibold">Settings</span>
+                        <span className="font-semibold">Pengaturan</span>
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -55,7 +55,7 @@ export function UserMenuContent({ user }: Props) {
                     data-test="logout-button"
                 >
                     <LogOut className="h-4 w-4" />
-                    <span className="font-semibold">Log out</span>
+                    <span className="font-semibold">Keluar</span>
                 </Link>
             </DropdownMenuItem>
         </>

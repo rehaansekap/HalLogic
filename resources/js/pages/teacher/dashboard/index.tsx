@@ -147,7 +147,7 @@ export default function TeacherDashboard({
 
     return (
         <>
-            <Head title="Dashboard - Teacher" />
+            <Head title="Dashboard - Guru" />
 
             <motion.div
                 className="space-y-8 p-6 md:p-8"
@@ -157,8 +157,8 @@ export default function TeacherDashboard({
             >
                 {/* Page Header */}
                 <PageHeader
-                    title={`Welcome back, ${user?.name || 'Teacher'}!`}
-                    subtitle="Manage your materials and student progress"
+                    title={`Selamat datang kembali, ${user?.name || 'Guru'}!`}
+                    subtitle="Kelola materi Anda dan pantau kemajuan siswa"
                     icon={<BookOpen className="h-6 w-6" />}
                     role="teacher"
                     userName={user?.name}
@@ -172,28 +172,28 @@ export default function TeacherDashboard({
                     animate="visible"
                 >
                     <StatCard
-                        title="Total Materials"
+                        title="Total Materi"
                         value={totalMaterials}
                         icon={<BookOpen className="h-6 w-6" />}
                         color="primary"
                         delay={0.1}
                     />
                     <StatCard
-                        title="Total Students"
+                        title="Total Siswa"
                         value={totalStudents}
                         icon={<Users className="h-6 w-6" />}
                         color="success"
                         delay={0.15}
                     />
                     <StatCard
-                        title="Active Materials"
+                        title="Materi Aktif"
                         value={activeMaterials}
                         icon={<Zap className="h-6 w-6" />}
                         color="warning"
                         delay={0.2}
                     />
                     <StatCard
-                        title="Pending Review"
+                        title="Menunggu Peninjauan"
                         value={pendingReview}
                         icon={<Clock className="h-6 w-6" />}
                         color="info"
@@ -218,10 +218,10 @@ export default function TeacherDashboard({
                             <div>
                                 <h2 className="flex items-center gap-2 text-2xl font-extrabold text-foreground tracking-tight">
                                     <BookOpen className="h-7 w-7 text-(--palette-green)" />
-                                    Your Materials
+                                    Materi Anda
                                 </h2>
                                 <p className="text-sm text-muted-foreground mt-1">
-                                    Manage and monitor your learning content
+                                    Kelola dan pantau konten pembelajaran Anda
                                 </p>
                             </div>
                         </div>
@@ -230,7 +230,7 @@ export default function TeacherDashboard({
                             <div className="w-full min-h-full relative">
                                 <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                                 <Input
-                                    placeholder="Search materials..."
+                                    placeholder="Cari materi..."
                                     value={searchQuery}
                                     onChange={(e) => {
                                         setSearchQuery(e.target.value);
@@ -242,7 +242,7 @@ export default function TeacherDashboard({
 
                             {classrooms.length > 0 && (
                                 <FilterButton
-                                    label="Filter by Classroom"
+                                    label="Filter berdasarkan Kelas"
                                     className="max-w-2xl"
                                     options={classrooms}
                                     value={selectedClassroom ?? undefined}
@@ -250,7 +250,7 @@ export default function TeacherDashboard({
                                         setSelectedClassroom(val);
                                         setCurrentPage(1);
                                     }}
-                                    placeholder="All Classrooms"
+                                    placeholder="Semua Kelas"
                                     color="success"
                                 />
                             )}
@@ -268,8 +268,8 @@ export default function TeacherDashboard({
                     {filteredMaterials.length === 0 ? (
                         <EmptyState
                             icon={<BookOpen className="h-8 w-8" />}
-                            title="No materials found"
-                            description="Create a new material to get started!"
+                            title="Materi tidak ditemukan"
+                            description="Buat materi baru untuk memulai!"
                             delay={0.35}
                         />
                     ) : (
@@ -285,19 +285,19 @@ export default function TeacherDashboard({
                                         <thead>
                                             <tr className="border-b border-(--palette-limelight)/20 bg-(--palette-limelight)/5">
                                                 <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                                    Material Details
+                                                    Detail Materi
                                                 </th>
                                                 <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                                    Target Class
+                                                    Kelas Sasaran
                                                 </th>
                                                 <th className="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                                    Group Progress
+                                                    Kemajuan Kelompok
                                                 </th>
                                                 <th className="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                                    Review Status
+                                                    Status Peninjauan
                                                 </th>
                                                 <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                                    Actions
+                                                    Aksi
                                                 </th>
                                             </tr>
                                         </thead>
@@ -417,7 +417,7 @@ export default function TeacherDashboard({
                                                                         <Link href={edit.url(material.slug)}>
                                                                             <DropdownMenuItem className="flex items-center gap-3 cursor-pointer py-3 px-4 rounded-xl focus:bg-(--palette-green)/10 focus:text-(--palette-green) transition-colors mb-1">
                                                                                 <Edit2 className="h-4 w-4" />
-                                                                                <span className="font-semibold">Edit Material</span>
+                                                                                <span className="font-semibold">Edit Materi</span>
                                                                             </DropdownMenuItem>
                                                                         </Link>
                                                                         <DropdownMenuSeparator className="my-1 bg-(--palette-limelight)/10" />

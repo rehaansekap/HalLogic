@@ -8,7 +8,7 @@ import {
 import { CheckCircleIcon as CheckCircleSolid } from '@heroicons/react/24/solid';
 import { Form } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Lightbulb, Send, BookOpen, ClipboardList } from 'lucide-react';
+import { Heart, Lightbulb, Send, BookOpen, ClipboardList, Play, Lock, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -160,10 +160,10 @@ export default function Phase1Orientation({
                                     <div className="rounded-lg bg-(--palette-green)/10 p-2 text-(--palette-green)">
                                         <BookOpen className="h-4 w-4" />
                                     </div>
-                                    Tujuan Pembelajaran (TP)
+                                    Apa yang akan kamu pelajari?
                                 </h3>
                                 <p className="text-xs font-bold text-muted-foreground/60 tracking-wide uppercase">
-                                    Di pertemuan ini, kamu diharapkan dapat:
+                                    Setelah mempelajari materi ini kamu bisa:
                                 </p>
                                 <div className="space-y-3 pl-1">
                                     {material.learning_objectives.map((objective, idx) => (
@@ -189,7 +189,7 @@ export default function Phase1Orientation({
                                     </div>
                                     Ringkasan Materi
                                 </h3>
-                                <p className="text-sm font-semibold text-muted-foreground leading-relaxed whitespace-pre-wrap pl-1">
+                                <p className="text-sm font-medium text-muted-foreground leading-relaxed whitespace-pre-wrap pl-1">
                                     {material.summary}
                                 </p>
                             </div>
@@ -235,7 +235,7 @@ export default function Phase1Orientation({
                                 </div>
 
                                 {/* Video Orientation (Saved Mode) */}
-                                {embedUrl && (
+                                {embedUrl ? (
                                     <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 shadow-sm">
                                         <div className="relative w-full pt-[56.25%]">
                                             <iframe
@@ -246,6 +246,14 @@ export default function Phase1Orientation({
                                                 allowFullScreen
                                             ></iframe>
                                         </div>
+                                    </div>
+                                ) : (
+                                    <div className="overflow-hidden rounded-xl bg-slate-900 aspect-video flex flex-col items-center justify-center text-white p-6 relative">
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm mb-4 border border-white/20">
+                                            <Play className="h-8 w-8 text-white fill-white" />
+                                        </div>
+                                        <p className="font-bold text-base text-slate-100">Video pengantar belum tersedia.</p>
+                                        <p className="text-slate-400 text-sm mt-1">Video akan segera hadir. Silakan lanjutkan dengan refleksi.</p>
                                     </div>
                                 )}
 
@@ -298,20 +306,20 @@ export default function Phase1Orientation({
                                 {/* Header */}
                                 <div className="mb-8 flex items-start gap-4">
                                     <div className="rounded-lg bg-(--palette-green)/8 p-4">
-                                        <Lightbulb className="h-6 w-6 text-(--palette-green)" />
+                                        <ClipboardList className="h-6 w-6 text-(--palette-green)" />
                                     </div>
                                     <div className="flex-1">
                                         <h2 className="mb-2 text-2xl font-bold text-foreground">
-                                            Fase 1: Orientasi & Refleksi Awal
+                                            Sebelum Belajar
                                         </h2>
                                         <p className="text-muted-foreground">
-                                            Tuliskan pemikiran awal Kamu tentang material ini sebelum memulai. Refleksi ini akan membantu Kamu melihat perkembangan pemahaman seiring waktu.
+                                            Tuliskan pendapat dan pemahaman awalmu sebelum memulai materi. Jawabanmu akan membantu melihat perkembangan pemahaman dari waktu ke waktu.
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Video Orientation (Form Mode) */}
-                                {embedUrl && (
+                                {embedUrl ? (
                                     <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 shadow-sm">
                                         <div className="relative w-full pt-[56.25%]">
                                             <iframe
@@ -322,6 +330,14 @@ export default function Phase1Orientation({
                                                 allowFullScreen
                                             ></iframe>
                                         </div>
+                                    </div>
+                                ) : (
+                                    <div className="overflow-hidden rounded-xl bg-slate-900 aspect-video flex flex-col items-center justify-center text-white p-6 relative">
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm mb-4 border border-white/20">
+                                            <Play className="h-8 w-8 text-white fill-white" />
+                                        </div>
+                                        <p className="font-bold text-base text-slate-100">Video pengantar belum tersedia.</p>
+                                        <p className="text-slate-400 text-sm mt-1">Video akan segera hadir. Silakan lanjutkan dengan refleksi.</p>
                                     </div>
                                 )}
 
@@ -386,84 +402,71 @@ export default function Phase1Orientation({
                                             <div className="flex items-center justify-between">
                                                 {isQuestionsMode ? (
                                                     <>
-                                                        <p className="text-xs text-muted-foreground">
-                                                            {answers.filter(ans => ans.trim().length >= 5).length} dari {material.pre_reflection_questions!.length} pertanyaan dijawab
+                                                        <p className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
+                                                            <MessageSquare className="h-4 w-4 text-green-600" />
+                                                            {answers.filter(ans => ans.trim().length > 0).length} dari {material.pre_reflection_questions!.length} pertanyaan dijawab
                                                         </p>
-                                                        <p
-                                                            className={`flex items-center gap-1 text-xs font-semibold ${answers.some(ans => ans.trim().length < 5)
-                                                                ? 'text-red-500'
-                                                                : 'text-(--palette-green)'
-                                                                }`}
-                                                        >
-                                                            {answers.some(ans => ans.trim().length < 5) ? (
-                                                                <>
-                                                                    <PencilIcon className="h-3.5 w-3.5" />
-                                                                    Setiap jawaban minimal 5 karakter
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <CheckCircleIcon className="h-3.5 w-3.5" />
-                                                                    Semua pertanyaan terisi
-                                                                </>
-                                                            )}
-                                                        </p>
+                                                        {!answers.some(ans => ans.trim().length > 0) && (
+                                                            <p className="flex items-center gap-1 text-xs font-bold text-red-500">
+                                                                <PencilIcon className="h-3.5 w-3.5" />
+                                                                Minimal 1 jawaban harus diisi untuk dapat menyimpan.
+                                                            </p>
+                                                        )}
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <p className="text-xs text-muted-foreground">
+                                                        <p className="text-xs text-muted-foreground font-semibold">
                                                             {reflection.length} karakter
                                                         </p>
-                                                        <p
-                                                            className={`flex items-center gap-1 text-xs font-semibold ${reflection.length < 50
-                                                                ? 'text-red-500'
-                                                                : reflection.length < 100
-                                                                    ? 'text-yellow-500'
-                                                                    : 'text-(--palette-green)'
-                                                                }`}
-                                                        >
-                                                            {reflection.length < 50 ? (
-                                                                <>
-                                                                    <PencilIcon className="h-3.5 w-3.5" />
-                                                                    Minimal 50 karakter
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <CheckCircleIcon className="h-3.5 w-3.5" />
-                                                                    {reflection.length < 100 ? 'Baik' : 'Lengkap'}
-                                                                </>
-                                                            )}
-                                                        </p>
+                                                        {reflection.length < 50 && (
+                                                            <p className="flex items-center gap-1 text-xs font-bold text-red-500">
+                                                                <PencilIcon className="h-3.5 w-3.5" />
+                                                                Minimal 50 karakter untuk dapat menyimpan.
+                                                            </p>
+                                                        )}
                                                     </>
                                                 )}
                                             </div>
 
                                             {/* Tips */}
-                                            <div className="rounded-lg border border-(--palette-limelight)/20 bg-(--palette-limelight)/10 p-4">
-                                                <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                                                    <LightBulbIcon className="h-4 w-4" />
-                                                    Tips Menulis Refleksi
+                                            <div className="rounded-2xl border border-yellow-200 bg-yellow-50/30 p-5 space-y-3">
+                                                <p className="flex items-center gap-2 text-base font-bold text-slate-800">
+                                                    <Lightbulb className="h-5 w-5 text-yellow-500" />
+                                                    Tips Menjawab
                                                 </p>
-                                                <ul className="space-y-1 text-xs text-muted-foreground">
-                                                    <li>• Apa yang sudah Kamu ketahui tentang topik ini?</li>
-                                                    <li>• Apa harapan Kamu dari material ini?</li>
-                                                    <li>• Apa tantangan yang Kamu antisipasi?</li>
-                                                    <li>• Bagaimana Kamu akan mengukur keberhasilan?</li>
-                                                </ul>
+                                                <div className="space-y-2 text-sm text-slate-600 font-semibold pl-1">
+                                                    <div className="flex items-start gap-2">
+                                                        <CheckCircleIcon className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                                        <span>Tulis berdasarkan pemahamanmu sendiri.</span>
+                                                    </div>
+                                                    <div className="flex items-start gap-2">
+                                                        <CheckCircleIcon className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                                        <span>Tidak harus benar sepenuhnya.</span>
+                                                    </div>
+                                                    <div className="flex items-start gap-2">
+                                                        <CheckCircleIcon className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                                        <span>Gunakan contoh sederhana jika perlu.</span>
+                                                    </div>
+                                                    <div className="flex items-start gap-2">
+                                                        <CheckCircleIcon className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                                        <span>Jawabanmu akan membantu proses belajarmu ke depan.</span>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             {/* Submit Button */}
-                                            <div className="flex gap-3 pt-4">
+                                            <div className="flex flex-col gap-3 pt-4">
                                                 <Button
                                                     type="submit"
                                                     disabled={
                                                         processing ||
                                                         wasSuccessful ||
                                                         (isQuestionsMode
-                                                            ? answers.some((ans) => ans.trim().length < 5)
+                                                            ? !answers.some((ans) => ans.trim().length > 0)
                                                             : reflection.length < 50)
                                                     }
                                                     className={cn(
-                                                        "flex flex-1 items-center justify-center gap-2 rounded-lg py-3 font-semibold transition-all text-white",
+                                                        "flex w-full items-center justify-center gap-2 rounded-lg py-3 font-semibold transition-all text-white",
                                                         wasSuccessful
                                                             ? 'bg-(--palette-green)'
                                                             : 'bg-(--palette-green) hover:shadow-lg disabled:opacity-50'
@@ -482,10 +485,15 @@ export default function Phase1Orientation({
                                                     ) : (
                                                         <>
                                                             <Send className="h-5 w-5" />
-                                                            Simpan Refleksi
+                                                            Simpan Jawaban
                                                         </>
                                                     )}
                                                 </Button>
+
+                                                <div className="flex items-center justify-center gap-2 rounded-lg bg-blue-50 border border-blue-100 p-3.5 text-xs text-blue-700 font-semibold">
+                                                    <Lock className="h-4 w-4" />
+                                                    <span>Jawabanmu hanya dapat dilihat oleh kamu dan guru.</span>
+                                                </div>
                                             </div>
 
                                             {/* Success Message */}

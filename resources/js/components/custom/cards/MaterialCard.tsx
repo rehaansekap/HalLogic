@@ -62,25 +62,25 @@ export default function MaterialCard({
     const statusConfig = {
         locked: {
             icon: <Lock className="h-5 w-5" />,
-            label: 'Locked',
+            label: 'Terkunci',
             color: 'bg-[var(--palette-yellow-green)]/10',
             textColor: 'text-[var(--palette-yellow-green)]',
         },
         unlocked: {
             icon: <BookOpen className="h-5 w-5" />,
-            label: 'Unlocked',
+            label: 'Terbuka',
             color: 'bg-[var(--palette-limelight)]/10',
             textColor: 'text-[var(--palette-limelight)]',
         },
         in_progress: {
             icon: <Play className="h-5 w-5" />,
-            label: 'In Progress',
+            label: 'Sedang Berjalan',
             color: 'bg-[var(--palette-sunflower)]/10',
             textColor: 'text-[var(--palette-sunflower)]',
         },
         completed: {
             icon: <CheckCircle2 className="h-5 w-5" />,
-            label: 'Completed',
+            label: 'Selesai',
             color: 'bg-[var(--palette-green)]/10',
             textColor: 'text-[var(--palette-green)]',
         },
@@ -206,7 +206,7 @@ export default function MaterialCard({
                                 <Lock className="w-3 h-3" />
                                 Materi Terkunci
                             </span>{' '}
-                            Silakan selesaikan materi <span className="font-semibold text-gray-900">"{prerequisiteLabel}"</span> terlebih dahulu.
+                            Selesaikan materi <span className="font-semibold text-gray-900">"{prerequisiteLabel}"</span> terlebih dahulu.
                         </p>
                     </motion.div>
                 )}
@@ -229,12 +229,12 @@ export default function MaterialCard({
                 >
                     <span className={status === 'locked' ? "text-gray-500" : "text-white"}>
                         {status === 'locked'
-                            ? 'Locked'
+                            ? 'Terkunci'
                             : status === 'completed'
-                              ? 'Completed'
+                              ? 'Selesai'
                               : status === 'in_progress'
-                                ? 'Continue'
-                                : 'Start Material'}
+                                ? 'Lanjutkan'
+                                : 'Mulai Belajar'}
                     </span>
                 </motion.button>
             </div>

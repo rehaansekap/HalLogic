@@ -99,7 +99,7 @@ export default function StudentDashboard({
     if (isLoading) {
         return (
             <>
-                <Head title="Dashboard - Student" />
+                <Head title="Dashboard - Siswa" />
                 <div className="space-y-6">
                     <DashboardSkeleton role="student" />
                 </div>
@@ -125,7 +125,7 @@ export default function StudentDashboard({
 
     return (
         <>
-            <Head title="Dashboard - Student" />
+            <Head title="Dashboard - Siswa" />
 
             <motion.div
                 className="space-y-6 p-6"
@@ -135,8 +135,8 @@ export default function StudentDashboard({
             >
                 {/* Page Header */}
                 <PageHeader
-                    title={`Welcome back, ${user?.name || 'Student'}!`}
-                    subtitle="Track your materials and level up"
+                    title={`Selamat datang kembali, ${user?.name || 'Siswa'}!`}
+                    subtitle="Yuk lanjutkan belajar dan tingkatkan level mu hari ini."
                     icon={<Zap className="h-6 w-6" />}
                     role="student"
                     userName={user?.name}
@@ -169,12 +169,10 @@ export default function StudentDashboard({
                         <div>
                             <h2 className="flex items-center gap-2 text-2xl font-bold">
                                 <BookOpen className="h-6 w-6 text-[--palette-green]" />
-                                Unlocked Materials
+                                Materi Tersedia
                             </h2>
                             <p className="mt-1 text-sm text-muted-foreground">
-                                {filteredMaterials.length} material
-                                {filteredMaterials.length !== 1 ? 's' : ''}{' '}
-                                Unlocked
+                                {filteredMaterials.length} materi tersedia
                             </p>
                         </div>
 
@@ -184,7 +182,7 @@ export default function StudentDashboard({
                                 options={teachers}
                                 value={selectedTeacher}
                                 onChange={setSelectedTeacher}
-                                placeholder="All Teachers"
+                                placeholder="Semua Guru"
                                 color="success"
                             />
                         )}
@@ -194,15 +192,15 @@ export default function StudentDashboard({
                     {filteredMaterials.length === 0 ? (
                         <EmptyState
                             icon={<BookOpen className="h-8 w-8" />}
-                            title="No materials yet"
-                            description="Check back soon for new materials from your teachers!"
+                            title="Belum ada materi"
+                            description="Silakan kembali lagi nanti untuk melihat materi baru dari gurumu!"
                             delay={0.45}
                         />
                     ) : paginatedMaterials.length === 0 ? (
                         <EmptyState
                             icon={<BookOpen className="h-8 w-8" />}
-                            title="No materials on this page"
-                            description="Try a different filter or check the previous page"
+                            title="Tidak ada materi di halaman ini"
+                            description="Coba gunakan filter lain atau periksa halaman sebelumnya"
                             delay={0.45}
                         />
                     ) : (

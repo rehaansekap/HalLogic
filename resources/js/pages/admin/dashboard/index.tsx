@@ -61,7 +61,7 @@ export default function AdminDashboard({
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
 
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString('id-ID', {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
@@ -118,8 +118,8 @@ export default function AdminDashboard({
             >
                 {/* Page Header */}
                 <PageHeader
-                    title={`Welcome back, ${user?.name || 'Admin'}!`}
-                    subtitle="System monitoring and management dashboard"
+                    title={`Selamat datang kembali, ${user?.name || 'Admin'}!`}
+                    subtitle="Dasbor pemantauan dan manajemen sistem"
                     icon={<Zap className="h-6 w-6" />}
                     role="admin"
                     userName={user?.name}
@@ -133,7 +133,7 @@ export default function AdminDashboard({
                     animate="visible"
                 >
                     <StatCard
-                        title="Total Students"
+                        title="Total Siswa"
                         value={totalStudents}
                         icon={<Users className="h-6 w-6" />}
                         color="success"
@@ -144,7 +144,7 @@ export default function AdminDashboard({
                         }}
                     />
                     <StatCard
-                        title="Total Teachers"
+                        title="Total Guru"
                         value={totalTeachers}
                         icon={<BookOpen className="h-6 w-6" />}
                         color="info"
@@ -155,14 +155,14 @@ export default function AdminDashboard({
                         }}
                     />
                     <StatCard
-                        title="Total Classrooms"
+                        title="Total Kelas"
                         value={totalClassrooms}
                         icon={<Building2 className="h-6 w-6" />}
                         color="warning"
                         delay={0.15}
                     />
                     <StatCard
-                        title="Total Materials"
+                        title="Total Materi"
                         value={totalMaterials}
                         icon={<Zap className="h-6 w-6" />}
                         color="primary"
@@ -185,7 +185,7 @@ export default function AdminDashboard({
                     >
                         <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
                             <Activity className="h-5 w-5 text-(--palette-green)" />
-                            System Health
+                            Status Sistem
                         </h3>
 
                         <div className="space-y-3">
@@ -209,10 +209,10 @@ export default function AdminDashboard({
                                     </motion.div>
                                     <div>
                                         <p className="text-sm font-semibold text-foreground">
-                                            Database
+                                            Basis Data
                                         </p>
                                         <p className="text-xs text-muted-foreground">
-                                            Connected
+                                            Terhubung
                                         </p>
                                     </div>
                                 </div>
@@ -285,10 +285,10 @@ export default function AdminDashboard({
                                     </motion.div>
                                     <div>
                                         <p className="text-sm font-semibold text-foreground">
-                                            Queue
+                                            Antrean
                                         </p>
                                         <p className="text-xs text-muted-foreground">
-                                            Processing
+                                            Memproses
                                         </p>
                                     </div>
                                 </div>
@@ -314,7 +314,7 @@ export default function AdminDashboard({
                         >
                             <p className="flex items-center gap-1.5 text-xs font-semibold text-(--palette-green)">
                                 <CheckCircleIcon className="h-3.5 w-3.5" />
-                                All systems operational
+                                Semua sistem berjalan normal
                             </p>
                         </motion.div>
                     </motion.div>
@@ -329,13 +329,13 @@ export default function AdminDashboard({
                         <div className="border-b border-(--palette-limelight)/10 p-6">
                             <h3 className="flex items-center gap-2 text-lg font-bold">
                                 <Users className="h-5 w-5 text-(--palette-green)" />
-                                Latest Users
+                                Pengguna Terbaru
                             </h3>
                         </div>
 
                         {latestUsers.length === 0 ? (
                             <div className="p-6 text-center text-muted-foreground">
-                                No users yet
+                                Belum ada pengguna
                             </div>
                         ) : (
                             <>
@@ -344,16 +344,16 @@ export default function AdminDashboard({
                                         <thead>
                                             <tr className="border-b border-(--palette-limelight)/10 bg-(--palette-limelight)/5">
                                                 <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
-                                                    User
+                                                    Pengguna
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                                                     Email
                                                 </th>
                                                 <th className="px-6 py-3 text-center text-sm font-semibold text-foreground">
-                                                    Role
+                                                    Peran
                                                 </th>
                                                 <th className="px-6 py-3 text-right text-sm font-semibold text-foreground">
-                                                    Joined
+                                                    Bergabung
                                                 </th>
                                             </tr>
                                         </thead>
@@ -404,7 +404,11 @@ export default function AdminDashboard({
                                                                     : 'bg-(--palette-limelight)/20 text-(--palette-limelight)'
                                                                 }`}
                                                         >
-                                                            {user.role}
+                                                            {user.role === 'admin'
+                                                                ? 'Admin'
+                                                                : user.role === 'teacher'
+                                                                ? 'Guru'
+                                                                : 'Siswa'}
                                                         </Badge>
                                                     </td>
                                                     <td className="px-6 py-4 text-right text-sm text-muted-foreground">
