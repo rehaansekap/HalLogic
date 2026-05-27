@@ -32,7 +32,7 @@ export function UserMenuContent({ user }: Props) {
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="my-1 bg-(--palette-limelight)/10" />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
                 <DropdownMenuItem asChild className="cursor-pointer rounded-xl px-4 py-3 focus:bg-(--palette-green)/10 focus:text-(--palette-green) transition-colors mb-1">
                     <Link
                         className="flex w-full items-center gap-3"
@@ -45,7 +45,7 @@ export function UserMenuContent({ user }: Props) {
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator className="my-1 bg-(--palette-limelight)/10" />
+            <DropdownMenuSeparator className="my-1 bg-(--palette-limelight)/10" /> */}
             <DropdownMenuItem asChild className="cursor-pointer rounded-xl px-4 py-3 text-red-600 focus:bg-red-50 focus:text-red-700 transition-colors">
                 <Link
                     className="flex w-full items-center gap-3"
