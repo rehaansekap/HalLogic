@@ -15,7 +15,7 @@ interface Material {
     slug: string;
     title: string;
     description: string;
-    difficulty_level: 1 | 2 | 3;
+    difficulty_level: number;
     classroom_name: string;
     teacher_name: string;
     status: 'locked' | 'unlocked' | 'in_progress' | 'completed';
@@ -106,22 +106,6 @@ export default function StudentDashboard({
             </>
         );
     }
-
-    // Console Log All Data from props as JSON in one Console Log
-    console.log(
-        'All Data:',
-        JSON.stringify(
-            {
-                materials,
-                teachers,
-                userXp,
-                userLevel,
-                user,
-            },
-            null,
-            2,
-        ),
-    );
 
     return (
         <>

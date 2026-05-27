@@ -89,23 +89,6 @@ export default function AdminDashboard({
         );
     }
 
-    // Console Log All Data from props as JSON in one Console Log
-    console.log(
-        'All Data:',
-        JSON.stringify(
-            {
-                totalStudents,
-                totalTeachers,
-                totalClassrooms,
-                totalMaterials,
-                latestUsers,
-                user,
-            },
-            null,
-            2,
-        ),
-    );
-
     return (
         <>
             <Head title="Dashboard - Admin" />
@@ -407,8 +390,8 @@ export default function AdminDashboard({
                                                             {user.role === 'admin'
                                                                 ? 'Admin'
                                                                 : user.role === 'teacher'
-                                                                ? 'Guru'
-                                                                : 'Siswa'}
+                                                                    ? 'Guru'
+                                                                    : 'Siswa'}
                                                         </Badge>
                                                     </td>
                                                     <td className="px-6 py-4 text-right text-sm text-muted-foreground">

@@ -105,7 +105,7 @@ interface MaterialDetailProps {
         id: number;
         title: string;
         description: string;
-        difficulty_level: string;
+        difficulty_level: number;
         slug: string;
         pre_reflection_questions?: string[];
         post_reflection_questions?: string[];

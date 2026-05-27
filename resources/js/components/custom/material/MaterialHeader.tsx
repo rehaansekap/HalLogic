@@ -5,12 +5,15 @@ import { ArrowLeft, Lock } from 'lucide-react';
 interface MaterialHeaderProps {
     title: string;
     description: string;
-    difficulty: 1 | 2 | 3;
+    difficulty: number;
     groupStatus?: 'locked' | 'active' | 'completed';
     isLocked: boolean;
 }
 
-const difficultyConfig = {
+const difficultyConfig: Record<
+    number,
+    { text: string; bg: string; border: string; label: string }
+> = {
     1: {
         text: 'text-(--palette-green)',
         bg: 'bg-(--palette-green)/8',
@@ -18,16 +21,28 @@ const difficultyConfig = {
         label: 'Mudah',
     },
     2: {
-        text: 'text-(--palette-yellow-green)',
-        bg: 'bg-(--palette-yellow-green)/8',
-        border: 'border-(--palette-yellow-green)/30',
-        label: 'Sedang',
-    },
-    3: {
         text: 'text-(--palette-sunflower)',
         bg: 'bg-(--palette-sunflower)/8',
         border: 'border-(--palette-sunflower)/30',
+        label: 'Sedang',
+    },
+    3: {
+        text: 'text-red-500',
+        bg: 'bg-red-500/8',
+        border: 'border-red-500/30',
         label: 'Sulit',
+    },
+    4: {
+        text: 'text-orange-500',
+        bg: 'bg-orange-500/8',
+        border: 'border-orange-500/30',
+        label: 'Expert',
+    },
+    5: {
+        text: 'text-purple-500',
+        bg: 'bg-purple-500/8',
+        border: 'border-purple-500/30',
+        label: 'Master',
     },
 };
 

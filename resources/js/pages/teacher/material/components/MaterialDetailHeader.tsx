@@ -19,31 +19,43 @@ interface MaterialDetailHeaderProps {
         id: number;
         title: string;
         description: string;
-        difficulty_level: string;
+        difficulty_level: number;
         slug: string;
     };
 }
 
 const difficultyConfig: Record<
-    string,
+    number,
     { label: string; color: string; bg: string; icon: React.ReactNode }
 > = {
-    easy: {
+    1: {
         label: 'Mudah',
         color: 'text-(--palette-green)',
         bg: 'bg-(--palette-green)/15 border-(--palette-green)/30',
         icon: <Sparkles className="h-3.5 w-3.5" />,
     },
-    medium: {
+    2: {
         label: 'Sedang',
         color: 'text-(--palette-sunflower)',
         bg: 'bg-(--palette-sunflower)/15 border-(--palette-sunflower)/30',
         icon: <Zap className="h-3.5 w-3.5" />,
     },
-    hard: {
+    3: {
         label: 'Sulit',
         color: 'text-red-500',
         bg: 'bg-red-500/15 border-red-500/30',
+        icon: <GraduationCap className="h-3.5 w-3.5" />,
+    },
+    4: {
+        label: 'Expert',
+        color: 'text-orange-500',
+        bg: 'bg-orange-500/15 border-orange-500/30',
+        icon: <GraduationCap className="h-3.5 w-3.5" />,
+    },
+    5: {
+        label: 'Master',
+        color: 'text-purple-500',
+        bg: 'bg-purple-500/15 border-purple-500/30',
         icon: <GraduationCap className="h-3.5 w-3.5" />,
     },
 };
@@ -52,7 +64,7 @@ export default function MaterialDetailHeader({
     material,
 }: MaterialDetailHeaderProps) {
     const difficulty =
-        difficultyConfig[material.difficulty_level] ?? difficultyConfig.easy;
+        difficultyConfig[Number(material.difficulty_level)] ?? difficultyConfig[1];
 
     return (
         <motion.div

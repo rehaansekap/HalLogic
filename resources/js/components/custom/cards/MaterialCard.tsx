@@ -13,7 +13,7 @@ interface MaterialCardProps {
     id: number;
     title: string;
     description: string;
-    difficulty: 1 | 2 | 3;
+    difficulty: number;
     classroom?: string;
     teacher?: string;
     status: 'locked' | 'unlocked' | 'in_progress' | 'completed';
@@ -35,7 +35,7 @@ export default function MaterialCard({
     onClick,
     delay = 0,
 }: MaterialCardProps) {
-    const difficultyColors = {
+    const difficultyColors: Record<number, { bg: string; text: string; border: string }> = {
         1: {
             bg: 'bg-[var(--palette-green)]/10',
             text: 'text-[var(--palette-green)]',
@@ -47,17 +47,29 @@ export default function MaterialCard({
             border: 'border-[var(--palette-sunflower)]/20',
         },
         3: {
-            bg: 'bg-[var(--palette-yellow-green)]/10',
-            text: 'text-[var(--palette-yellow-green)]',
-            border: 'border-[var(--palette-yellow-green)]/20',
+            bg: 'bg-red-500/10',
+            text: 'text-red-500',
+            border: 'border-red-500/20',
+        },
+        4: {
+            bg: 'bg-orange-500/10',
+            text: 'text-orange-500',
+            border: 'border-orange-500/20',
+        },
+        5: {
+            bg: 'bg-purple-500/10',
+            text: 'text-purple-500',
+            border: 'border-purple-500/20',
         },
     };
 
-    const difficultyTextMap = {
-        1: 'Easy',
-        2: 'Medium',
-        3: 'Hard',
-    } as const;
+    const difficultyTextMap: Record<number, string> = {
+        1: 'Mudah',
+        2: 'Sedang',
+        3: 'Sulit',
+        4: 'Expert',
+        5: 'Master',
+    };
 
     const statusConfig = {
         locked: {

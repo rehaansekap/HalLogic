@@ -13,7 +13,7 @@ interface Material {
     title: string;
     slug: string;
     description: string;
-    difficulty_level: 'easy' | 'medium' | 'hard';
+    difficulty_level: number;
     video_url?: string;
     material_pdf?: string;
     learning_objectives?: string[];
@@ -111,7 +111,7 @@ export default function MaterialPage({
                 <MaterialHeader
                     title={material.title}
                     description={material.description}
-                    difficulty={material.difficulty_level === 'easy' ? 1 : material.difficulty_level === 'medium' ? 2 : 3}
+                    difficulty={material.difficulty_level}
                     groupStatus={groupStatus as any}
                     isLocked={isLocked}
                 />
