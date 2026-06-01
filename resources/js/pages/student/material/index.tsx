@@ -53,6 +53,13 @@ interface MaterialPageProps {
     submission?: {
         files: string[] | null;
         submitted_at: string | null;
+        grade?: {
+            id: number;
+            score: number;
+            teacher_notes: string | null;
+            created_at?: string;
+            updated_at?: string;
+        } | null;
     } | null;
     attendance?: {
         is_present: boolean;

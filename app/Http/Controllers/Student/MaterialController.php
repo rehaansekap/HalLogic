@@ -84,6 +84,7 @@ class MaterialController extends Controller
             'groupStatus' => $groupStatus,
             'submission' => Submission::where('group_id', $groupMember?->group_id)
                 ->where('material_id', $material->id)
+                ->with('grade')
                 ->first(),
             'attendance' => DB::table('attendances')
                 ->where('material_id', $material->id)

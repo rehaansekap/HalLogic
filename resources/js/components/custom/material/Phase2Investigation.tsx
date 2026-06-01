@@ -20,6 +20,7 @@ import {
     ClipboardCheck,
     Monitor,
     PartyPopper,
+    Award,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
@@ -65,6 +66,13 @@ interface Phase2InvestigationProps {
     submission?: {
         files: string[] | null;
         submitted_at: string | null;
+        grade?: {
+            id: number;
+            score: number;
+            teacher_notes: string | null;
+            created_at?: string;
+            updated_at?: string;
+        } | null;
     } | null;
 }
 
@@ -970,13 +978,59 @@ int main() {
                                         )}
                                     </div>
                                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                                        {isSubmitted
+                        {isSubmitted
                                             ? "Jawaban tugas dikirim oleh ketua kelompok dan hanya dapat dikirim satu kali."
                                             : "Unggah jawaban tugas yang sudah dikerjakan bersama kelompok."}
                                     </p>
 
                                     {isSubmitted ? (
                                         <div className="mt-6 space-y-4">
+                                            {/* Panel Nilai & Feedback dari Guru (Jika Sudah Dinilai) */}
+                                            {submission?.grade && (
+                                                <motion.div
+                                                    className="rounded-2xl border border-[--palette-green]/30 bg-gradient-to-br from-[--palette-green]/10 to-[--palette-limelight]/5 p-5 md:p-6 shadow-sm"
+                                                    initial={{ opacity: 0, y: 15 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                >
+                                                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-[--palette-green]/10 pb-5">
+                                                        <div className="flex items-start gap-4">
+                                                            <div className="rounded-xl bg-[--palette-green]/15 p-3 text-[--palette-green] border border-[--palette-green]/20 shrink-0">
+                                                                <Award className="h-6 w-6" />
+                                                            </div>
+                                                            <div>
+                                                                <h4 className="text-lg font-black text-slate-800 tracking-tight">Evaluasi Guru</h4>
+                                                                <p className="text-xs text-muted-foreground mt-1 font-medium">
+                                                                    Tugas kelompokmu telah dinilai dan dievaluasi.
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Badge Nilai Akhir */}
+                                                        <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl shadow-sm border border-[--palette-green]/20 self-stretch md:self-auto justify-center">
+                                                            <div className="text-center">
+                                                                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">Nilai Akhir</span>
+                                                                <div className="flex items-baseline justify-center gap-0.5">
+                                                                    <span className="text-3xl font-black text-[--palette-green]">{submission.grade.score}</span>
+                                                                    <span className="text-xs font-bold text-slate-450">/100</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {submission.grade.teacher_notes && (
+                                                        <div className="mt-5 rounded-xl border border-slate-200/60 bg-white/70 p-4 md:p-5 shadow-inner">
+                                                            <div className="flex items-center gap-2 text-slate-800 font-bold text-xs md:text-sm mb-2.5">
+                                                                <Star className="h-4 w-4 text-[--palette-green] fill-current" />
+                                                                <span>Catatan & Feedback Guru:</span>
+                                                            </div>
+                                                            <p className="text-xs md:text-sm text-slate-600 leading-relaxed italic whitespace-pre-wrap pl-6 border-l-2 border-[--palette-green]/40">
+                                                                "{submission.grade.teacher_notes}"
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </motion.div>
+                                            )}
+
                                             <div className="rounded-xl border border-green-200 bg-green-50/10 p-4">
                                                 <div className="flex items-center gap-2 text-xs font-bold text-green-800 mb-3">
                                                     <CheckCircle2 className="h-4 w-4 text-green-600" />

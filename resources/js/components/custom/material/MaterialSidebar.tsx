@@ -1,6 +1,6 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, FileUp, FileText, CheckCircle2, Loader2, X, Inbox, Lock, Download } from 'lucide-react';
+import { Users, FileUp, FileText, CheckCircle2, Loader2, X, Inbox, Lock, Download, Award } from 'lucide-react';
 import { useState, useRef } from 'react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -27,6 +27,13 @@ interface MaterialSidebarProps {
     submission?: {
         files: string[] | null;
         submitted_at: string | null;
+        grade?: {
+            id: number;
+            score: number;
+            teacher_notes: string | null;
+            created_at?: string;
+            updated_at?: string;
+        } | null;
     } | null;
     attendance?: {
         is_present: boolean;
@@ -117,6 +124,53 @@ export default function MaterialSidebar({
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
         >
+            {/* Nilai & Umpan Balik Guru */}
+            {submission?.grade && (
+                <motion.div
+                    className="group relative overflow-hidden rounded-xl border border-[--palette-green]/30 bg-gradient-to-br from-[--palette-green]/10 to-[--palette-limelight]/5 p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 }}
+                >
+                    <div className="relative z-10 space-y-3">
+                        <div className="flex items-center justify-between border-b border-[--palette-green]/10 pb-2.5">
+                            <div className="flex items-center gap-2">
+                                <div className="rounded-lg bg-[--palette-green]/15 p-1.5 text-[--palette-green]">
+                                    <Award className="h-4.5 w-4.5" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                        Hasil Evaluasi
+                                    </p>
+                                    <h3 className="text-xs font-bold text-foreground">
+                                        Nilai Tugas
+                                    </h3>
+                                </div>
+                            </div>
+                            <div className="flex items-baseline gap-0.5 rounded-lg bg-white/70 px-2.5 py-1 shadow-sm border border-[--palette-green]/10">
+                                <span className="text-xl font-black text-[--palette-green]">
+                                    {submission.grade.score}
+                                </span>
+                                <span className="text-[10px] font-bold text-slate-450">
+                                    /100
+                                </span>
+                            </div>
+                        </div>
+
+                        {submission.grade.teacher_notes && (
+                            <div className="rounded-lg bg-white/60 p-2.5 border border-slate-200/50">
+                                <p className="text-[9px] font-black uppercase tracking-wider text-slate-400">
+                                    Catatan Guru
+                                </p>
+                                <p className="mt-1 text-xs text-slate-650 line-clamp-3 leading-relaxed italic">
+                                    "{submission.grade.teacher_notes}"
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </motion.div>
+            )}
+
             {/* Attendance Status */}
             <motion.div
                 className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
