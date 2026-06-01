@@ -33,6 +33,7 @@ return new class extends Migration
             $table->timestamp('finished_at')->nullable();
 
             $table->string('video_url')->nullable();
+            $table->string('case_title')->nullable();
             $table->longText('case_narrative')->nullable();
             $table->string('case_image_path')->nullable();
 

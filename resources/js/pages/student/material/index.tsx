@@ -31,6 +31,7 @@ interface Material {
         output: string;
         explanation: string;
     }>;
+    case_title?: string | null;
     case_narrative?: string;
     case_image_path?: string | null;
 }

@@ -333,6 +333,10 @@ export default function Step4Review({
                                             <span className="truncate max-w-40">{formData.case_image?.name || (formData.case_image_existing ? 'Gambar tersimpan' : 'Tidak disertakan')}</span>
                                         </div>
                                     </div>
+                                     <div className="flex flex-col gap-1">
+                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Judul Kasus</span>
+                                         <p className="text-xs font-semibold text-slate-800 mt-1 truncate">{formData.case_title || 'Tidak disertakan'}</p>
+                                     </div>
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Narasi Kasus</span>
                                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{formData.case_narrative || 'Tidak disertakan'}</p>

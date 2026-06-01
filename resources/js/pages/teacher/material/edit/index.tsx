@@ -26,6 +26,7 @@ interface EditMaterialProps {
         description: string;
         difficulty_level: number;
         video_url: string;
+        case_title: string;
         case_narrative: string;
         case_image_path: string | null;
         material_pdf: string | null;
@@ -60,6 +61,7 @@ export default function EditMaterial({
         description: material.description,
         difficulty_level: material.difficulty_level,
         video_url: material.video_url,
+        case_title: material.case_title || '',
         case_narrative: material.case_narrative,
         case_image_existing: material.case_image_path || undefined,
         prerequisite_material_id: material.prerequisite_material_id,

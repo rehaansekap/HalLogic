@@ -9,6 +9,7 @@ export interface MaterialFormData {
     started_at: string | null;
     finished_at: string | null;
     video_url: string;
+    case_title: string;
     case_narrative: string;
     case_image: File | null;
     case_image_existing?: string;
@@ -49,6 +50,7 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
         started_at: initialData?.started_at ?? null,
         finished_at: initialData?.finished_at ?? null,
         video_url: initialData?.video_url ?? '',
+        case_title: initialData?.case_title ?? '',
         case_narrative: initialData?.case_narrative ?? '',
         case_image: null,
         case_image_existing: initialData?.case_image_existing ?? undefined,
@@ -174,6 +176,12 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                 newErrors.video_url = ['URL harus dari YouTube atau Google Drive'];
             }
         } else if (step === 3) {
+            if (!formData.case_title || !formData.case_title.trim()) {
+                newErrors.case_title = ['Judul studi kasus wajib diisi'];
+            } else if (formData.case_title.length > 255) {
+                newErrors.case_title = ['Judul studi kasus maksimal 255 karakter'];
+            }
+
             if (
                 formData.case_narrative &&
                 formData.case_narrative.length > 1000

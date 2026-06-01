@@ -24,6 +24,7 @@ class Material extends Model
         'started_at',
         'finished_at',
         'video_url',
+        'case_title',
         'case_narrative',
         'case_image_path',
         'material_pdf',

@@ -159,7 +159,7 @@ export default function Step3Reflections({
 
     const getError = (field: string) => errors[field]?.[0];
 
-    const hasMediaErrors = useMemo(() => !!errors.case_image || !!errors.case_narrative, [errors]);
+    const hasMediaErrors = useMemo(() => !!errors.case_image || !!errors.case_title || !!errors.case_narrative, [errors]);
     const hasPreErrors = useMemo(() => !!errors.pre_reflection_questions, [errors]);
     const hasPostErrors = useMemo(() => !!errors.post_reflection_questions, [errors]);
 
@@ -232,42 +232,79 @@ export default function Step3Reflections({
             >
                 <div className="space-y-8">
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label
-                                htmlFor="case_narrative"
-                                className="flex items-center gap-2 text-sm font-bold text-foreground"
-                            >
-                                <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                                Narasi Kasus / Masalah
-                            </Label>
-                            <div className="relative group">
-                                <textarea
-                                    id="case_narrative"
-                                    value={formData.case_narrative}
-                                    onChange={(e) =>
-                                        setFieldValue(
-                                            'case_narrative',
-                                            e.target.value,
-                                        )
-                                    }
-                                    placeholder="Deskripsikan kasus atau masalah yang akan dipelajari siswa..."
-                                    className={cn(
-                                        'min-h-[180px] w-full resize-none rounded-lg border border-(--palette-limelight)/20 bg-white px-4 py-3 pl-11 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
-                                        getError('case_narrative') &&
-                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
-                                    )}
-                                    maxLength={1000}
-                                />
-                                <MessageSquare className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
-                                <div className="absolute bottom-3 right-3 text-[10px] font-bold tracking-tighter text-muted-foreground/50 uppercase">
-                                    {formData.case_narrative.length}/1000
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label
+                                    htmlFor="case_title"
+                                    className="flex items-center gap-2 text-sm font-bold text-foreground"
+                                >
+                                    <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                                    Judul Studi Kasus
+                                </Label>
+                                <div className="relative group">
+                                    <Input
+                                        id="case_title"
+                                        value={formData.case_title}
+                                        onChange={(e) =>
+                                            setFieldValue('case_title', e.target.value)
+                                        }
+                                        placeholder="Contoh: Pendaftaran Turnamen E-Sport Sekolah..."
+                                        className={cn(
+                                            'h-12 rounded-lg border border-(--palette-limelight)/20 bg-white px-4 pl-11 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
+                                            getError('case_title') &&
+                                            'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                        )}
+                                        maxLength={255}
+                                    />
+                                    <ClipboardList className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
+                                    <div className="absolute top-1/2 right-3 -translate-y-1/2 text-[9px] font-bold tracking-tighter text-muted-foreground/30 uppercase">
+                                        {formData.case_title.length}/255
+                                    </div>
                                 </div>
+                                {getError('case_title') && (
+                                    <p className="mt-1 text-xs font-medium text-red-500">
+                                        {getError('case_title')}
+                                    </p>
+                                )}
                             </div>
-                            {getError('case_narrative') && (
-                                <p className="mt-1 text-xs font-medium text-red-500">
-                                    {getError('case_narrative')}
-                                </p>
-                            )}
+
+                            <div className="space-y-2">
+                                <Label
+                                    htmlFor="case_narrative"
+                                    className="flex items-center gap-2 text-sm font-bold text-foreground"
+                                >
+                                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                                    Narasi Kasus / Masalah
+                                </Label>
+                                <div className="relative group">
+                                    <textarea
+                                        id="case_narrative"
+                                        value={formData.case_narrative}
+                                        onChange={(e) =>
+                                            setFieldValue(
+                                                'case_narrative',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder="Deskripsikan kasus atau masalah yang akan dipelajari siswa..."
+                                        className={cn(
+                                            'min-h-[180px] w-full resize-none rounded-lg border border-(--palette-limelight)/20 bg-white px-4 py-3 pl-11 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
+                                            getError('case_narrative') &&
+                                            'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                        )}
+                                        maxLength={1000}
+                                    />
+                                    <MessageSquare className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
+                                    <div className="absolute bottom-3 right-3 text-[10px] font-bold tracking-tighter text-muted-foreground/50 uppercase">
+                                        {formData.case_narrative.length}/1000
+                                    </div>
+                                </div>
+                                {getError('case_narrative') && (
+                                    <p className="mt-1 text-xs font-medium text-red-500">
+                                        {getError('case_narrative')}
+                                    </p>
+                                )}
+                            </div>
                         </div>
 
                         <div className="space-y-2">

@@ -42,6 +42,7 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
             'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'summary' => 'Ini adalah ringkasan materi dalam bahasa Indonesia.',
             'learning_objectives' => [
@@ -116,6 +117,7 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
             'video_url' => 'https://drive.google.com/file/d/1234567890abcdefghijklmnopqrstuvwxyz/view?usp=sharing',
+            'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'summary' => 'Ini adalah ringkasan materi dengan video Google Drive.',
             'learning_objectives' => [
@@ -153,6 +155,7 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
             'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'learning_objectives' => [
                 'Objective 1',
@@ -182,6 +185,7 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
             'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'summary' => 'This is a English summary.',
             'learning_objectives' => [], // Empty array
@@ -212,6 +216,7 @@ class TeacherMaterialManagementTest extends TestCase
             'teacher_id' => $teacher->id,
             'classroom_id' => $classroom->id,
             'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'case_title' => 'Original case title',
             'case_narrative' => 'Original case narrative',
             'summary' => 'Original summary',
             'learning_objectives' => ['Original Objective'],
@@ -239,6 +244,7 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'Updated description text here.',
             'difficulty_level' => 3,
             'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'case_title' => 'Updated case title.',
             'case_narrative' => 'Updated case narrative.',
             'summary' => 'Ringkasan materi yang diperbarui.',
             'learning_objectives' => [
@@ -311,6 +317,7 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A description.',
             'difficulty_level' => 2,
             'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'case_image' => $caseImage,
             'summary' => 'Summary content.',

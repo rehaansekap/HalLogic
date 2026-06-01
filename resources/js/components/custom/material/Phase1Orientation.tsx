@@ -27,6 +27,7 @@ interface Phase1OrientationProps {
         learning_objectives?: string[];
         summary?: string;
         pre_reflection_questions?: string[];
+        case_title?: string | null;
         case_narrative?: string | null;
         case_image_path?: string | null;
     };
@@ -220,36 +221,32 @@ export default function Phase1Orientation({
                     >
                         {hasInitialReflection ? (
                             <div className="space-y-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="rounded-lg bg-(--palette-green)/10 p-3">
-                                        <Heart className="h-5 w-5 text-(--palette-green)" />
+                                <div className="flex items-start gap-4 mb-8">
+                                    <div className="rounded-lg bg-(--palette-green)/8 p-4 relative">
+                                        <ClipboardList className="h-6 w-6 text-(--palette-green)" />
+                                        <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm border border-slate-100">
+                                            <CheckCircleSolid className="h-4.5 w-4.5 text-(--palette-green)" />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h2 className="flex items-center gap-2 text-2xl font-bold text-foreground">
-                                            Refleksi Awal Tersimpan
-                                            <CheckCircleSolid className="h-6 w-6 text-(--palette-green)" />
+                                    <div className="flex-1">
+                                        <h2 className="mb-2 text-2xl font-bold text-foreground flex items-center gap-2">
+                                            Sebelum Belajar <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-(--palette-green)/10 text-(--palette-green) border border-(--palette-green)/20">Tersimpan</span>
                                         </h2>
-                                        <p className="text-sm text-muted-foreground">
-                                            Refleksi Kamu telah direkam, silakan lanjut ke fase berikutnya
+                                        <p className="text-muted-foreground text-sm leading-relaxed">
+                                            Kamu telah membaca studi kasus dan merekam jawaban refleksi awal untuk mengidentifikasi permasalahan dan informasi penting sebelum memulai pembelajaran.
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Studi Kasus & Gambar (Saved Mode) */}
                                 {material.case_narrative && (
-                                    <div className="rounded-xl border border-(--palette-limelight)/25 bg-slate-50/40 p-5 md:p-6 space-y-4 shadow-sm">
-                                        <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
-                                            <div className="rounded-lg bg-(--palette-green)/10 p-2 text-(--palette-green)">
-                                                <ClipboardList className="h-4 w-4" />
-                                            </div>
-                                            Studi Kasus / Masalah
-                                        </h3>
+                                    <div className="rounded-2xl border border-[--palette-green]/20 bg-[--palette-green]/5 p-5 md:p-6 space-y-4 shadow-sm overflow-hidden">
                                         {material.case_image_path && (
-                                            <div className="w-full max-w-2xl mx-auto border border-slate-100 p-2 rounded-2xl bg-white flex items-center justify-center shadow-inner">
+                                            <div className="w-full max-w-2xl mx-auto border border-slate-100 p-2 rounded-2xl bg-white flex items-center justify-center shadow-sm">
                                                 <img
                                                     src={`/storage/${material.case_image_path}`}
                                                     alt="Ilustrasi Studi Kasus"
-                                                    className="rounded-xl max-h-72 object-contain cursor-pointer transition-transform hover:scale-[1.01]"
+                                                    className="rounded-xl max-h-80 object-contain cursor-pointer transition-transform hover:scale-[1.01]"
                                                     onClick={() => {
                                                         MySwal.fire({
                                                             imageUrl: `/storage/${material.case_image_path}`,
@@ -269,9 +266,14 @@ export default function Phase1Orientation({
                                                 />
                                             </div>
                                         )}
-                                        <p className="text-sm font-semibold text-slate-700 leading-relaxed whitespace-pre-wrap pl-1">
-                                            {material.case_narrative}
-                                        </p>
+                                        <div className="space-y-3">
+                                            <h3 className="text-base md:text-lg font-black text-[--palette-green]">
+                                                Studi Kasus: {material.case_title || 'Misi Utama'}
+                                            </h3>
+                                            <p className="text-sm font-medium text-justify text-slate-700 leading-relaxed whitespace-pre-wrap pl-1">
+                                                {material.case_narrative}
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
 
@@ -330,27 +332,21 @@ export default function Phase1Orientation({
                                         <h2 className="mb-2 text-2xl font-bold text-foreground">
                                             Sebelum Belajar
                                         </h2>
-                                        <p className="text-muted-foreground">
-                                            Tuliskan pendapat dan pemahaman awalmu sebelum memulai materi. Jawabanmu akan membantu melihat perkembangan pemahaman dari waktu ke waktu.
+                                        <p className="text-muted-foreground text-sm leading-relaxed">
+                                            Bacalah studi kasus berikut dengan cermat, kemudian jawablah pertanyaan-pertanyaan yang disediakan untuk mengidentifikasi permasalahan dan informasi penting yang kamu butuhkan.
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Studi Kasus & Gambar (Form Mode) */}
                                 {material.case_narrative && (
-                                    <div className="rounded-xl border border-(--palette-limelight)/25 bg-slate-50/40 p-5 md:p-6 space-y-4 shadow-sm">
-                                        <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
-                                            <div className="rounded-lg bg-(--palette-green)/10 p-2 text-(--palette-green)">
-                                                <ClipboardList className="h-4 w-4" />
-                                            </div>
-                                            Studi Kasus / Masalah
-                                        </h3>
+                                    <div className="rounded-2xl border border-[--palette-green]/20 bg-[--palette-green]/5 p-5 md:p-6 space-y-4 shadow-sm overflow-hidden">
                                         {material.case_image_path && (
-                                            <div className="w-full max-w-2xl mx-auto border border-slate-100 p-2 rounded-2xl bg-white flex items-center justify-center shadow-inner">
+                                            <div className="w-full max-w-2xl mx-auto border border-slate-100 p-2 rounded-2xl bg-white flex items-center justify-center shadow-sm">
                                                 <img
                                                     src={`/storage/${material.case_image_path}`}
                                                     alt="Ilustrasi Studi Kasus"
-                                                    className="rounded-xl max-h-72 object-contain cursor-pointer transition-transform hover:scale-[1.01]"
+                                                    className="rounded-xl max-h-80 object-contain cursor-pointer transition-transform hover:scale-[1.01]"
                                                     onClick={() => {
                                                         MySwal.fire({
                                                             imageUrl: `/storage/${material.case_image_path}`,
@@ -370,9 +366,14 @@ export default function Phase1Orientation({
                                                 />
                                             </div>
                                         )}
-                                        <p className="text-sm font-medium text-justify text-slate-700 leading-relaxed whitespace-pre-wrap pl-1">
-                                            {material.case_narrative}
-                                        </p>
+                                        <div className="space-y-3">
+                                            <h3 className="text-base md:text-lg font-black text-[--palette-green]">
+                                                Studi Kasus: {material.case_title || 'Misi Utama'}
+                                            </h3>
+                                            <p className="text-sm font-medium text-justify text-slate-700 leading-relaxed whitespace-pre-wrap pl-1">
+                                                {material.case_narrative}
+                                            </p>
+                                        </div>
                                     </div>
                                 )}
 
@@ -527,7 +528,7 @@ export default function Phase1Orientation({
 
                                                 <div className="flex items-center justify-center gap-2 rounded-lg bg-blue-50 border border-blue-100 p-3.5 text-xs text-blue-700 font-semibold">
                                                     <Lock className="h-4 w-4" />
-                                                    <span>Jawabanmu hanya dapat dilihat oleh kamu dan guru.</span>
+                                                    <span>Jawabanmu hanya dapat dilihat oleh kelompokmu.</span>
                                                 </div>
                                             </div>
 

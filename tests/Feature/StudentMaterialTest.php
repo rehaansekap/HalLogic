@@ -35,6 +35,7 @@ class StudentMaterialTest extends TestCase
             'slug' => 'struktur-kontrol-c',
             'description' => 'Mempelajari if-else dan switch-case.',
             'difficulty_level' => 1,
+            'case_title' => 'Studi Kasus Percabangan',
             'case_narrative' => 'Bagaimana membuat pencabangan?',
         ]);
 
