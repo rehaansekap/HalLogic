@@ -29,6 +29,8 @@ class UpdateMaterialRequest extends FormRequest
             'difficulty_level' => ['required', 'integer', 'between:1,5'],
             'video_url' => ['required', 'url', 'regex:/youtube\.com|youtu\.be|drive\.google\.com/'],
             'case_narrative' => ['required', 'string', 'max:1000'],
+            'case_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'remove_case_image' => ['nullable', 'boolean'],
             'material_pdf' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:51200'],
             'remove_pdf' => ['nullable', 'boolean'],
             'simulator_config' => ['nullable', 'json'],
@@ -98,6 +100,10 @@ class UpdateMaterialRequest extends FormRequest
     {
         if (is_string($this->material_pdf)) {
             $this->request->remove('material_pdf');
+        }
+
+        if (is_string($this->case_image)) {
+            $this->request->remove('case_image');
         }
 
         $this->merge([

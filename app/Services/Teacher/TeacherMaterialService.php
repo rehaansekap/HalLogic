@@ -21,6 +21,11 @@ class TeacherMaterialService
             $pdfPath = $data['material_pdf']->store('materials', 'public');
         }
 
+        $caseImagePath = null;
+        if (isset($data['case_image']) && $data['case_image'] instanceof UploadedFile) {
+            $caseImagePath = $data['case_image']->store('materials/case_images', 'public');
+        }
+
         $subMaterials = $this->processSubMaterials($data['sub_materials'] ?? []);
 
         $slug = $this->generateUniqueSlug($data['title']);
@@ -34,6 +39,7 @@ class TeacherMaterialService
             'difficulty_level' => $data['difficulty_level'],
             'video_url' => $data['video_url'],
             'case_narrative' => $data['case_narrative'],
+            'case_image_path' => $caseImagePath,
             'material_pdf' => $pdfPath,
             'simulator_config' => $data['simulator_config'] ?? null,
             'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
@@ -74,6 +80,22 @@ class TeacherMaterialService
             $pdfPath = $data['material_pdf']->store('materials', 'public');
         }
 
+        $caseImagePath = $material->case_image_path;
+
+        if (isset($data['remove_case_image']) && $data['remove_case_image']) {
+            if ($material->case_image_path) {
+                Storage::disk('public')->delete($material->case_image_path);
+            }
+            $caseImagePath = null;
+        }
+
+        if (isset($data['case_image']) && $data['case_image'] instanceof UploadedFile) {
+            if ($material->case_image_path) {
+                Storage::disk('public')->delete($material->case_image_path);
+            }
+            $caseImagePath = $data['case_image']->store('materials/case_images', 'public');
+        }
+
         $subMaterials = $this->processSubMaterials($data['sub_materials'] ?? [], $material->sub_materials);
 
         $slug = $material->slug;
@@ -89,6 +111,7 @@ class TeacherMaterialService
             'difficulty_level' => $data['difficulty_level'],
             'video_url' => $data['video_url'],
             'case_narrative' => $data['case_narrative'],
+            'case_image_path' => $caseImagePath,
             'material_pdf' => $pdfPath,
             'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
@@ -111,6 +134,10 @@ class TeacherMaterialService
     {
         if ($material->material_pdf) {
             Storage::disk('public')->delete($material->material_pdf);
+        }
+
+        if ($material->case_image_path) {
+            Storage::disk('public')->delete($material->case_image_path);
         }
 
         if ($material->sub_materials) {

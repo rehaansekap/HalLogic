@@ -34,6 +34,7 @@ return new class extends Migration
 
             $table->string('video_url')->nullable();
             $table->longText('case_narrative')->nullable();
+            $table->string('case_image_path')->nullable();
 
             $table->string('material_pdf')->nullable();
             $table->json('sub_materials')->nullable();

@@ -252,6 +252,7 @@ export default function Step2Material({
 }: Step2MaterialProps) {
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         materi: true,
+        video: false,
         contoh: false,
         media: false,
     });
@@ -268,19 +269,21 @@ export default function Step2Material({
 
     const hasMateriErrors = useMemo(() => !!errors.sub_materials, [errors]);
     const hasContohErrors = useMemo(() => !!errors.code_examples, [errors]);
-    const hasMediaErrors = useMemo(() => !!errors.video_url || !!errors.case_narrative || !!errors.material_pdf, [errors]);
+    const hasVideoErrors = useMemo(() => !!errors.video_url, [errors]);
+    const hasMediaErrors = useMemo(() => !!errors.material_pdf, [errors]);
 
     useEffect(() => {
-        if (hasMateriErrors || hasContohErrors || hasMediaErrors) {
+        if (hasMateriErrors || hasContohErrors || hasVideoErrors || hasMediaErrors) {
             setOpenSections((prev) => {
                 const next = { ...prev };
                 if (hasMateriErrors) next.materi = true;
                 if (hasContohErrors) next.contoh = true;
+                if (hasVideoErrors) next.video = true;
                 if (hasMediaErrors) next.media = true;
                 return next;
             });
         }
-    }, [errors, hasMateriErrors, hasContohErrors, hasMediaErrors]);
+    }, [errors, hasMateriErrors, hasContohErrors, hasVideoErrors, hasMediaErrors]);
 
     // Sub-materials Handlers
     const subMaterials = formData.sub_materials || [];
@@ -514,6 +517,51 @@ export default function Step2Material({
                             <span>⚠️</span> {getError('sub_materials')}
                         </p>
                     )}
+                </div>
+            </AccordionSection>
+
+            {/* Section: Video Pembelajaran */}
+            <AccordionSection
+                id="video"
+                title="Video Pembelajaran"
+                description="Sertakan URL video pembelajaran untuk membantu pemahaman siswa."
+                icon={Play}
+                isOpen={openSections.video}
+                onToggle={() => toggleSection('video')}
+                hasError={hasVideoErrors}
+            >
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label
+                            htmlFor="video_url"
+                            className="flex items-center gap-2 text-sm font-bold text-foreground"
+                        >
+                            <Play className="h-4 w-4 text-muted-foreground" />
+                            URL Video (YouTube / Google Drive)
+                        </Label>
+                        <div className="relative group">
+                            <Input
+                                id="video_url"
+                                type="url"
+                                value={formData.video_url}
+                                onChange={(e) =>
+                                    setFieldValue('video_url', e.target.value)
+                                }
+                                placeholder="https://www.youtube.com/watch?v=... atau https://drive.google.com/file/d/..."
+                                className={cn(
+                                    'h-12 rounded-lg border-(--palette-limelight)/20 bg-white px-4 pl-11 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10',
+                                    getError('video_url') &&
+                                    'border-red-500 focus:border-red-500 focus:ring-red-500/20',
+                                )}
+                            />
+                            <Play className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
+                        </div>
+                        {getError('video_url') && (
+                            <p className="mt-1 text-xs font-medium text-red-500">
+                                {getError('video_url')}
+                            </p>
+                        )}
+                    </div>
                 </div>
             </AccordionSection>
 

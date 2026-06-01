@@ -8,10 +8,14 @@ import {
 import { CheckCircleIcon as CheckCircleSolid } from '@heroicons/react/24/solid';
 import { Form } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Lightbulb, Send, BookOpen, ClipboardList, Play, Lock, MessageSquare } from 'lucide-react';
+import { Heart, Lightbulb, Send, BookOpen, ClipboardList, Play, Lock, MessageSquare, Image as ImageIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 interface Phase1OrientationProps {
     material: {
@@ -23,6 +27,8 @@ interface Phase1OrientationProps {
         learning_objectives?: string[];
         summary?: string;
         pre_reflection_questions?: string[];
+        case_narrative?: string | null;
+        case_image_path?: string | null;
     };
     hasInitialReflection: boolean;
     initialReflectionText?: string | null;
@@ -42,19 +48,6 @@ export default function Phase1Orientation({
             ? material.pre_reflection_questions.map(() => '')
             : ['']
     );
-
-    const embedUrl = material.video_url ? (() => {
-        const ytMatch = material.video_url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
-        if (ytMatch && ytMatch[2].length === 11) {
-            return `https://www.youtube.com/embed/${ytMatch[2]}`;
-        }
-        const gdMatch = material.video_url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) || 
-                        material.video_url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
-        if (gdMatch) {
-            return `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
-        }
-        return null;
-    })() : null;
 
     const parsedReflection = (() => {
         if (!initialReflectionText) return null;
@@ -130,7 +123,7 @@ export default function Phase1Orientation({
                     )}
                 >
                     <Heart className="h-4 w-4" />
-                    <span>Refleksi</span>
+                    <span>Studi Kasus</span>
                     {activeTab === 'refleksi' && (
                         <motion.div
                             className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
@@ -242,26 +235,43 @@ export default function Phase1Orientation({
                                     </div>
                                 </div>
 
-                                {/* Video Orientation (Saved Mode) */}
-                                {embedUrl ? (
-                                    <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 shadow-sm">
-                                        <div className="relative w-full pt-[56.25%]">
-                                            <iframe
-                                                className="absolute inset-0 h-full w-full"
-                                                src={embedUrl}
-                                                title="Video Materi"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                            ></iframe>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="overflow-hidden rounded-xl bg-slate-900 aspect-video flex flex-col items-center justify-center text-white p-6 relative">
-                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm mb-4 border border-white/20">
-                                            <Play className="h-8 w-8 text-white fill-white" />
-                                        </div>
-                                        <p className="font-bold text-base text-slate-100">Video pengantar belum tersedia.</p>
-                                        <p className="text-slate-400 text-sm mt-1">Video akan segera hadir. Silakan lanjutkan dengan refleksi.</p>
+                                {/* Studi Kasus & Gambar (Saved Mode) */}
+                                {material.case_narrative && (
+                                    <div className="rounded-xl border border-(--palette-limelight)/25 bg-slate-50/40 p-5 md:p-6 space-y-4 shadow-sm">
+                                        <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
+                                            <div className="rounded-lg bg-(--palette-green)/10 p-2 text-(--palette-green)">
+                                                <ClipboardList className="h-4 w-4" />
+                                            </div>
+                                            Studi Kasus / Masalah
+                                        </h3>
+                                        {material.case_image_path && (
+                                            <div className="w-full max-w-2xl mx-auto border border-slate-100 p-2 rounded-2xl bg-white flex items-center justify-center shadow-inner">
+                                                <img
+                                                    src={`/storage/${material.case_image_path}`}
+                                                    alt="Ilustrasi Studi Kasus"
+                                                    className="rounded-xl max-h-72 object-contain cursor-pointer transition-transform hover:scale-[1.01]"
+                                                    onClick={() => {
+                                                        MySwal.fire({
+                                                            imageUrl: `/storage/${material.case_image_path}`,
+                                                            imageAlt: "Ilustrasi Studi Kasus",
+                                                            width: 'auto',
+                                                            showConfirmButton: false,
+                                                            showCloseButton: true,
+                                                            background: 'transparent',
+                                                            backdrop: `rgba(0,0,0,0.8)`,
+                                                            customClass: {
+                                                                image: 'max-h-[85vh] object-contain rounded-xl',
+                                                                popup: 'p-0 bg-transparent',
+                                                                closeButton: 'text-white hover:text-gray-300'
+                                                            }
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                        <p className="text-sm font-semibold text-slate-700 leading-relaxed whitespace-pre-wrap pl-1">
+                                            {material.case_narrative}
+                                        </p>
                                     </div>
                                 )}
 
@@ -326,26 +336,43 @@ export default function Phase1Orientation({
                                     </div>
                                 </div>
 
-                                {/* Video Orientation (Form Mode) */}
-                                {embedUrl ? (
-                                    <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 shadow-sm">
-                                        <div className="relative w-full pt-[56.25%]">
-                                            <iframe
-                                                className="absolute inset-0 h-full w-full"
-                                                src={embedUrl}
-                                                title="Video Materi"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                            ></iframe>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="overflow-hidden rounded-xl bg-slate-900 aspect-video flex flex-col items-center justify-center text-white p-6 relative">
-                                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm mb-4 border border-white/20">
-                                            <Play className="h-8 w-8 text-white fill-white" />
-                                        </div>
-                                        <p className="font-bold text-base text-slate-100">Video pengantar belum tersedia.</p>
-                                        <p className="text-slate-400 text-sm mt-1">Video akan segera hadir. Silakan lanjutkan dengan refleksi.</p>
+                                {/* Studi Kasus & Gambar (Form Mode) */}
+                                {material.case_narrative && (
+                                    <div className="rounded-xl border border-(--palette-limelight)/25 bg-slate-50/40 p-5 md:p-6 space-y-4 shadow-sm">
+                                        <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
+                                            <div className="rounded-lg bg-(--palette-green)/10 p-2 text-(--palette-green)">
+                                                <ClipboardList className="h-4 w-4" />
+                                            </div>
+                                            Studi Kasus / Masalah
+                                        </h3>
+                                        {material.case_image_path && (
+                                            <div className="w-full max-w-2xl mx-auto border border-slate-100 p-2 rounded-2xl bg-white flex items-center justify-center shadow-inner">
+                                                <img
+                                                    src={`/storage/${material.case_image_path}`}
+                                                    alt="Ilustrasi Studi Kasus"
+                                                    className="rounded-xl max-h-72 object-contain cursor-pointer transition-transform hover:scale-[1.01]"
+                                                    onClick={() => {
+                                                        MySwal.fire({
+                                                            imageUrl: `/storage/${material.case_image_path}`,
+                                                            imageAlt: "Ilustrasi Studi Kasus",
+                                                            width: 'auto',
+                                                            showConfirmButton: false,
+                                                            showCloseButton: true,
+                                                            background: 'transparent',
+                                                            backdrop: `rgba(0,0,0,0.8)`,
+                                                            customClass: {
+                                                                image: 'max-h-[85vh] object-contain rounded-xl',
+                                                                popup: 'p-0 bg-transparent',
+                                                                closeButton: 'text-white hover:text-gray-300'
+                                                            }
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                        <p className="text-sm font-medium text-justify text-slate-700 leading-relaxed whitespace-pre-wrap pl-1">
+                                            {material.case_narrative}
+                                        </p>
                                     </div>
                                 )}
 

@@ -25,6 +25,7 @@ class Material extends Model
         'finished_at',
         'video_url',
         'case_narrative',
+        'case_image_path',
         'material_pdf',
         'simulator_config',
         'summary',

@@ -16,6 +16,7 @@ import {
     MessageSquare,
     Users,
     ClipboardList,
+    Image as ImageIcon,
 } from 'lucide-react';
 import { Editor } from '@monaco-editor/react';
 
@@ -310,7 +311,7 @@ export default function Step4Review({
                                     <Play className="h-4 w-4 text-(--palette-green)" />
                                     <span>LKPD & Media</span>
                                 </h4>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10">
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">File LKPD</span>
                                         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
@@ -323,6 +324,13 @@ export default function Step4Review({
                                         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
                                             <Link className="h-4 w-4 text-blue-600" />
                                             <span className="truncate max-w-40">{formData.video_url || 'Tidak disertakan'}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Gambar Kasus</span>
+                                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
+                                            <ImageIcon className="h-4 w-4 text-emerald-600" />
+                                            <span className="truncate max-w-40">{formData.case_image?.name || (formData.case_image_existing ? 'Gambar tersimpan' : 'Tidak disertakan')}</span>
                                         </div>
                                     </div>
                                     <div className="flex flex-col gap-1">

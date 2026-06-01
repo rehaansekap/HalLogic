@@ -26,6 +26,7 @@ class StoreMaterialRequest extends FormRequest
             'difficulty_level' => ['required', 'integer', 'between:1,5'],
             'video_url' => ['required', 'url', 'regex:/youtube\.com|youtu\.be|drive\.google\.com/'],
             'case_narrative' => ['required', 'string', 'max:1000'],
+            'case_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'material_pdf' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:51200'],
             'simulator_config' => ['nullable', 'json'],
             'prerequisite_material_id' => ['nullable', 'exists:materials,id'],

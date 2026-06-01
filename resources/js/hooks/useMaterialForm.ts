@@ -10,6 +10,9 @@ export interface MaterialFormData {
     finished_at: string | null;
     video_url: string;
     case_narrative: string;
+    case_image: File | null;
+    case_image_existing?: string;
+    remove_case_image?: boolean;
     material_pdf: File | null;
     material_pdf_existing?: string; // For edit mode - existing file path
     remove_pdf?: boolean; // Flag to indicate existing pdf should be removed
@@ -47,6 +50,9 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
         finished_at: initialData?.finished_at ?? null,
         video_url: initialData?.video_url ?? '',
         case_narrative: initialData?.case_narrative ?? '',
+        case_image: null,
+        case_image_existing: initialData?.case_image_existing ?? undefined,
+        remove_case_image: false,
         material_pdf: initialData?.material_pdf ?? null,
         material_pdf_existing: initialData?.material_pdf_existing ?? undefined,
         remove_pdf: false,
@@ -162,15 +168,22 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                     newErrors.code_examples = ['Setiap contoh kode wajib memiliki judul, kode program, output, dan penjelasan'];
                 }
             }
-        } else if (step === 3) {
+
+            // Video URL validation
             if (formData.video_url && !isValidVideoUrl(formData.video_url)) {
                 newErrors.video_url = ['URL harus dari YouTube atau Google Drive'];
             }
+        } else if (step === 3) {
             if (
                 formData.case_narrative &&
                 formData.case_narrative.length > 1000
             ) {
                 newErrors.case_narrative = ['Narasi maksimal 1000 karakter'];
+            }
+
+            // Case image size validation (max 2MB)
+            if (formData.case_image && formData.case_image.size > 2 * 1024 * 1024) {
+                newErrors.case_image = ['Ukuran gambar maksimal 2MB'];
             }
 
             if (formData.pre_reflection_questions && formData.pre_reflection_questions.length > 0) {

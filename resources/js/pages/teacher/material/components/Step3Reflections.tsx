@@ -9,6 +9,10 @@ import {
     ChevronDown,
     Play,
     Link,
+    Image as ImageIcon,
+    Upload,
+    X,
+    AlertCircle,
 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 
@@ -155,7 +159,7 @@ export default function Step3Reflections({
 
     const getError = (field: string) => errors[field]?.[0];
 
-    const hasMediaErrors = useMemo(() => !!errors.video_url || !!errors.case_narrative, [errors]);
+    const hasMediaErrors = useMemo(() => !!errors.case_image || !!errors.case_narrative, [errors]);
     const hasPreErrors = useMemo(() => !!errors.pre_reflection_questions, [errors]);
     const hasPostErrors = useMemo(() => !!errors.post_reflection_questions, [errors]);
 
@@ -219,9 +223,9 @@ export default function Step3Reflections({
             {/* Accordion 1: Media & Narasi Kasus */}
             <AccordionSection
                 id="media"
-                title="Narasi Kasus & Media Pembelajaran"
-                description="Sertakan video kasus/narasi untuk menunjang aktivitas kelompok."
-                icon={Play}
+                title="Studi Kasus & Gambar Pendamping"
+                description="Tuliskan narasi studi kasus dan tambahkan gambar pendamping untuk siswa."
+                icon={ClipboardList}
                 isOpen={openSections.media}
                 onToggle={() => toggleSection('media')}
                 hasError={hasMediaErrors}
@@ -248,7 +252,7 @@ export default function Step3Reflections({
                                     }
                                     placeholder="Deskripsikan kasus atau masalah yang akan dipelajari siswa..."
                                     className={cn(
-                                        'min-h-[120px] w-full resize-none rounded-lg border border-(--palette-limelight)/20 bg-white px-4 py-3 pl-11 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
+                                        'min-h-[180px] w-full resize-none rounded-lg border border-(--palette-limelight)/20 bg-white px-4 py-3 pl-11 text-sm leading-relaxed transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none',
                                         getError('case_narrative') &&
                                         'border-red-500 focus:border-red-500 focus:ring-red-500/20',
                                     )}
@@ -267,33 +271,62 @@ export default function Step3Reflections({
                         </div>
 
                         <div className="space-y-2">
-                            <Label
-                                htmlFor="video_url"
-                                className="flex items-center gap-2 text-sm font-bold text-foreground"
-                            >
-                                <Link className="h-4 w-4 text-muted-foreground" />
-                                URL Video (YouTube / Google Drive)
+                            <Label className="flex items-center gap-2 text-sm font-bold text-foreground">
+                                <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                                Gambar Pendamping (Opsional)
                             </Label>
-                            <div className="relative group">
-                                <Input
-                                    id="video_url"
-                                    type="url"
-                                    value={formData.video_url}
-                                    onChange={(e) =>
-                                        setFieldValue('video_url', e.target.value)
-                                    }
-                                    placeholder="https://www.youtube.com/watch?v=... atau https://drive.google.com/file/d/..."
-                                    className={cn(
-                                        'h-12 rounded-lg border-(--palette-limelight)/20 px-4 pl-11 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20',
-                                        getError('video_url') &&
-                                        'border-red-500 focus:border-red-500 focus:ring-red-500/20',
-                                    )}
-                                />
-                                <Play className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-(--palette-green)" />
-                            </div>
-                            {getError('video_url') && (
+                            {formData.case_image || formData.case_image_existing ? (
+                                <div className="border border-gray-150 rounded-xl p-3 bg-white space-y-3">
+                                    <div className="aspect-video w-full rounded-lg bg-gray-50 overflow-hidden flex items-center justify-center border border-gray-100">
+                                        <img
+                                            src={formData.case_image ? URL.createObjectURL(formData.case_image) : `/storage/${formData.case_image_existing}`}
+                                            alt="Ilustrasi Kasus"
+                                            className="object-contain h-full w-full"
+                                        />
+                                    </div>
+                                    <div className="flex items-center justify-between text-xs">
+                                        <span className="text-muted-foreground truncate max-w-40 font-medium">
+                                            {formData.case_image ? formData.case_image.name : 'Gambar tersimpan'}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setFieldValue('case_image', null);
+                                                setFieldValue('case_image_existing', undefined);
+                                                setFieldValue('remove_case_image', true);
+                                            }}
+                                            className="text-red-500 hover:text-red-700 font-bold"
+                                        >
+                                            Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div
+                                    onClick={() => document.getElementById('case-img-file')?.click()}
+                                    className="border-2 border-dashed border-gray-200 hover:border-(--palette-green)/50 rounded-xl p-6 text-center cursor-pointer transition-colors bg-white flex flex-col items-center justify-center h-44"
+                                >
+                                    <input
+                                        type="file"
+                                        id="case-img-file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const files = e.target.files;
+                                            if (files && files[0]) {
+                                                setFieldValue('case_image', files[0]);
+                                                setFieldValue('remove_case_image', false);
+                                            }
+                                        }}
+                                    />
+                                    <ImageIcon className="text-slate-400 mb-2 h-7 w-7" />
+                                    <span className="text-[11px] font-bold text-slate-500">Pilih Gambar</span>
+                                    <span className="text-[9px] text-muted-foreground mt-0.5">PNG, JPG, JPEG (Maks. 2MB)</span>
+                                </div>
+                            )}
+                            {getError('case_image') && (
                                 <p className="mt-1 text-xs font-medium text-red-500">
-                                    {getError('video_url')}
+                                    {getError('case_image')}
                                 </p>
                             )}
                         </div>

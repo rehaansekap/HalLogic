@@ -460,6 +460,73 @@ int main() {
                         transition={{ duration: 0.2 }}
                         className="space-y-4"
                     >
+                        {/* Video Pembelajaran Box */}
+                        {material.video_url && (
+                            <div className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6 shadow-sm mb-6">
+                                <div className="flex items-start gap-4 mb-4">
+                                    <div className="rounded-xl border border-(--palette-green)/10 bg-(--palette-green)/8 p-3 text-(--palette-green)">
+                                        <Play className="h-6 w-6 shrink-0" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight">
+                                            Video Pembelajaran
+                                        </h3>
+                                        <p className="mt-1 text-xs md:text-sm leading-relaxed text-muted-foreground">
+                                            Simak video berikut untuk memahami materi pada pertemuan ini.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {(() => {
+                                    const ytMatch = material.video_url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+                                    let embedUrl = null;
+                                    if (ytMatch && ytMatch[2].length === 11) {
+                                        embedUrl = `https://www.youtube.com/embed/${ytMatch[2]}`;
+                                    } else {
+                                        const gdMatch = material.video_url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) || 
+                                                        material.video_url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+                                        if (gdMatch) {
+                                            embedUrl = `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
+                                        }
+                                    }
+
+                                    return embedUrl ? (
+                                        <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm max-w-2xl mx-auto mb-4">
+                                            <div className="relative w-full pt-[56.25%]">
+                                                <iframe
+                                                    className="absolute inset-0 h-full w-full"
+                                                    src={embedUrl}
+                                                    title="Video Pembelajaran"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                ></iframe>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="overflow-hidden rounded-xl bg-slate-900 aspect-video flex flex-col items-center justify-center text-white p-6 relative max-w-2xl mx-auto mb-4">
+                                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm mb-4 border border-white/20">
+                                                <Play className="h-8 w-8 text-white fill-white" />
+                                            </div>
+                                            <p className="font-bold text-base text-slate-100">Video tidak dapat diputar.</p>
+                                            <p className="text-slate-400 text-sm mt-1">Silakan gunakan tombol di bawah untuk membuka video.</p>
+                                        </div>
+                                    );
+                                })()}
+
+                                <div className="flex justify-start">
+                                    <a
+                                        href={material.video_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 rounded-xl bg-(--palette-green) hover:bg-green-600 text-white font-bold py-2.5 px-5 shadow-sm transition-all text-xs hover:scale-[1.02] active:scale-[0.98]"
+                                    >
+                                        <Play className="h-3.5 w-3.5 fill-current" />
+                                        Tonton Video
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+
                         {material.sub_materials && material.sub_materials.length > 0 ? (
                             material.sub_materials.map((sub, index) => {
                                 const isOpen = expandedSubIndices.includes(index);

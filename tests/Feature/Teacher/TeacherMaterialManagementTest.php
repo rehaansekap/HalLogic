@@ -6,6 +6,8 @@ use App\Models\Classroom;
 use App\Models\Material;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class TeacherMaterialManagementTest extends TestCase
@@ -292,5 +294,104 @@ class TeacherMaterialManagementTest extends TestCase
         $this->assertEquals('Updated Sub Title', $updatedMaterial->sub_materials[0]['title']);
         $this->assertCount(1, $updatedMaterial->code_examples);
         $this->assertEquals('Updated Example Title', $updatedMaterial->code_examples[0]['title']);
+    }
+
+    public function test_teacher_can_create_update_and_delete_material_with_case_image(): void
+    {
+        Storage::fake('public');
+
+        $teacher = $this->createTeacher();
+        $classroom = $this->createClassroom($teacher);
+
+        $caseImage = UploadedFile::fake()->image('my_case_image.png');
+
+        $payload = [
+            'classroom_id' => $classroom->id,
+            'title' => 'Case Image Title',
+            'description' => 'A description.',
+            'difficulty_level' => 2,
+            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'case_narrative' => 'A valid case narrative description.',
+            'case_image' => $caseImage,
+            'summary' => 'Summary content.',
+            'learning_objectives' => ['Objective 1'],
+            'sub_materials' => [
+                [
+                    'title' => 'Sub Materi Awal',
+                    'content' => '<p>Konten sub materi awal</p>',
+                ],
+            ],
+            'started_at' => now()->format('Y-m-d'),
+            'finished_at' => now()->addDays(7)->format('Y-m-d'),
+        ];
+
+        // 1. Test Create
+        $response = $this->actingAs($teacher)
+            ->post(route('teacher.materials.store'), $payload);
+
+        $response->assertRedirect(route('teacher.dashboard'));
+
+        $this->assertDatabaseHas('materials', [
+            'title' => 'Case Image Title',
+        ]);
+
+        $material = Material::where('title', 'Case Image Title')->first();
+        $this->assertNotNull($material->case_image_path);
+        Storage::disk('public')->assertExists($material->case_image_path);
+
+        // 2. Test Update (Replace Image)
+        $newCaseImage = UploadedFile::fake()->image('updated_case_image.png');
+        $oldImagePath = $material->case_image_path;
+
+        $updatePayload = $payload;
+        $updatePayload['title'] = 'Updated Case Image Title';
+        $updatePayload['case_image'] = $newCaseImage;
+
+        $response = $this->actingAs($teacher)
+            ->post(route('teacher.materials.update', $material->id), $updatePayload);
+
+        $response->assertRedirect(route('teacher.dashboard'));
+
+        $material = $material->fresh();
+        $this->assertEquals('Updated Case Image Title', $material->title);
+        $this->assertNotEquals($oldImagePath, $material->case_image_path);
+        Storage::disk('public')->assertExists($material->case_image_path);
+        Storage::disk('public')->assertMissing($oldImagePath);
+
+        // 3. Test Update (Remove Image)
+        $currentImagePath = $material->case_image_path;
+        $removePayload = $updatePayload;
+        unset($removePayload['case_image']);
+        $removePayload['remove_case_image'] = true;
+
+        $response = $this->actingAs($teacher)
+            ->post(route('teacher.materials.update', $material->id), $removePayload);
+
+        $response->assertRedirect(route('teacher.dashboard'));
+
+        $material = $material->fresh();
+        $this->assertNull($material->case_image_path);
+        Storage::disk('public')->assertMissing($currentImagePath);
+
+        // 4. Test Delete (Re-upload and delete material)
+        $caseImageForDelete = UploadedFile::fake()->image('delete_case_image.png');
+        $reuploadPayload = $removePayload;
+        $reuploadPayload['case_image'] = $caseImageForDelete;
+        unset($reuploadPayload['remove_case_image']);
+
+        $this->actingAs($teacher)
+            ->post(route('teacher.materials.update', $material->id), $reuploadPayload);
+
+        $material = $material->fresh();
+        $deletePath = $material->case_image_path;
+        $this->assertNotNull($deletePath);
+        Storage::disk('public')->assertExists($deletePath);
+
+        $response = $this->actingAs($teacher)
+            ->delete(route('teacher.materials.destroy', $material->id));
+
+        $response->assertRedirect(route('teacher.dashboard'));
+        $this->assertDatabaseMissing('materials', ['id' => $material->id]);
+        Storage::disk('public')->assertMissing($deletePath);
     }
 }
