@@ -207,7 +207,7 @@ export default function Phase1Orientation({
                                 }}
                                 className="flex-1 sm:flex-initial h-12 px-8 font-bold bg-(--palette-green) hover:bg-green-600 text-white rounded-xl shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
                             >
-                                Lanjut ke Refleksi
+                                Lanjut ke Studi Kasus
                             </Button>
                         </div>
                     </motion.div>
@@ -233,7 +233,7 @@ export default function Phase1Orientation({
                                             Sebelum Belajar <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-(--palette-green)/10 text-(--palette-green) border border-(--palette-green)/20">Tersimpan</span>
                                         </h2>
                                         <p className="text-muted-foreground text-sm leading-relaxed">
-                                            Kamu telah membaca studi kasus dan merekam jawaban refleksi awal untuk mengidentifikasi permasalahan dan informasi penting sebelum memulai pembelajaran.
+                                            Kamu telah membaca studi kasus dan merekam jawaban kamu untuk mengidentifikasi permasalahan dan informasi penting sebelum memulai pembelajaran.
                                         </p>
                                     </div>
                                 </div>
@@ -306,7 +306,7 @@ export default function Phase1Orientation({
                                             Kelompok Kamu Sudah Terbentuk
                                         </p>
                                         <p className="text-sm text-muted-foreground">
-                                            Guru telah membentuk kelompok Kamu. Sekarang Kamu dapat melanjutkan ke Fase 2 untuk mengatur peran kelompok!
+                                            Guru telah membentuk kelompok Kamu. Sekarang Kamu dapat melanjutkan ke Fase berikutnya untuk mengatur peran kelompok!
                                         </p>
                                     </div>
                                 ) : (
@@ -316,7 +316,7 @@ export default function Phase1Orientation({
                                             Menunggu Pembentukan Kelompok
                                         </p>
                                         <p className="text-sm text-muted-foreground">
-                                            Refleksi Kamu disimpan! Guru akan membentuk kelompok dan Kamu dapat melanjutkan ke fase berikutnya.
+                                            Jawaban Kamu disimpan! Guru akan membentuk kelompok dan Kamu dapat melanjutkan ke fase berikutnya.
                                         </p>
                                     </div>
                                 )}
@@ -401,7 +401,7 @@ export default function Phase1Orientation({
                                                                     newAnswers[index] = e.target.value;
                                                                     setAnswers(newAnswers);
                                                                 }}
-                                                                placeholder="Tuliskan jawaban refleksi Kamu..."
+                                                                placeholder="Tuliskan jawaban Kamu..."
                                                                 className="resize-vertical min-h-24 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
                                                                 required
                                                             />
@@ -415,7 +415,7 @@ export default function Phase1Orientation({
                                                 ) : (
                                                     <div className="space-y-2">
                                                         <label className="block text-sm font-semibold text-foreground">
-                                                            Refleksi Awal Kamu <span className="text-red-500">*</span>
+                                                            Jawaban Kamu <span className="text-red-500">*</span>
                                                         </label>
                                                         <textarea
                                                             name="reflection"
@@ -528,7 +528,7 @@ export default function Phase1Orientation({
 
                                                 <div className="flex items-center justify-center gap-2 rounded-lg bg-blue-50 border border-blue-100 p-3.5 text-xs text-blue-700 font-semibold">
                                                     <Lock className="h-4 w-4" />
-                                                    <span>Jawabanmu hanya dapat dilihat oleh kelompokmu.</span>
+                                                    <span>Jawabanmu hanya dapat dilihat oleh Kamu dan Guru.</span>
                                                 </div>
                                             </div>
 
@@ -536,7 +536,7 @@ export default function Phase1Orientation({
                                             {wasSuccessful && (
                                                 <div className="flex items-center gap-2 rounded-lg border border-(--palette-green)/30 bg-(--palette-green)/10 p-4 text-sm font-semibold text-(--palette-green)">
                                                     <CheckCircleIcon className="h-4 w-4 shrink-0" />
-                                                    Refleksi berhasil disimpan! Silakan tunggu guru membentuk kelompok atau refresh halaman.
+                                                    Jawabanmu berhasil disimpan! Silakan tunggu guru membentuk kelompok atau refresh halaman.
                                                 </div>
                                             )}
                                         </div>
