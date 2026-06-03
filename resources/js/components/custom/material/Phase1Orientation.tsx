@@ -306,7 +306,7 @@ export default function Phase1Orientation({
                                             Kelompok Kamu Sudah Terbentuk
                                         </p>
                                         <p className="text-sm text-muted-foreground">
-                                            Guru telah membentuk kelompok Kamu. Sekarang Kamu dapat melanjutkan ke Fase berikutnya untuk mengatur peran kelompok!
+                                            Guru telah membentuk kelompok Kamu. Sekarang Kamu dapat melanjutkan ke fase berikutnya untuk pelajari dan pahami materi!
                                         </p>
                                     </div>
                                 ) : (

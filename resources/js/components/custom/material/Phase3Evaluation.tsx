@@ -89,7 +89,7 @@ export default function Phase3Evaluation({
                     <div>
                         <p className="mb-4 flex items-center gap-2 font-semibold text-foreground">
                             <CheckCircleIcon className="h-4 w-4 text-(--palette-green)" />
-                            Refleksi Akhir Tersimpan
+                            Jawabanmu Tersimpan
                         </p>
                         <div className="rounded-lg bg-(--palette-green)/10 p-5 space-y-4 text-sm text-foreground">
                             {parsedReflection ? (
