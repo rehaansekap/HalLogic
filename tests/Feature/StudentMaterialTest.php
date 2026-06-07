@@ -8,7 +8,9 @@ use App\Models\Material;
 use App\Models\Submission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class StudentMaterialTest extends TestCase
@@ -107,5 +109,206 @@ class StudentMaterialTest extends TestCase
             ->where('submission.grade.score', 95)
             ->where('submission.grade.teacher_notes', 'Sangat bagus, pengerjaan lengkap dan rapi.')
         );
+    }
+
+    public function test_student_leader_can_submit_pdf_and_image_files()
+    {
+        Storage::fake('public');
+
+        $student = User::factory()->create(['role' => 'student']);
+        $teacher = User::factory()->create(['role' => 'teacher']);
+
+        $classroom = Classroom::create([
+            'name' => 'Kelas A',
+            'academic_year' => '2025/2026',
+            'teacher_id' => $teacher->id,
+        ]);
+
+        $material = Material::create([
+            'classroom_id' => $classroom->id,
+            'title' => 'Struktur Kontrol C',
+            'slug' => 'struktur-kontrol-c',
+            'description' => 'Mempelajari if-else dan switch-case.',
+            'difficulty_level' => 1,
+            'case_title' => 'Studi Kasus Percabangan',
+            'case_narrative' => 'Bagaimana membuat pencabangan?',
+        ]);
+
+        $groupId = DB::table('groups')->insertGetId([
+            'name' => 'Kelompok 1',
+            'classroom_id' => $classroom->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('reflections')->insert([
+            'user_id' => $student->id,
+            'material_id' => $material->id,
+            'type' => 'initial',
+            'content' => 'Saya ingin belajar if else.',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('group_members')->insert([
+            'group_id' => $groupId,
+            'user_id' => $student->id,
+            'is_leader' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('group_progress')->insert([
+            'group_id' => $groupId,
+            'material_id' => $material->id,
+            'current_step' => 2,
+            'status' => 'in_progress',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $pdfFile = UploadedFile::fake()->create('jawaban.pdf', 500, 'application/pdf');
+        $imageFile = UploadedFile::fake()->image('ilustrasi.png');
+
+        $response = $this->actingAs($student)
+            ->post(route('material.save-phase-3', $material->slug), [
+                'files' => [$pdfFile, $imageFile],
+            ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success', 'Berkas berhasil dikirim! Lanjut ke tahap evaluasi.');
+
+        $this->assertDatabaseHas('submissions', [
+            'group_id' => $groupId,
+            'material_id' => $material->id,
+            'is_final' => true,
+        ]);
+
+        $submission = Submission::where('group_id', $groupId)->where('material_id', $material->id)->first();
+        $this->assertCount(2, $submission->files);
+
+        Storage::disk('public')->assertExists($submission->files[0]);
+        Storage::disk('public')->assertExists($submission->files[1]);
+
+        $this->assertDatabaseHas('group_progress', [
+            'group_id' => $groupId,
+            'material_id' => $material->id,
+            'current_step' => 3,
+        ]);
+    }
+
+    public function test_student_cannot_submit_final_reflection_less_than_15_characters()
+    {
+        $student = User::factory()->create(['role' => 'student']);
+        $teacher = User::factory()->create(['role' => 'teacher']);
+
+        $classroom = Classroom::create([
+            'name' => 'Kelas A',
+            'academic_year' => '2025/2026',
+            'teacher_id' => $teacher->id,
+        ]);
+
+        $material = Material::create([
+            'classroom_id' => $classroom->id,
+            'title' => 'Struktur Kontrol C',
+            'slug' => 'struktur-kontrol-c',
+            'description' => 'Mempelajari if-else dan switch-case.',
+            'difficulty_level' => 1,
+            'case_title' => 'Studi Kasus Percabangan',
+            'case_narrative' => 'Bagaimana membuat pencabangan?',
+        ]);
+
+        $groupId = DB::table('groups')->insertGetId([
+            'name' => 'Kelompok 1',
+            'classroom_id' => $classroom->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('group_members')->insert([
+            'group_id' => $groupId,
+            'user_id' => $student->id,
+            'is_leader' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('group_progress')->insert([
+            'group_id' => $groupId,
+            'material_id' => $material->id,
+            'current_step' => 3,
+            'status' => 'in_progress',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Submit final reflection with string less than 15 chars (e.g. "pendek")
+        $response = $this->actingAs($student)
+            ->post(route('material.finish', $material->slug), [
+                'final_reflection' => 'pendek',
+            ]);
+
+        $response->assertSessionHasErrors(['final_reflection']);
+    }
+
+    public function test_student_can_submit_final_reflection_at_least_15_characters()
+    {
+        $student = User::factory()->create(['role' => 'student']);
+        $teacher = User::factory()->create(['role' => 'teacher']);
+
+        $classroom = Classroom::create([
+            'name' => 'Kelas A',
+            'academic_year' => '2025/2026',
+            'teacher_id' => $teacher->id,
+        ]);
+
+        $material = Material::create([
+            'classroom_id' => $classroom->id,
+            'title' => 'Struktur Kontrol C',
+            'slug' => 'struktur-kontrol-c',
+            'description' => 'Mempelajari if-else dan switch-case.',
+            'difficulty_level' => 1,
+            'case_title' => 'Studi Kasus Percabangan',
+            'case_narrative' => 'Bagaimana membuat pencabangan?',
+        ]);
+
+        $groupId = DB::table('groups')->insertGetId([
+            'name' => 'Kelompok 1',
+            'classroom_id' => $classroom->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('group_members')->insert([
+            'group_id' => $groupId,
+            'user_id' => $student->id,
+            'is_leader' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('group_progress')->insert([
+            'group_id' => $groupId,
+            'material_id' => $material->id,
+            'current_step' => 3,
+            'status' => 'in_progress',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Submit final reflection with string of at least 15 chars
+        $response = $this->actingAs($student)
+            ->post(route('material.finish', $material->slug), [
+                'final_reflection' => 'Ini adalah refleksi yang memiliki lebih dari lima belas karakter.',
+            ]);
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseHas('reflections', [
+            'user_id' => $student->id,
+            'material_id' => $material->id,
+            'type' => 'final',
+            'content' => 'Ini adalah refleksi yang memiliki lebih dari lima belas karakter.',
+        ]);
     }
 }

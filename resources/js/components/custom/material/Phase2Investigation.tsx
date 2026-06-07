@@ -1115,7 +1115,11 @@ int main() {
                                                         const ext = fileName.split('.').pop()?.toUpperCase() || 'FILE';
                                                         return (
                                                             <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
-                                                                <FileText className="h-8 w-8 text-blue-500 shrink-0" />
+                                                                {['PNG', 'JPG', 'JPEG'].includes(ext) ? (
+                                                                    <ImageIcon className="h-8 w-8 text-emerald-500 shrink-0" />
+                                                                ) : (
+                                                                    <FileText className="h-8 w-8 text-blue-500 shrink-0" />
+                                                                )}
                                                                 <div>
                                                                     <p className="text-sm font-semibold text-slate-800 leading-none truncate max-w-md">{fileName}</p>
                                                                     <p className="text-[11px] text-muted-foreground mt-1.5">
@@ -1185,7 +1189,7 @@ int main() {
                                                     ref={fileInputRef}
                                                     onChange={handleFileChange}
                                                     multiple
-                                                    accept=".pdf,.doc,.docx,.txt,.c"
+                                                    accept=".pdf,.doc,.docx,.txt,.c,.png,.jpg,.jpeg"
                                                     className="hidden"
                                                 />
                                                 <div className="text-center">
@@ -1194,7 +1198,7 @@ int main() {
                                                         Seret berkas di sini atau <span className="text-blue-600">pilih dari komputer</span>
                                                     </p>
                                                     <p className="text-xs text-muted-foreground mt-1">
-                                                        Mendukung format PDF, Word, Txt, atau kode sumber C.
+                                                        Mendukung format PDF, Word, Txt, kode sumber C, atau Gambar (PNG, JPG, JPEG).
                                                     </p>
                                                 </div>
                                             </div>
@@ -1204,7 +1208,13 @@ int main() {
                                                     {data.files.map((file, idx) => (
                                                         <div key={idx} className="flex items-center justify-between rounded-xl bg-slate-50 border border-slate-150 p-3 text-xs font-semibold text-slate-700">
                                                             <div className="flex items-center gap-2 truncate">
-                                                                <FileText className="h-4 w-4 text-blue-500" />
+                                                                {(() => {
+                                                                    const ext = file.name.split('.').pop()?.toLowerCase();
+                                                                    if (['png', 'jpg', 'jpeg'].includes(ext || '')) {
+                                                                        return <ImageIcon className="h-4 w-4 text-emerald-500 shrink-0" />;
+                                                                    }
+                                                                    return <FileText className="h-4 w-4 text-blue-500 shrink-0" />;
+                                                                })()}
                                                                 <span className="truncate">{file.name}</span>
                                                             </div>
                                                             <button

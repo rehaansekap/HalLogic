@@ -15,7 +15,7 @@ class SavePhase3Request extends FormRequest
     {
         return [
             'files' => ['required', 'array', 'min:1'],
-            'files.*' => ['required', 'file', 'mimes:pdf,doc,docx,txt,c', 'max:10240'],
+            'files.*' => ['required', 'file', 'mimes:pdf,doc,docx,txt,c,png,jpg,jpeg', 'max:10240'],
         ];
     }
 

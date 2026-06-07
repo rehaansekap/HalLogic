@@ -165,6 +165,9 @@ export default function Phase3Evaluation({
                                                 className="resize-vertical min-h-24 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
                                                 required
                                             />
+                                            <p className="text-[11px] text-muted-foreground pl-1">
+                                                Minimal 15 karakter. Karakter saat ini: <span className={(answers[index]?.trim().length || 0) < 15 ? 'text-red-500 font-bold' : 'text-(--palette-green) font-bold'}>{answers[index]?.trim().length || 0}</span>
+                                            </p>
                                             {errors[`final_reflection.${index}`] && (
                                                 <p className="mt-1 text-xs font-semibold text-red-500">
                                                     {errors[`final_reflection.${index}`]}
@@ -187,6 +190,9 @@ export default function Phase3Evaluation({
                                             className="resize-vertical min-h-50 w-full rounded-lg border border-(--palette-limelight)/20 px-4 py-3 focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/20 focus:outline-none"
                                             required
                                         />
+                                        <p className="text-[11px] text-muted-foreground pl-1">
+                                            Minimal 15 karakter. Karakter saat ini: <span className={reflection.trim().length < 15 ? 'text-red-500 font-bold' : 'text-(--palette-green) font-bold'}>{reflection.trim().length}</span>
+                                        </p>
                                         {errors.final_reflection && (
                                             <p className="mt-2 text-sm text-red-500">
                                                 {errors.final_reflection}
@@ -198,25 +204,25 @@ export default function Phase3Evaluation({
                                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                                     {isQuestionsMode ? (
                                         <span>
-                                            {answers.filter(ans => ans.trim().length >= 5).length} dari {questions.length} pertanyaan dijawab
+                                            {answers.filter(ans => ans.trim().length >= 15).length} dari {questions.length} pertanyaan dijawab
                                         </span>
                                     ) : (
-                                        <span>{reflection.length} karakter</span>
+                                        <span>{reflection.trim().length} karakter</span>
                                     )}
                                     <span className={
                                         (isQuestionsMode
-                                            ? answers.some(ans => ans.trim().length < 5)
-                                            : reflection.length < 50)
+                                            ? answers.some(ans => ans.trim().length < 15)
+                                            : reflection.trim().length < 15)
                                             ? 'text-red-500 font-semibold'
                                             : 'text-(--palette-green) font-semibold'
                                     }>
                                         {isQuestionsMode ? (
-                                            answers.some(ans => ans.trim().length < 5)
-                                                ? 'Setiap jawaban minimal 5 karakter'
+                                            answers.some(ans => ans.trim().length < 15)
+                                                ? 'Setiap jawaban minimal 15 karakter'
                                                 : 'Semua pertanyaan terisi'
                                         ) : (
-                                            reflection.length < 50
-                                                ? 'Minimal 50 karakter'
+                                            reflection.trim().length < 15
+                                                ? 'Minimal 15 karakter'
                                                 : 'Lengkap'
                                         )}
                                     </span>
@@ -228,8 +234,8 @@ export default function Phase3Evaluation({
                                         processing ||
                                         wasSuccessful ||
                                         (isQuestionsMode
-                                            ? answers.some((ans) => ans.trim().length < 5)
-                                            : reflection.length < 50)
+                                            ? answers.some((ans) => ans.trim().length < 15)
+                                            : reflection.trim().length < 15)
                                     }
                                     className="flex w-full items-center justify-center gap-2 rounded-lg bg-(--palette-green) py-3.5 font-semibold text-white hover:shadow-lg disabled:opacity-50"
                                 >

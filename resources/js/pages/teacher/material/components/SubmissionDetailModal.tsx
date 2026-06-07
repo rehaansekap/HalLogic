@@ -8,6 +8,7 @@ import {
     Save,
     X,
     Download,
+    Image as ImageIcon,
 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -193,21 +194,29 @@ export default function SubmissionDetailModal({
                             <div className="rounded-xl border border-(--palette-limelight)/20 bg-(--palette-limelight)/5 p-4">
                                 {submission.files && submission.files.length > 0 && (
                                     <div className="mb-3 space-y-2">
-                                        {submission.files.map((file, idx) => (
-                                            <div key={idx} className="flex items-center gap-2">
-                                                <FileText className="h-4 w-4 text-(--palette-green)" />
-                                                <a
-                                                    href={`/storage/${file}`}
-                                                    download
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center gap-2 text-sm font-medium text-(--palette-green) underline hover:no-underline truncate"
-                                                >
-                                                    <Download className="h-3 w-3" />
-                                                    {file.split('/').pop()}
-                                                </a>
-                                            </div>
-                                        ))}
+                                        {submission.files.map((file, idx) => {
+                                            const ext = file.split('.').pop()?.toLowerCase();
+                                            const isImg = ['png', 'jpg', 'jpeg'].includes(ext || '');
+                                            return (
+                                                <div key={idx} className="flex items-center gap-2">
+                                                    {isImg ? (
+                                                        <ImageIcon className="h-4 w-4 text-(--palette-green)" />
+                                                    ) : (
+                                                        <FileText className="h-4 w-4 text-(--palette-green)" />
+                                                    )}
+                                                    <a
+                                                        href={`/storage/${file}`}
+                                                        download
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-2 text-sm font-medium text-(--palette-green) underline hover:no-underline truncate"
+                                                    >
+                                                        <Download className="h-3 w-3" />
+                                                        {file.split('/').pop()}
+                                                    </a>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 )}
                                 {submission.code_answer && (
