@@ -143,7 +143,7 @@ export default function MaterialSidebar({
                                         Hasil Evaluasi
                                     </p>
                                     <h3 className="text-xs font-bold text-foreground">
-                                        Nilai Tugas
+                                        Nilai Kode
                                     </h3>
                                 </div>
                             </div>
