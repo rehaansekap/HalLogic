@@ -458,7 +458,7 @@ export default function Step3Reflections({
                     )}
                 </div>
             </AccordionSection>
-            */}ion>
+            */}
 
             {/* Accordion 2: Refleksi Akhir */}
             <AccordionSection

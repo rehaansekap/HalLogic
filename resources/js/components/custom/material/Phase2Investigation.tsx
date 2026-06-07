@@ -442,7 +442,7 @@ int main() {
                     )}
                 >
                     <Monitor className="h-4 w-4" />
-                    <span>Coba Kode</span>
+                    <span>Compiler Online</span>
                     {activeTab === 'editor' && (
                         <motion.div
                             className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
@@ -462,7 +462,7 @@ int main() {
                     )}
                 >
                     <ClipboardCheck className="h-4 w-4" />
-                    <span>Tugas</span>
+                    <span>Upload Kode</span>
                     {activeTab === 'tugas' && (
                         <motion.div
                             className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
@@ -846,7 +846,7 @@ int main() {
                             <div className="flex-1 space-y-1">
                                 <h3 className="text-lg font-bold text-slate-800 tracking-tight flex items-center gap-2">
                                     <Code2 className="h-5 w-5 text-green-600" />
-                                    Coba Kode
+                                    Compiler Online
                                 </h3>
                                 <p className="text-sm text-slate-600">
                                     Ubah kode di editor, lalu jalankan untuk melihat hasilnya. Eksplorasi dan pahami bagaimana program bekerja!
@@ -921,7 +921,7 @@ int main() {
                                 ) : (
                                     <>
                                         <Play className="h-4 w-4 fill-current" />
-                                        Jalankan Kode
+                                        Jalankan Compiler Online
                                     </>
                                 )}
                             </Button>
@@ -1035,7 +1035,7 @@ int main() {
                         </div>
                         */}
 
-                        {/* Section 2: Upload Jawaban Kelompok */}
+                        {/* Section 2: Upload Kode Kelompok */}
                         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                             <div className="flex items-start gap-4">
                                 <div className="rounded-xl bg-blue-50 p-3.5 text-blue-600 border border-blue-100 shrink-0">
@@ -1043,18 +1043,18 @@ int main() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between flex-wrap gap-2">
-                                        <h3 className="text-lg font-bold text-slate-800 tracking-tight">Upload Jawaban Kelompok</h3>
+                                        <h3 className="text-lg font-bold text-slate-800 tracking-tight">Upload Kode Kelompok</h3>
                                         {isSubmitted && (
                                             <div className="flex items-center gap-1.5 text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-3 py-1 rounded-full">
                                                 <CheckCircle2 className="h-3.5 w-3.5" />
-                                                <span>Tugas Berhasil Dikumpulkan</span>
+                                                <span>Kode Berhasil Dikumpulkan</span>
                                             </div>
                                         )}
                                     </div>
                                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                                         {isSubmitted
-                                            ? "Jawaban tugas dikirim oleh ketua kelompok dan hanya dapat dikirim satu kali."
-                                            : "Unggah jawaban tugas yang sudah dikerjakan bersama kelompok."}
+                                            ? "Kode dikirim oleh ketua kelompok dan hanya dapat dikirim satu kali."
+                                            : "Unggah kode yang sudah dikerjakan bersama kelompok."}
                                     </p>
 
                                     {isSubmitted ? (
@@ -1074,7 +1074,7 @@ int main() {
                                                             <div>
                                                                 <h4 className="text-lg font-black text-slate-800 tracking-tight">Evaluasi Guru</h4>
                                                                 <p className="text-xs text-muted-foreground mt-1 font-medium">
-                                                                    Tugas kelompokmu telah dinilai dan dievaluasi.
+                                                                    Kode kelompokmu telah dinilai dan dievaluasi.
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -1139,8 +1139,8 @@ int main() {
                                                         <PartyPopper className="h-5 w-5" />
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm font-bold text-green-800">Jawaban Sudah Dikirim!</p>
-                                                        <p className="text-xs text-green-700 mt-0.5">Terima kasih, tugas kelompokmu telah berhasil dikumpulkan.</p>
+                                                        <p className="text-sm font-bold text-green-800">Kode Sudah Dikirim!</p>
+                                                        <p className="text-xs text-green-700 mt-0.5">Terima kasih, kode kelompokmu telah berhasil dikumpulkan.</p>
                                                     </div>
                                                 </div>
                                                 <Button
@@ -1148,7 +1148,7 @@ int main() {
                                                     className="bg-green-600 font-bold text-white opacity-100 disabled:opacity-100 px-4 py-2 h-10 rounded-lg flex items-center gap-2 hover:bg-green-600 shrink-0 self-start sm:self-center"
                                                 >
                                                     <Check className="h-4 w-4" />
-                                                    Jawaban Sudah Dikirim
+                                                    Kode Sudah Dikirim
                                                 </Button>
                                             </div>
                                         </div>
@@ -1157,15 +1157,15 @@ int main() {
                                             <Lock className="mx-auto mb-2.5 h-6 w-6 text-amber-600/85" />
                                             <p className="text-sm font-bold text-amber-900">Kamu belum terdaftar dalam kelompok.</p>
                                             <p className="text-xs text-amber-700/80 mt-1">
-                                                Silakan hubungi Gurumu untuk membagi kelompok terlebih dahulu sebelum mengumpulkan tugas.
+                                                Silakan hubungi Gurumu untuk membagi kelompok terlebih dahulu sebelum mengumpulkan kode.
                                             </p>
                                         </div>
                                     ) : !isLeader ? (
                                         <div className="mt-4 rounded-xl border border-dashed border-amber-200 bg-amber-50/30 p-6 text-center">
                                             <Lock className="mx-auto mb-2.5 h-6 w-6 text-amber-600/85" />
-                                            <p className="text-sm font-bold text-amber-900">Hanya ketua kelompok yang dapat mengunggah jawaban.</p>
+                                            <p className="text-sm font-bold text-amber-900">Hanya ketua kelompok yang dapat mengunggah kode.</p>
                                             <p className="text-xs text-amber-700/80 mt-1">
-                                                Silakan hubungi ketua kelompok untuk mengirim jawaban tugas.
+                                                Silakan hubungi ketua kelompok untuk mengirim kode.
                                             </p>
                                         </div>
                                     ) : (
@@ -1194,7 +1194,7 @@ int main() {
                                                 <input
                                                     type="file"
                                                     id="file-upload"
-                                                    aria-label="Unggah berkas jawaban kelompok"
+                                                    aria-label="Unggah berkas kode kelompok"
                                                     ref={fileInputRef}
                                                     onChange={handleFileChange}
                                                     multiple
@@ -1262,7 +1262,7 @@ int main() {
                                                 ) : (
                                                     <FileUp className="mr-2 h-4 w-4" />
                                                 )}
-                                                Kirim Jawaban
+                                                Kirim Kode
                                             </Button>
                                         </form>
                                     )}
