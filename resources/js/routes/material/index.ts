@@ -99,82 +99,8 @@ showForm.head = (args: { slug: string | number } | [slug: string | number ] | st
 show.form = showForm
 
 /**
-* @see \App\Http\Controllers\Student\MaterialController::reflection
-* @see app/Http/Controllers/Student/MaterialController.php:96
-* @route '/material/{slug}/reflection'
-*/
-export const reflection = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: reflection.url(args, options),
-    method: 'post',
-})
-
-reflection.definition = {
-    methods: ["post"],
-    url: '/material/{slug}/reflection',
-} satisfies RouteDefinition<["post"]>
-
-/**
-* @see \App\Http\Controllers\Student\MaterialController::reflection
-* @see app/Http/Controllers/Student/MaterialController.php:96
-* @route '/material/{slug}/reflection'
-*/
-reflection.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
-    if (typeof args === 'string' || typeof args === 'number') {
-        args = { slug: args }
-    }
-
-    if (Array.isArray(args)) {
-        args = {
-            slug: args[0],
-        }
-    }
-
-    args = applyUrlDefaults(args)
-
-    const parsedArgs = {
-        slug: args.slug,
-    }
-
-    return reflection.definition.url
-            .replace('{slug}', parsedArgs.slug.toString())
-            .replace(/\/+$/, '') + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\Student\MaterialController::reflection
-* @see app/Http/Controllers/Student/MaterialController.php:96
-* @route '/material/{slug}/reflection'
-*/
-reflection.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: reflection.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Student\MaterialController::reflection
-* @see app/Http/Controllers/Student/MaterialController.php:96
-* @route '/material/{slug}/reflection'
-*/
-const reflectionForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: reflection.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Student\MaterialController::reflection
-* @see app/Http/Controllers/Student/MaterialController.php:96
-* @route '/material/{slug}/reflection'
-*/
-reflectionForm.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: reflection.url(args, options),
-    method: 'post',
-})
-
-reflection.form = reflectionForm
-
-/**
 * @see \App\Http\Controllers\Student\MaterialController::savePhase3
-* @see app/Http/Controllers/Student/MaterialController.php:119
+* @see app/Http/Controllers/Student/MaterialController.php:122
 * @route '/material/{slug}/save-phase-3'
 */
 export const savePhase3 = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -189,7 +115,7 @@ savePhase3.definition = {
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::savePhase3
-* @see app/Http/Controllers/Student/MaterialController.php:119
+* @see app/Http/Controllers/Student/MaterialController.php:122
 * @route '/material/{slug}/save-phase-3'
 */
 savePhase3.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -216,7 +142,7 @@ savePhase3.url = (args: { slug: string | number } | [slug: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::savePhase3
-* @see app/Http/Controllers/Student/MaterialController.php:119
+* @see app/Http/Controllers/Student/MaterialController.php:122
 * @route '/material/{slug}/save-phase-3'
 */
 savePhase3.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -226,7 +152,7 @@ savePhase3.post = (args: { slug: string | number } | [slug: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::savePhase3
-* @see app/Http/Controllers/Student/MaterialController.php:119
+* @see app/Http/Controllers/Student/MaterialController.php:122
 * @route '/material/{slug}/save-phase-3'
 */
 const savePhase3Form = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -236,7 +162,7 @@ const savePhase3Form = (args: { slug: string | number } | [slug: string | number
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::savePhase3
-* @see app/Http/Controllers/Student/MaterialController.php:119
+* @see app/Http/Controllers/Student/MaterialController.php:122
 * @route '/material/{slug}/save-phase-3'
 */
 savePhase3Form.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -248,7 +174,7 @@ savePhase3.form = savePhase3Form
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::finish
-* @see app/Http/Controllers/Student/MaterialController.php:152
+* @see app/Http/Controllers/Student/MaterialController.php:155
 * @route '/material/{slug}/finish'
 */
 export const finish = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -263,7 +189,7 @@ finish.definition = {
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::finish
-* @see app/Http/Controllers/Student/MaterialController.php:152
+* @see app/Http/Controllers/Student/MaterialController.php:155
 * @route '/material/{slug}/finish'
 */
 finish.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -290,7 +216,7 @@ finish.url = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::finish
-* @see app/Http/Controllers/Student/MaterialController.php:152
+* @see app/Http/Controllers/Student/MaterialController.php:155
 * @route '/material/{slug}/finish'
 */
 finish.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -300,7 +226,7 @@ finish.post = (args: { slug: string | number } | [slug: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::finish
-* @see app/Http/Controllers/Student/MaterialController.php:152
+* @see app/Http/Controllers/Student/MaterialController.php:155
 * @route '/material/{slug}/finish'
 */
 const finishForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -310,7 +236,7 @@ const finishForm = (args: { slug: string | number } | [slug: string | number ] |
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::finish
-* @see app/Http/Controllers/Student/MaterialController.php:152
+* @see app/Http/Controllers/Student/MaterialController.php:155
 * @route '/material/{slug}/finish'
 */
 finishForm.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -322,7 +248,7 @@ finish.form = finishForm
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::runCode
-* @see app/Http/Controllers/Student/MaterialController.php:190
+* @see app/Http/Controllers/Student/MaterialController.php:193
 * @route '/material/{slug}/run-code'
 */
 export const runCode = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -337,7 +263,7 @@ runCode.definition = {
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::runCode
-* @see app/Http/Controllers/Student/MaterialController.php:190
+* @see app/Http/Controllers/Student/MaterialController.php:193
 * @route '/material/{slug}/run-code'
 */
 runCode.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -364,7 +290,7 @@ runCode.url = (args: { slug: string | number } | [slug: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::runCode
-* @see app/Http/Controllers/Student/MaterialController.php:190
+* @see app/Http/Controllers/Student/MaterialController.php:193
 * @route '/material/{slug}/run-code'
 */
 runCode.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -374,7 +300,7 @@ runCode.post = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::runCode
-* @see app/Http/Controllers/Student/MaterialController.php:190
+* @see app/Http/Controllers/Student/MaterialController.php:193
 * @route '/material/{slug}/run-code'
 */
 const runCodeForm = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -384,7 +310,7 @@ const runCodeForm = (args: { slug: string | number } | [slug: string | number ] 
 
 /**
 * @see \App\Http\Controllers\Student\MaterialController::runCode
-* @see app/Http/Controllers/Student/MaterialController.php:190
+* @see app/Http/Controllers/Student/MaterialController.php:193
 * @route '/material/{slug}/run-code'
 */
 runCodeForm.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -396,7 +322,6 @@ runCode.form = runCodeForm
 
 const material = {
     show: Object.assign(show, show),
-    reflection: Object.assign(reflection, reflection),
     savePhase3: Object.assign(savePhase3, savePhase3),
     finish: Object.assign(finish, finish),
     runCode: Object.assign(runCode, runCode),

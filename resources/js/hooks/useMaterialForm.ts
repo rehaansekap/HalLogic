@@ -182,6 +182,7 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                 newErrors.video_url = ['URL harus dari YouTube atau Google Drive'];
             }
         } else if (step === 3) {
+            /* Commented out validations for Case Study & Pre-Reflection Questions
             if (!formData.case_title || !formData.case_title.trim()) {
                 newErrors.case_title = ['Judul studi kasus wajib diisi'];
             } else if (formData.case_title.length > 255) {
@@ -211,6 +212,7 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                     }
                 }
             }
+            */
             if (formData.post_reflection_questions && formData.post_reflection_questions.length > 0) {
                 const emptyPost = formData.post_reflection_questions.findIndex(q => !q.trim());
                 if (emptyPost !== -1) {

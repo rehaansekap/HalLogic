@@ -96,7 +96,7 @@ export default function MaterialPage({
         only: ['groupMembers', 'currentStep', 'groupStatus', 'submission', 'attendance'],
     });
 
-    const isLocked = material && !initialReflection;
+    const isLocked = false;
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {

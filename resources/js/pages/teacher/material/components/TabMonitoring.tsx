@@ -371,7 +371,8 @@ export default function TabMonitoring({
                     Refleksi Siswa
                 </h3>
 
-                {/* Initial Reflections Accordion */}
+                {/* Initial Reflections Accordion (Commented out)
+                {/* 
                 <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white shadow-sm">
                     <button
                         onClick={() => setIsInitialOpen(!isInitialOpen)}
@@ -409,6 +410,7 @@ export default function TabMonitoring({
                         )}
                     </AnimatePresence>
                 </div>
+                */}
 
                 {/* Final Reflections Accordion */}
                 <div className="overflow-hidden rounded-xl border border-(--palette-limelight)/20 bg-white shadow-sm">

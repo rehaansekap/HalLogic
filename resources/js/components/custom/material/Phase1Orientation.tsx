@@ -1,3 +1,7 @@
+import { motion } from 'framer-motion';
+import { BookOpen, ClipboardList } from 'lucide-react';
+import { cn } from '@/lib/utils';
+/*
 import {
     CheckCircleIcon,
     ClockIcon,
@@ -7,15 +11,14 @@ import {
 } from '@heroicons/react/24/outline';
 import { CheckCircleIcon as CheckCircleSolid } from '@heroicons/react/24/solid';
 import { Form } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Lightbulb, Send, BookOpen, ClipboardList, Play, Lock, MessageSquare, Image as ImageIcon } from 'lucide-react';
+import { Heart, Lightbulb, Send, Play, Lock, MessageSquare, Image as ImageIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
+*/
 
 interface Phase1OrientationProps {
     material: {
@@ -42,6 +45,7 @@ export default function Phase1Orientation({
     initialReflectionText = '',
     groupExists,
 }: Phase1OrientationProps) {
+    /*
     const [activeTab, setActiveTab] = useState<'materi' | 'refleksi'>('materi');
     const [reflection, setReflection] = useState(initialReflectionText ?? '');
     const [answers, setAnswers] = useState<string[]>(
@@ -64,6 +68,7 @@ export default function Phase1Orientation({
     })();
 
     const isQuestionsMode = material.pre_reflection_questions && material.pre_reflection_questions.length > 0;
+    */
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -88,7 +93,8 @@ export default function Phase1Orientation({
             initial="hidden"
             animate="visible"
         >
-            {/* Tabs Navigation */}
+            {/* Tabs Navigation (Commented out)
+            {/* 
             <motion.div
                 className="flex gap-1.5 rounded-xl border border-(--palette-limelight)/20 bg-(--palette-limelight)/5 p-1 mb-8"
                 variants={itemVariants}
@@ -134,8 +140,65 @@ export default function Phase1Orientation({
                     )}
                 </button>
             </motion.div>
+            */}
 
-            {/* Tab Contents */}
+            {/* Tab Contents: Only showing Materi content directly */}
+            <div className="space-y-8">
+                {/* Title & Description */}
+                <div className="space-y-3">
+                    <h2 className="text-2xl font-extrabold text-foreground tracking-tight uppercase">
+                        {material.title}
+                    </h2>
+                    <p className="text-sm leading-relaxed text-muted-foreground leading-relaxed">
+                        {material.description}
+                    </p>
+                </div>
+
+                {/* Learning Objectives */}
+                {material.learning_objectives && material.learning_objectives.length > 0 && (
+                    <div className="rounded-xl border border-(--palette-limelight)/10 bg-gray-50/30 p-6 space-y-4">
+                        <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
+                            <div className="rounded-lg bg-(--palette-green)/10 p-2 text-(--palette-green)">
+                                <BookOpen className="h-4 w-4" />
+                            </div>
+                            Apa yang akan kamu pelajari?
+                        </h3>
+                        <p className="text-xs font-bold text-muted-foreground/60 tracking-wide uppercase">
+                            Setelah mempelajari materi ini kamu bisa:
+                        </p>
+                        <div className="space-y-3 pl-1">
+                            {material.learning_objectives.map((objective, idx) => (
+                                <div key={idx} className="flex items-start gap-3">
+                                    <div className="mt-0.5 flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-md bg-(--palette-green)/10 text-[10px] font-extrabold text-(--palette-green) border border-(--palette-green)/10">
+                                        {idx + 1}
+                                    </div>
+                                    <p className="text-sm font-semibold text-muted-foreground leading-relaxed">
+                                        {objective}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Summary */}
+                {material.summary && (
+                    <div className="rounded-xl border border-(--palette-limelight)/10 bg-gray-50/30 p-6 space-y-3">
+                        <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
+                            <div className="rounded-lg bg-(--palette-green)/10 p-2 text-(--palette-green)">
+                                <ClipboardList className="h-4 w-4" />
+                            </div>
+                            Ringkasan Materi
+                        </h3>
+                        <p className="text-sm font-medium text-muted-foreground leading-relaxed whitespace-pre-wrap pl-1">
+                            {material.summary}
+                        </p>
+                    </div>
+                )}
+            </div>
+
+            {/* Commented out case study & reflection tab content
+            {/*
             <AnimatePresence mode="wait">
                 {activeTab === 'materi' ? (
                     <motion.div
@@ -145,7 +208,7 @@ export default function Phase1Orientation({
                         exit={{ opacity: 0, y: -10 }}
                         className="space-y-8"
                     >
-                        {/* Title & Description */}
+                        {/* Title & Description * /}
                         <div className="space-y-3">
                             <h2 className="text-2xl font-extrabold text-foreground tracking-tight uppercase">
                                 {material.title}
@@ -155,7 +218,7 @@ export default function Phase1Orientation({
                             </p>
                         </div>
 
-                        {/* Learning Objectives */}
+                        {/* Learning Objectives * /}
                         {material.learning_objectives && material.learning_objectives.length > 0 && (
                             <div className="rounded-xl border border-(--palette-limelight)/10 bg-gray-50/30 p-6 space-y-4">
                                 <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
@@ -182,7 +245,7 @@ export default function Phase1Orientation({
                             </div>
                         )}
 
-                        {/* Summary */}
+                        {/* Summary * /}
                         {material.summary && (
                             <div className="rounded-xl border border-(--palette-limelight)/10 bg-gray-50/30 p-6 space-y-3">
                                 <h3 className="flex items-center gap-2.5 text-base font-bold text-foreground">
@@ -197,7 +260,7 @@ export default function Phase1Orientation({
                             </div>
                         )}
 
-                        {/* Continue Button */}
+                        {/* Continue Button * /}
                         <div className="flex pt-2">
                             <Button
                                 type="button"
@@ -238,7 +301,7 @@ export default function Phase1Orientation({
                                     </div>
                                 </div>
 
-                                {/* Studi Kasus & Gambar (Saved Mode) */}
+                                {/* Studi Kasus & Gambar (Saved Mode) * /}
                                 {material.case_narrative && (
                                     <div className="rounded-2xl border border-[--palette-green]/20 bg-[--palette-green]/5 p-5 md:p-6 space-y-4 shadow-sm overflow-hidden">
                                         {material.case_image_path && (
@@ -323,7 +386,7 @@ export default function Phase1Orientation({
                             </div>
                         ) : (
                             <div className="space-y-6">
-                                {/* Header */}
+                                {/* Header * /}
                                 <div className="mb-8 flex items-start gap-4">
                                     <div className="rounded-lg bg-(--palette-green)/8 p-4">
                                         <ClipboardList className="h-6 w-6 text-(--palette-green)" />
@@ -338,7 +401,7 @@ export default function Phase1Orientation({
                                     </div>
                                 </div>
 
-                                {/* Studi Kasus & Gambar (Form Mode) */}
+                                {/* Studi Kasus & Gambar (Form Mode) * /}
                                 {material.case_narrative && (
                                     <div className="rounded-2xl border border-[--palette-green]/20 bg-[--palette-green]/5 p-5 md:p-6 space-y-4 shadow-sm overflow-hidden">
                                         {material.case_image_path && (
@@ -377,7 +440,7 @@ export default function Phase1Orientation({
                                     </div>
                                 )}
 
-                                {/* Form */}
+                                {/* Form * /}
                                 <Form
                                     method="post"
                                     action={`/material/${material.slug}/reflection`}
@@ -385,7 +448,7 @@ export default function Phase1Orientation({
                                 >
                                     {({ errors, processing, wasSuccessful }) => (
                                         <div className="space-y-6">
-                                            {/* Text Areas */}
+                                            {/* Text Areas * /}
                                             <div className="space-y-6">
                                                 {isQuestionsMode ? (
                                                     material.pre_reflection_questions!.map((qText, index) => (
@@ -434,7 +497,7 @@ export default function Phase1Orientation({
                                                 )}
                                             </div>
 
-                                            {/* Status */}
+                                            {/* Status * /}
                                             <div className="flex items-center justify-between">
                                                 {isQuestionsMode ? (
                                                     <>
@@ -464,7 +527,7 @@ export default function Phase1Orientation({
                                                 )}
                                             </div>
 
-                                            {/* Tips */}
+                                            {/* Tips * /}
                                             <div className="rounded-2xl border border-yellow-200 bg-yellow-50/30 p-5 space-y-3">
                                                 <p className="flex items-center gap-2 text-base font-bold text-slate-800">
                                                     <Lightbulb className="h-5 w-5 text-yellow-500" />
@@ -490,7 +553,7 @@ export default function Phase1Orientation({
                                                 </div>
                                             </div>
 
-                                            {/* Submit Button */}
+                                            {/* Submit Button * /}
                                             <div className="flex flex-col gap-3 pt-4">
                                                 <Button
                                                     type="submit"
@@ -532,7 +595,7 @@ export default function Phase1Orientation({
                                                 </div>
                                             </div>
 
-                                            {/* Success Message */}
+                                            {/* Success Message * /}
                                             {wasSuccessful && (
                                                 <div className="flex items-center gap-2 rounded-lg border border-(--palette-green)/30 bg-(--palette-green)/10 p-4 text-sm font-semibold text-(--palette-green)">
                                                     <CheckCircleIcon className="h-4 w-4 shrink-0" />
@@ -547,6 +610,7 @@ export default function Phase1Orientation({
                     </motion.div>
                 )}
             </AnimatePresence>
+            */}
         </motion.div>
     );
 }

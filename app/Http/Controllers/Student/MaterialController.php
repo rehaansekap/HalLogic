@@ -46,28 +46,27 @@ class MaterialController extends Controller
                 ->with('error', 'Selesaikan material "'.($prerequisite?->title ?? 'sebelumnya').'" terlebih dahulu.');
         }
 
-        $initialReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'initial');
+        // Initial reflection is commented out/removed
+        $initialReflection = null;
 
-        $groupMember = $initialReflection
-            ? $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id)
-            : null;
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
 
         if ($groupMember) {
             $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
 
-            // Auto-advance if student has reflection but group is still at step 1
-            if ($initialReflection && (! $progress || (int) $progress->current_step === 1)) {
+            // Auto-advance since initial reflection is removed/commented out
+            if (! $progress || (int) $progress->current_step === 1) {
                 $this->progressService->updateGroupProgress($groupMember->group_id, $material->id, 2);
                 $currentStep = 2;
                 $groupStatus = 'in_progress';
             } else {
-                $currentStep = $progress ? (int) $progress->current_step : 1;
+                $currentStep = $progress ? (int) $progress->current_step : 2;
                 $groupStatus = $progress?->status ?? 'locked';
             }
 
             $myGroupMembers = $this->groupService->getGroupMembers($groupMember->group_id);
         } else {
-            $currentStep = 1;
+            $currentStep = 2;
             $myGroupMembers = collect();
             $groupStatus = null;
         }
@@ -82,10 +81,12 @@ class MaterialController extends Controller
             'initialReflection' => $initialReflection,
             'finalReflection' => $finalReflection,
             'groupStatus' => $groupStatus,
-            'submission' => Submission::where('group_id', $groupMember?->group_id)
-                ->where('material_id', $material->id)
-                ->with('grade')
-                ->first(),
+            'submission' => $groupMember
+                ? Submission::where('group_id', $groupMember->group_id)
+                    ->where('material_id', $material->id)
+                    ->with('grade')
+                    ->first()
+                : null,
             'attendance' => DB::table('attendances')
                 ->where('material_id', $material->id)
                 ->where('user_id', $user->id)
@@ -93,6 +94,7 @@ class MaterialController extends Controller
         ]);
     }
 
+    /*
     public function submitReflection(StoreReflectionRequest $request, $slug)
     {
         $material = Material::where('slug', $slug)->firstOrFail();
@@ -115,6 +117,7 @@ class MaterialController extends Controller
 
         return redirect()->back()->with('success', 'Refleksi tersimpan! Menunggu pembentukan kelompok oleh Guru.');
     }
+    */
 
     public function savePhase3(SavePhase3Request $request, $slug)
     {
@@ -192,14 +195,8 @@ class MaterialController extends Controller
         $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
 
-        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
-        if (! $groupMember) {
-            return response()->json(['error' => 'Kamu belum memiliki kelompok untuk material ini!'], 403);
-        }
-
-        $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
-        if (! $progress || (int) $progress->current_step < 2) {
-            return response()->json(['error' => 'Tahap ini belum terbuka.'], 403);
+        if ($this->lockService->isMaterialLocked($material, $user)) {
+            return response()->json(['error' => 'Materi ini masih terkunci.'], 403);
         }
 
         $data = $request->validated();

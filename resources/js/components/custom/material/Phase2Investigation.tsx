@@ -1151,6 +1151,14 @@ int main() {
                                                 </Button>
                                             </div>
                                         </div>
+                                    ) : groupMembers.length === 0 ? (
+                                        <div className="mt-4 rounded-xl border border-dashed border-amber-200 bg-amber-50/30 p-6 text-center">
+                                            <Lock className="mx-auto mb-2.5 h-6 w-6 text-amber-600/85" />
+                                            <p className="text-sm font-bold text-amber-900">Kamu belum terdaftar dalam kelompok.</p>
+                                            <p className="text-xs text-amber-700/80 mt-1">
+                                                Silakan hubungi Gurumu untuk membagi kelompok terlebih dahulu sebelum mengumpulkan tugas.
+                                            </p>
+                                        </div>
                                     ) : !isLeader ? (
                                         <div className="mt-4 rounded-xl border border-dashed border-amber-200 bg-amber-50/30 p-6 text-center">
                                             <Lock className="mx-auto mb-2.5 h-6 w-6 text-amber-600/85" />

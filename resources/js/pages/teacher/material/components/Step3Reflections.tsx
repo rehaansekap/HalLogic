@@ -220,7 +220,7 @@ export default function Step3Reflections({
             initial="hidden"
             animate="visible"
         >
-            {/* Accordion 1: Media & Narasi Kasus */}
+            {/* Accordion 1: Media & Narasi Kasus (Commented out)
             <AccordionSection
                 id="media"
                 title="Studi Kasus & Gambar Pendamping"
@@ -370,7 +370,9 @@ export default function Step3Reflections({
                     </div>
                 </div>
             </AccordionSection>
-            {/* Accordion 1: Refleksi Awal */}
+            */}
+
+            {/* Accordion 1: Refleksi Awal (Commented out)
             <AccordionSection
                 id="pre"
                 title="Refleksi Awal (Pre-Reflection)"
@@ -456,6 +458,7 @@ export default function Step3Reflections({
                     )}
                 </div>
             </AccordionSection>
+            */}ion>
 
             {/* Accordion 2: Refleksi Akhir */}
             <AccordionSection

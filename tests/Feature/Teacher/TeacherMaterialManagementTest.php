@@ -42,17 +42,17 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
             'video_url' => null,
-            'case_title' => 'A valid case title.',
-            'case_narrative' => 'A valid case narrative description.',
+            // 'case_title' => 'A valid case title.',
+            // 'case_narrative' => 'A valid case narrative description.',
             'summary' => 'Ini adalah ringkasan materi dalam bahasa Indonesia.',
             'learning_objectives' => [
                 'Understand logical gerbang AND',
                 'Design a basic circuit logic diagram',
             ],
-            'pre_reflection_questions' => [
-                'Apa yang kamu ketahui tentang gerbang logika?',
-                'Bagaimana kamu menguji kebenaran sirkuit?',
-            ],
+            // 'pre_reflection_questions' => [
+            //     'Apa yang kamu ketahui tentang gerbang logika?',
+            //     'Bagaimana kamu menguji kebenaran sirkuit?',
+            // ],
             'post_reflection_questions' => [
                 'Hambatan apa yang kamu temukan?',
                 'Bagaimana cara kamu mengatasinya?',
@@ -93,10 +93,10 @@ class TeacherMaterialManagementTest extends TestCase
             'Understand logical gerbang AND',
             'Design a basic circuit logic diagram',
         ], $material->learning_objectives);
-        $this->assertEquals([
-            'Apa yang kamu ketahui tentang gerbang logika?',
-            'Bagaimana kamu menguji kebenaran sirkuit?',
-        ], $material->pre_reflection_questions);
+        // $this->assertEquals([
+        //     'Apa yang kamu ketahui tentang gerbang logika?',
+        //     'Bagaimana kamu menguji kebenaran sirkuit?',
+        // ], $material->pre_reflection_questions);
         $this->assertEquals([
             'Hambatan apa yang kamu temukan?',
             'Bagaimana cara kamu mengatasinya?',
@@ -119,8 +119,8 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
             'video_url' => null,
-            'case_title' => 'A valid case title.',
-            'case_narrative' => 'A valid case narrative description.',
+            // 'case_title' => 'A valid case title.',
+            // 'case_narrative' => 'A valid case narrative description.',
             'summary' => 'Ini adalah ringkasan materi dengan video Google Drive.',
             'learning_objectives' => [
                 'Understand Google Drive video embed support',
@@ -160,8 +160,8 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
             'video_url' => null,
-            'case_title' => 'A valid case title.',
-            'case_narrative' => 'A valid case narrative description.',
+            // 'case_title' => 'A valid case title.',
+            // 'case_narrative' => 'A valid case narrative description.',
             'learning_objectives' => [
                 'Objective 1',
             ],
@@ -191,8 +191,8 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
             'video_url' => null,
-            'case_title' => 'A valid case title.',
-            'case_narrative' => 'A valid case narrative description.',
+            // 'case_title' => 'A valid case title.',
+            // 'case_narrative' => 'A valid case narrative description.',
             'summary' => 'This is a English summary.',
             'learning_objectives' => [], // Empty array
             'sub_materials' => [
@@ -223,11 +223,11 @@ class TeacherMaterialManagementTest extends TestCase
             'teacher_id' => $teacher->id,
             'classroom_id' => $classroom->id,
             'video_url' => null,
-            'case_title' => 'Original case title',
-            'case_narrative' => 'Original case narrative',
+            // 'case_title' => 'Original case title',
+            // 'case_narrative' => 'Original case narrative',
             'summary' => 'Original summary',
             'learning_objectives' => ['Original Objective'],
-            'pre_reflection_questions' => ['Original Pre Question'],
+            // 'pre_reflection_questions' => ['Original Pre Question'],
             'post_reflection_questions' => ['Original Post Question'],
             'sub_materials' => [
                 [
@@ -252,16 +252,16 @@ class TeacherMaterialManagementTest extends TestCase
             'description' => 'Updated description text here.',
             'difficulty_level' => 3,
             'video_url' => null,
-            'case_title' => 'Updated case title.',
-            'case_narrative' => 'Updated case narrative.',
+            // 'case_title' => 'Updated case title.',
+            // 'case_narrative' => 'Updated case narrative.',
             'summary' => 'Ringkasan materi yang diperbarui.',
             'learning_objectives' => [
                 'New Objective 1',
                 'New Objective 2',
             ],
-            'pre_reflection_questions' => [
-                'Updated Pre Question 1',
-            ],
+            // 'pre_reflection_questions' => [
+            //     'Updated Pre Question 1',
+            // ],
             'post_reflection_questions' => [
                 'Updated Post Question 1',
             ],
@@ -299,9 +299,9 @@ class TeacherMaterialManagementTest extends TestCase
             'New Objective 1',
             'New Objective 2',
         ], $updatedMaterial->learning_objectives);
-        $this->assertEquals([
-            'Updated Pre Question 1',
-        ], $updatedMaterial->pre_reflection_questions);
+        // $this->assertEquals([
+        //     'Updated Pre Question 1',
+        // ], $updatedMaterial->pre_reflection_questions);
         $this->assertEquals([
             'Updated Post Question 1',
         ], $updatedMaterial->post_reflection_questions);
@@ -312,104 +312,103 @@ class TeacherMaterialManagementTest extends TestCase
         $this->assertEquals('Updated Example Title', $updatedMaterial->code_examples[0]['title']);
     }
 
-    public function test_teacher_can_create_update_and_delete_material_with_case_image(): void
-    {
-        Storage::fake('public');
-
-        $teacher = $this->createTeacher();
-        $classroom = $this->createClassroom($teacher);
-
-        $caseImage = UploadedFile::fake()->image('my_case_image.png');
-
-        $payload = [
-            'classroom_id' => $classroom->id,
-            'title' => 'Case Image Title',
-            'description' => 'A description.',
-            'difficulty_level' => 2,
-            'video_url' => null,
-            'case_title' => 'A valid case title.',
-            'case_narrative' => 'A valid case narrative description.',
-            'case_image' => $caseImage,
-            'summary' => 'Summary content.',
-            'learning_objectives' => ['Objective 1'],
-            'sub_materials' => [
-                [
-                    'title' => 'Sub Materi Awal',
-                    'content' => '<p>Konten sub materi awal</p>',
-                    'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                ],
-            ],
-            'started_at' => now()->format('Y-m-d'),
-            'finished_at' => now()->addDays(7)->format('Y-m-d'),
-        ];
-
-        // 1. Test Create
-        $response = $this->actingAs($teacher)
-            ->post(route('teacher.materials.store'), $payload);
-
-        $response->assertRedirect(route('teacher.dashboard'));
-
-        $this->assertDatabaseHas('materials', [
-            'title' => 'Case Image Title',
-        ]);
-
-        $material = Material::where('title', 'Case Image Title')->first();
-        $this->assertNotNull($material->case_image_path);
-        Storage::disk('public')->assertExists($material->case_image_path);
-
-        // 2. Test Update (Replace Image)
-        $newCaseImage = UploadedFile::fake()->image('updated_case_image.png');
-        $oldImagePath = $material->case_image_path;
-
-        $updatePayload = $payload;
-        $updatePayload['title'] = 'Updated Case Image Title';
-        $updatePayload['case_image'] = $newCaseImage;
-
-        $response = $this->actingAs($teacher)
-            ->post(route('teacher.materials.update', $material->id), $updatePayload);
-
-        $response->assertRedirect(route('teacher.dashboard'));
-
-        $material = $material->fresh();
-        $this->assertEquals('Updated Case Image Title', $material->title);
-        $this->assertNotEquals($oldImagePath, $material->case_image_path);
-        Storage::disk('public')->assertExists($material->case_image_path);
-        Storage::disk('public')->assertMissing($oldImagePath);
-
-        // 3. Test Update (Remove Image)
-        $currentImagePath = $material->case_image_path;
-        $removePayload = $updatePayload;
-        unset($removePayload['case_image']);
-        $removePayload['remove_case_image'] = true;
-
-        $response = $this->actingAs($teacher)
-            ->post(route('teacher.materials.update', $material->id), $removePayload);
-
-        $response->assertRedirect(route('teacher.dashboard'));
-
-        $material = $material->fresh();
-        $this->assertNull($material->case_image_path);
-        Storage::disk('public')->assertMissing($currentImagePath);
-
-        // 4. Test Delete (Re-upload and delete material)
-        $caseImageForDelete = UploadedFile::fake()->image('delete_case_image.png');
-        $reuploadPayload = $removePayload;
-        $reuploadPayload['case_image'] = $caseImageForDelete;
-        unset($reuploadPayload['remove_case_image']);
-
-        $this->actingAs($teacher)
-            ->post(route('teacher.materials.update', $material->id), $reuploadPayload);
-
-        $material = $material->fresh();
-        $deletePath = $material->case_image_path;
-        $this->assertNotNull($deletePath);
-        Storage::disk('public')->assertExists($deletePath);
-
-        $response = $this->actingAs($teacher)
-            ->delete(route('teacher.materials.destroy', $material->id));
-
-        $response->assertRedirect(route('teacher.dashboard'));
-        $this->assertDatabaseMissing('materials', ['id' => $material->id]);
-        Storage::disk('public')->assertMissing($deletePath);
-    }
+    // public function test_teacher_can_create_update_and_delete_material_with_case_image(): void
+    // {
+    //     Storage::fake('public');
+    //
+    //     $teacher = $this->createTeacher();
+    //     $classroom = $this->createClassroom($teacher);
+    //
+    //     $caseImage = UploadedFile::fake()->image('my_case_image.png');
+    //
+    //     $payload = [
+    //         'classroom_id' => $classroom->id,
+    //         'title' => 'Case Image Title',
+    //         'description' => 'A description.',
+    //         'difficulty_level' => 2,
+    //         'video_url' => null,
+    //         'case_title' => 'A valid case title.',
+    //         'case_narrative' => 'A valid case narrative description.',
+    //         'case_image' => $caseImage,
+    //         'summary' => 'Summary content.',
+    //         'learning_objectives' => ['Objective 1'],
+    //         'sub_materials' => [
+    //             [
+    //                 'title' => 'Sub Materi Awal',
+    //                 'content' => '<p>Konten sub materi awal</p>',
+    //                 'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    //             ],
+    //         ],
+    //         'started_at' => now()->format('Y-m-d'),
+    //         'finished_at' => now()->addDays(7)->format('Y-m-d'),
+    //     ];
+    //
+    //     // 1. Test Create
+    //     $response = $this->actingAs($teacher)
+    //         ->post(route('teacher.materials.store'), $payload);
+    //
+    //     $response->assertRedirect(route('teacher.dashboard'));
+    //
+    //     $this->assertDatabaseHas('materials', [
+    //         'title' => 'Case Image Title',
+    //     ]);
+    //
+    //     $material = Material::where('title', 'Case Image Title')->first();
+    //     $this->assertNotNull($material->case_image_path);
+    //     Storage::disk('public')->assertExists($material->case_image_path);
+    //
+    //     // 2. Test Update (Replace Image)
+    //     $newCaseImage = UploadedFile::fake()->image('updated_case_image.png');
+    //     $oldImagePath = $material->case_image_path;
+    //
+    //     $updatePayload = $payload;
+    //     $updatePayload['title'] = 'Updated Case Image Title';
+    //     $updatePayload['case_image'] = $newCaseImage;
+    //
+    //     $response = $this->actingAs($teacher)
+    //         ->post(route('teacher.materials.update', $material->id), $updatePayload);
+    //
+    //     $response->assertRedirect(route('teacher.dashboard'));
+    //
+    //     $material = $material->fresh();
+    //     $this->assertEquals('Updated Case Image Title', $material->title);
+    //     $this->assertNotEquals($oldImagePath, $material->case_image_path);
+    //     Storage::disk('public')->assertExists($material->case_image_path);
+    //     Storage::disk('public')->assertMissing($oldImagePath);
+    //
+    //     // 3. Test Update (Remove Image)
+    //     $currentImagePath = $material->case_image_path;
+    //     $removePayload = $updatePayload;
+    //     unset($removePayload['case_image']);
+    //     $removePayload['remove_case_image'] = true;
+    //
+    //     $response = $this->actingAs($teacher)
+    //         ->post(route('teacher.materials.update', $material->id), $removePayload);
+    //
+    //     $response->assertRedirect(route('teacher.dashboard'));
+    //
+    //     $material = $material->fresh();
+    //     $this->assertNull($material->case_image_path);
+    //     Storage::disk('public')->assertMissing($currentImagePath);
+    //
+    //     // 4. Test Delete (Re-upload and delete material)
+    //     $caseImageForDelete = UploadedFile::fake()->image('delete_case_image.png');
+    //     $reuploadPayload = $removePayload;
+    //     $reuploadPayload['case_image'] = $caseImageForDelete;
+    //     unset($reuploadPayload['remove_case_image']);
+    //
+    //     $this->actingAs($teacher)
+    //         ->post(route('teacher.materials.update', $material->id), $reuploadPayload);
+    //
+    //     $material = $material->fresh();
+    //     $deletePath = $material->case_image_path;
+    //     $this->assertNotNull($deletePath);
+    //     Storage::disk('public')->assertExists($deletePath);
+    //
+    //     $response = $this->actingAs($teacher)
+    //         ->delete(route('teacher.materials.destroy', $material->id));
+    //
+    //     $response->assertRedirect(route('teacher.dashboard'));
+    //     $this->assertDatabaseMissing('materials', ['id' => $material->id]);
+    //     Storage::disk('public')->assertMissing($deletePath);
 }

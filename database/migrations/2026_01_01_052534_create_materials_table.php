@@ -33,9 +33,9 @@ return new class extends Migration
             $table->timestamp('finished_at')->nullable();
 
             $table->string('video_url')->nullable();
-            $table->string('case_title')->nullable();
-            $table->longText('case_narrative')->nullable();
-            $table->string('case_image_path')->nullable();
+            // $table->string('case_title')->nullable();
+            // $table->longText('case_narrative')->nullable();
+            // $table->string('case_image_path')->nullable();
 
             $table->string('material_pdf')->nullable();
             $table->json('sub_materials')->nullable();
@@ -43,7 +43,7 @@ return new class extends Migration
             $table->json('simulator_config')->nullable();
             $table->text('summary')->nullable();
             $table->json('learning_objectives')->nullable();
-            $table->json('pre_reflection_questions')->nullable();
+            // $table->json('pre_reflection_questions')->nullable();
             $table->json('post_reflection_questions')->nullable();
 
             $table->timestamps();

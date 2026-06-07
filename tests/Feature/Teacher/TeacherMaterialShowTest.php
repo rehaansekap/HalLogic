@@ -37,8 +37,8 @@ class TeacherMaterialShowTest extends TestCase
             'teacher_id' => $teacher->id,
             'classroom_id' => $classroom->id,
             'video_url' => 'https://example.com/video',
-            'case_title' => 'Test case title',
-            'case_narrative' => 'Test narrative',
+            // 'case_title' => 'Test case title',
+            // 'case_narrative' => 'Test narrative',
         ]);
     }
 

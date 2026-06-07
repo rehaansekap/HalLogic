@@ -37,8 +37,8 @@ class StudentMaterialTest extends TestCase
             'slug' => 'struktur-kontrol-c',
             'description' => 'Mempelajari if-else dan switch-case.',
             'difficulty_level' => 1,
-            'case_title' => 'Studi Kasus Percabangan',
-            'case_narrative' => 'Bagaimana membuat pencabangan?',
+            // 'case_title' => 'Studi Kasus Percabangan',
+            // 'case_narrative' => 'Bagaimana membuat pencabangan?',
         ]);
 
         // 4. Create Group
@@ -130,8 +130,8 @@ class StudentMaterialTest extends TestCase
             'slug' => 'struktur-kontrol-c',
             'description' => 'Mempelajari if-else dan switch-case.',
             'difficulty_level' => 1,
-            'case_title' => 'Studi Kasus Percabangan',
-            'case_narrative' => 'Bagaimana membuat pencabangan?',
+            // 'case_title' => 'Studi Kasus Percabangan',
+            // 'case_narrative' => 'Bagaimana membuat pencabangan?',
         ]);
 
         $groupId = DB::table('groups')->insertGetId([
@@ -214,8 +214,8 @@ class StudentMaterialTest extends TestCase
             'slug' => 'struktur-kontrol-c',
             'description' => 'Mempelajari if-else dan switch-case.',
             'difficulty_level' => 1,
-            'case_title' => 'Studi Kasus Percabangan',
-            'case_narrative' => 'Bagaimana membuat pencabangan?',
+            // 'case_title' => 'Studi Kasus Percabangan',
+            // 'case_narrative' => 'Bagaimana membuat pencabangan?',
         ]);
 
         $groupId = DB::table('groups')->insertGetId([
@@ -268,8 +268,8 @@ class StudentMaterialTest extends TestCase
             'slug' => 'struktur-kontrol-c',
             'description' => 'Mempelajari if-else dan switch-case.',
             'difficulty_level' => 1,
-            'case_title' => 'Studi Kasus Percabangan',
-            'case_narrative' => 'Bagaimana membuat pencabangan?',
+            // 'case_title' => 'Studi Kasus Percabangan',
+            // 'case_narrative' => 'Bagaimana membuat pencabangan?',
         ]);
 
         $groupId = DB::table('groups')->insertGetId([
@@ -337,8 +337,8 @@ class StudentMaterialTest extends TestCase
             'slug' => 'struktur-kontrol-c',
             'description' => 'Mempelajari if-else dan switch-case.',
             'difficulty_level' => 1,
-            'case_title' => 'Studi Kasus Percabangan',
-            'case_narrative' => 'Bagaimana membuat pencabangan?',
+            // 'case_title' => 'Studi Kasus Percabangan',
+            // 'case_narrative' => 'Bagaimana membuat pencabangan?',
         ]);
 
         // Mark as completed by inserting final reflection
@@ -364,6 +364,37 @@ class StudentMaterialTest extends TestCase
                 ->where('progress', 100)
                 ->etc()
             )
+        );
+    }
+
+    public function test_student_without_group_can_access_step_2_directly(): void
+    {
+        $student = User::factory()->create(['role' => 'student']);
+        $teacher = User::factory()->create(['role' => 'teacher']);
+
+        $classroom = Classroom::create([
+            'name' => 'Kelas A',
+            'academic_year' => '2025/2026',
+            'teacher_id' => $teacher->id,
+        ]);
+
+        $material = Material::create([
+            'classroom_id' => $classroom->id,
+            'title' => 'Struktur Kontrol C',
+            'slug' => 'struktur-kontrol-c',
+            'description' => 'Mempelajari if-else dan switch-case.',
+            'difficulty_level' => 1,
+        ]);
+
+        $response = $this->actingAs($student)
+            ->get(route('material.show', $material->slug));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('student/material/index')
+            ->where('currentStep', 2)
+            ->where('unlockedStep', 2)
+            ->where('groupMembers', [])
         );
     }
 }

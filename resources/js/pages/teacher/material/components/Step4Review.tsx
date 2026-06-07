@@ -131,7 +131,6 @@ export default function Step4Review({
             ?.title || 'Tidak Ada';
 
     const hasReflections = 
-        (formData.pre_reflection_questions && formData.pre_reflection_questions.length > 0) ||
         (formData.post_reflection_questions && formData.post_reflection_questions.length > 0);
 
     return (
@@ -331,6 +330,7 @@ export default function Step4Review({
                                         </div>
                                     </div>
 
+                                    {/* Commented out Case Study Review Columns
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Gambar Kasus</span>
                                         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
@@ -346,6 +346,7 @@ export default function Step4Review({
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Narasi Kasus</span>
                                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{formData.case_narrative || 'Tidak disertakan'}</p>
                                     </div>
+                                    */}
                                 </div>
                             </div>
                         </div>
@@ -359,8 +360,8 @@ export default function Step4Review({
                         onEditStep={onEditStep}
                     >
                         {hasReflections ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                {/* Refleksi Awal */}
+                            <div className="grid grid-cols-1 gap-8">
+                                {/* Refleksi Awal (Commented out)
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2 font-bold text-sm text-foreground">
                                         <MessageSquare className="h-4 w-4 text-(--palette-green)" />
@@ -381,6 +382,7 @@ export default function Step4Review({
                                         </p>
                                     )}
                                 </div>
+                                */}
 
                                 {/* Refleksi Akhir */}
                                 <div className="space-y-4">

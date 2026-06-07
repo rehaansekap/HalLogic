@@ -101,8 +101,8 @@ class DatabaseSeeder extends Seeder
             'description' => 'Pelajari logika percabangan (If-Else) untuk menghitung tarif parkir otomatis.',
             'difficulty_level' => 1,
             'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
-            'case_title' => 'Sistem Tarif Parkir Otomatis',
-            'case_narrative' => 'Mall Grand Indonesia mengubah tarif parkirnya. 1 jam pertama Rp5.000, jam berikutnya Rp3.000 flat. Bantu mereka membuat sistem otomatis!',
+            // 'case_title' => 'Sistem Tarif Parkir Otomatis',
+            // 'case_narrative' => 'Mall Grand Indonesia mengubah tarif parkirnya. 1 jam pertama Rp5.000, jam berikutnya Rp3.000 flat. Bantu mereka membuat sistem otomatis!',
             'simulator_config' => ['type' => 'logic', 'answer' => 8000],
             'prerequisite_material_id' => null,
             'teacher_id' => $guru1->id,
@@ -114,10 +114,10 @@ class DatabaseSeeder extends Seeder
                 'Mampu menuliskan pernyataan If-Else dengan benar.',
                 'Mampu menerapkan struktur percabangan untuk memecahkan masalah nyata.',
             ],
-            'pre_reflection_questions' => [
-                'Apa yang kamu ketahui tentang bagaimana komputer mengambil keputusan?',
-                'Pernahkah kamu mendengar istilah logika If-Else? Jelaskan pendapatmu.',
-            ],
+            // 'pre_reflection_questions' => [
+            //     'Apa yang kamu ketahui tentang bagaimana komputer mengambil keputusan?',
+            //     'Pernahkah kamu mendengar istilah logika If-Else? Jelaskan pendapatmu.',
+            // ],
             'post_reflection_questions' => [
                 'Apakah kamu dapat membedakan kapan harus menggunakan If saja dan kapan harus menggunakan If-Else?',
                 'Tantangan apa yang paling sulit saat kamu mencoba membuat kondisi percabangan tadi?',
@@ -151,8 +151,8 @@ class DatabaseSeeder extends Seeder
             'description' => 'Pelajari penggunaan Switch-Case untuk memperbaiki mesin minuman yang salah mengeluarkan produk.',
             'difficulty_level' => 2,
             'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
-            'case_title' => 'Mesin Minuman Otomatis',
-            'case_narrative' => 'Mesin penjual otomatis di sekolah error. Jika tekan tombol A harusnya keluar Teh, tombol B keluar Kopi. Tapi sekarang acak-acakan.',
+            // 'case_title' => 'Mesin Minuman Otomatis',
+            // 'case_narrative' => 'Mesin penjual otomatis di sekolah error. Jika tekan tombol A harusnya keluar Teh, tombol B keluar Kopi. Tapi sekarang acak-acakan.',
             'simulator_config' => ['type' => 'string_match', 'answer' => 'Teh Botol'],
             'prerequisite_material_id' => $material1->id,
             'teacher_id' => $guru1->id,
@@ -164,10 +164,10 @@ class DatabaseSeeder extends Seeder
                 'Mampu menuliskan struktur Switch-Case beserta penggunaan kata kunci break dan default.',
                 'Mampu merancang menu pilihan berbasis Switch-Case.',
             ],
-            'pre_reflection_questions' => [
-                'Menurutmu, apa yang terjadi jika kita memiliki puluhan kondisi If-Else bertingkat? Apakah ada cara lain yang lebih rapi?',
-                'Apa yang kamu bayangkan tentang cara kerja tombol-tombol pada mesin minuman otomatis?',
-            ],
+            // 'pre_reflection_questions' => [
+            //     'Menurutmu, apa yang terjadi jika kita memiliki puluhan kondisi If-Else bertingkat? Apakah ada cara lain yang lebih rapi?',
+            //     'Apa yang kamu bayangkan tentang cara kerja tombol-tombol pada mesin minuman otomatis?',
+            // ],
             'post_reflection_questions' => [
                 'Mengapa kata kunci break sangat penting di dalam struktur Switch-Case?',
                 'Apakah kamu merasa lebih mudah membaca struktur Switch-Case dibandingkan If-Else bertingkat?',
@@ -201,8 +201,8 @@ class DatabaseSeeder extends Seeder
             'description' => 'Pelajari penggunaan Perulangan (For Loop) untuk merekap absen 1 bulan.',
             'difficulty_level' => 3,
             'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
-            'case_title' => 'Sistem Absensi Kelas',
-            'case_narrative' => 'Guru piket lelah memanggil 40 nama setiap pagi. Buat program yang bisa mengulang panggilan secara otomatis.',
+            // 'case_title' => 'Sistem Absensi Kelas',
+            // 'case_narrative' => 'Guru piket lelah memanggil 40 nama setiap pagi. Buat program yang bisa mengulang panggilan secara otomatis.',
             'simulator_config' => ['type' => 'loop', 'answer' => 30],
             'prerequisite_material_id' => $material2->id,
             'teacher_id' => $guru1->id,
@@ -214,10 +214,10 @@ class DatabaseSeeder extends Seeder
                 'Mengidentifikasi bagian-bagian utama For Loop: inisialisasi, kondisi, dan increment/decrement.',
                 'Mampu menerapkan perulangan untuk memproses data berulang.',
             ],
-            'pre_reflection_questions' => [
-                'Bagaimana cara kamu menyuruh komputer menulis kalimat Saya tidak akan terlambat lagi sebanyak 100 kali?',
-                'Apa perbedaan utama antara perulangan dan percabangan yang kamu ketahui?',
-            ],
+            // 'pre_reflection_questions' => [
+            //     'Bagaimana cara kamu menyuruh komputer menulis kalimat Saya tidak akan terlambat lagi sebanyak 100 kali?',
+            //     'Apa perbedaan utama antara perulangan dan percabangan yang kamu ketahui?',
+            // ],
             'post_reflection_questions' => [
                 'Apa yang terjadi jika kondisi perulangan yang kamu buat selalu bernilai true?',
                 'Sebutkan satu implementasi perulangan yang bisa membantu mempermudah kehidupan sehari-hari.',
