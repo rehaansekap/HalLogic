@@ -256,6 +256,8 @@ export default function Step2Material({
         media: false,
     });
     const [dragActive, setDragActive] = useState(false);
+    const [openSubMaterials, setOpenSubMaterials] = useState<Record<number, boolean>>({ 0: true });
+    const [openCodeExamples, setOpenCodeExamples] = useState<Record<number, boolean>>({ 0: true });
 
     const toggleSection = (id: string) => {
         setOpenSections((prev) => ({
@@ -287,6 +289,11 @@ export default function Step2Material({
 
     const handleAddSub = () => {
         setFieldValue('sub_materials', [...subMaterials, { title: '', content: '', image: null, video_url: '' }]);
+        setOpenSubMaterials(prev => ({ ...prev, [subMaterials.length]: true }));
+    };
+
+    const toggleSubMaterial = (index: number) => {
+        setOpenSubMaterials(prev => ({ ...prev, [index]: !prev[index] }));
     };
 
     const handleRemoveSub = (index: number) => {
@@ -326,6 +333,11 @@ export default function Step2Material({
 
     const handleAddExample = () => {
         setFieldValue('code_examples', [...codeExamples, { title: '', code: '', output: '', explanation: '' }]);
+        setOpenCodeExamples(prev => ({ ...prev, [codeExamples.length]: true }));
+    };
+
+    const toggleCodeExample = (index: number) => {
+        setOpenCodeExamples(prev => ({ ...prev, [index]: !prev[index] }));
     };
 
     const handleRemoveExample = (index: number) => {
@@ -413,107 +425,153 @@ export default function Step2Material({
 
                     {subMaterials.length > 0 ? (
                         <div className="space-y-6">
-                            {subMaterials.map((sub, index) => (
-                                <div
-                                    key={index}
-                                    className="p-5 rounded-2xl border border-gray-150 bg-gray-50/20 space-y-4 relative group"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex px-3 py-1.5 items-center justify-center rounded-xl bg-(--palette-green)/10 text-xs font-black text-(--palette-green) border border-(--palette-green)/20 uppercase tracking-wider">
-                                                Sub Materi {index + 1}
-                                            </div>
-                                        </div>
+                            {subMaterials.map((sub, index) => {
+                                const isSubOpen = !!openSubMaterials[index];
+                                return (
+                                    <div
+                                        key={index}
+                                        className={cn(
+                                            "rounded-2xl border shadow-sm transition-all duration-300 overflow-hidden",
+                                            isSubOpen
+                                                ? "border-slate-350 bg-slate-100/40 ring-2 ring-slate-100"
+                                                : "border-slate-200 bg-slate-50/60 hover:bg-slate-50 hover:border-slate-350"
+                                        )}
+                                    >
+                                        {/* Accordion Header */}
                                         <button
                                             type="button"
-                                            onClick={() => handleRemoveSub(index)}
-                                            className="rounded-xl p-2 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
-                                            title="Hapus sub-materi"
+                                            onClick={() => toggleSubMaterial(index)}
+                                            className="flex w-full items-center justify-between p-5 text-left focus:outline-none transition-colors duration-200"
                                         >
-                                            <Trash2 className="h-4 w-4" />
-                                        </button>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold text-foreground">Judul Sub-Materi</Label>
-                                            <Input
-                                                value={sub.title}
-                                                onChange={(e) => handleSubChange(index, 'title', e.target.value)}
-                                                placeholder="Contoh: Mengapa Data Harus Dibedakan?"
-                                                className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                                                <Play className="h-3.5 w-3.5 text-muted-foreground" />
-                                                URL Video Pembelajaran (YouTube / Google Drive) (Opsional)
-                                            </Label>
-                                            <Input
-                                                value={sub.video_url || ''}
-                                                onChange={(e) => handleSubChange(index, 'video_url', e.target.value)}
-                                                placeholder="Contoh: https://www.youtube.com/watch?v=..."
-                                                className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <div className="md:col-span-2 space-y-2">
-                                            <Label className="text-xs font-bold text-foreground">Konten Materi</Label>
-                                            <RichTextEditor
-                                                id={`sub-material-content-${index}`}
-                                                value={sub.content}
-                                                onChange={(val) => handleSubChange(index, 'content', val)}
-                                                placeholder="Tulis materi pembelajaran di sini... Gunakan toolbar untuk memformat teks."
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold text-foreground">Gambar Konten (Opsional)</Label>
-                                            {sub.image || sub.image_path ? (
-                                                <div className="border border-gray-150 rounded-xl p-3 bg-white space-y-3">
-                                                    <div className="aspect-video w-full rounded-lg bg-gray-50 overflow-hidden flex items-center justify-center border border-gray-100">
-                                                        <img
-                                                            src={sub.image ? URL.createObjectURL(sub.image) : `/storage/${sub.image_path}`}
-                                                            alt={`Sub materi ${index + 1}`}
-                                                            className="object-contain h-full w-full"
-                                                        />
-                                                    </div>
-                                                    <div className="flex items-center justify-between text-xs">
-                                                        <span className="text-muted-foreground truncate max-w-40 font-medium">
-                                                            {sub.image ? sub.image.name : 'Gambar tersimpan'}
-                                                        </span>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleClearSubImage(index)}
-                                                            className="text-red-500 hover:text-red-700 font-bold"
-                                                        >
-                                                            Hapus
-                                                        </button>
-                                                    </div>
+                                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                <div className="flex px-3 py-1.5 items-center justify-center rounded-xl bg-(--palette-green)/10 text-xs font-black text-(--palette-green) border border-(--palette-green)/20 uppercase tracking-wider shrink-0">
+                                                    Sub Materi {index + 1}
                                                 </div>
-                                            ) : (
-                                                <div
-                                                    onClick={() => document.getElementById(`sub-img-file-${index}`)?.click()}
-                                                    className="border-2 border-dashed border-gray-200 hover:border-(--palette-green)/50 rounded-xl p-6 text-center cursor-pointer transition-colors bg-white flex flex-col items-center justify-center h-44"
+                                                <span className={cn(
+                                                    "text-sm font-bold truncate pr-4",
+                                                    sub.title ? "text-foreground" : "text-muted-foreground italic font-medium"
+                                                )}>
+                                                    {sub.title || "Belum diberi judul..."}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-3 shrink-0">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleRemoveSub(index);
+                                                    }}
+                                                    className="rounded-xl p-2 text-red-500 hover:bg-red-55 hover:text-red-600 transition-colors"
+                                                    title="Hapus sub-materi"
                                                 >
-                                                    <input
-                                                        type="file"
-                                                        id={`sub-img-file-${index}`}
-                                                        accept="image/*"
-                                                        className="hidden"
-                                                        onChange={(e) => handleSubFileChange(index, e)}
-                                                    />
-                                                    <ImageIcon className="text-slate-400 mb-2 h-7 w-7" />
-                                                    <span className="text-[11px] font-bold text-slate-500">Pilih Gambar</span>
-                                                    <span className="text-[9px] text-muted-foreground mt-0.5">PNG, JPG, JPEG (Maks. 2MB)</span>
-                                                </div>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                                <motion.div
+                                                    animate={{ rotate: isSubOpen ? 180 : 0 }}
+                                                    transition={{ duration: 0.2 }}
+                                                    className="text-muted-foreground/60 mr-1"
+                                                >
+                                                    <ChevronDown className="h-5 w-5" />
+                                                </motion.div>
+                                            </div>
+                                        </button>
+
+                                        {/* Accordion Content */}
+                                        <AnimatePresence initial={false}>
+                                            {isSubOpen && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: "auto", opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                                                    className="overflow-visible"
+                                                >
+                                                    <div className="p-5 pt-0 border-t border-slate-200/50 mt-1 space-y-4">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                                                            <div className="space-y-2">
+                                                                <Label className="text-xs font-bold text-foreground">Judul Sub-Materi</Label>
+                                                                <Input
+                                                                    value={sub.title}
+                                                                    onChange={(e) => handleSubChange(index, 'title', e.target.value)}
+                                                                    placeholder="Contoh: Mengapa Data Harus Dibedakan?"
+                                                                    className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 bg-white"
+                                                                />
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <Label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                                                                    <Play className="h-3.5 w-3.5 text-muted-foreground" />
+                                                                    URL Video Pembelajaran (YouTube / Google Drive) (Opsional)
+                                                                </Label>
+                                                                <Input
+                                                                    value={sub.video_url || ''}
+                                                                    onChange={(e) => handleSubChange(index, 'video_url', e.target.value)}
+                                                                    placeholder="Contoh: https://www.youtube.com/watch?v=..."
+                                                                    className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 bg-white"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                            <div className="md:col-span-2 space-y-2">
+                                                                <Label className="text-xs font-bold text-foreground">Konten Materi</Label>
+                                                                <RichTextEditor
+                                                                    id={`sub-material-content-${index}`}
+                                                                    value={sub.content}
+                                                                    onChange={(val) => handleSubChange(index, 'content', val)}
+                                                                    placeholder="Tulis materi pembelajaran di sini... Gunakan toolbar untuk memformat teks."
+                                                                />
+                                                            </div>
+
+                                                            <div className="space-y-2">
+                                                                <Label className="text-xs font-bold text-foreground">Gambar Konten (Opsional)</Label>
+                                                                {sub.image || sub.image_path ? (
+                                                                    <div className="border border-gray-150 rounded-xl p-3 bg-white space-y-3">
+                                                                        <div className="aspect-video w-full rounded-lg bg-gray-50 overflow-hidden flex items-center justify-center border border-gray-100">
+                                                                            <img
+                                                                                src={sub.image ? URL.createObjectURL(sub.image) : `/storage/${sub.image_path}`}
+                                                                                alt={`Sub materi ${index + 1}`}
+                                                                                className="object-contain h-full w-full"
+                                                                            />
+                                                                        </div>
+                                                                        <div className="flex items-center justify-between text-xs">
+                                                                            <span className="text-muted-foreground truncate max-w-40 font-medium">
+                                                                                {sub.image ? sub.image.name : 'Gambar tersimpan'}
+                                                                            </span>
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => handleClearSubImage(index)}
+                                                                                className="text-red-500 hover:text-red-700 font-bold"
+                                                                            >
+                                                                                Hapus
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <div
+                                                                        onClick={() => document.getElementById(`sub-img-file-${index}`)?.click()}
+                                                                        className="border-2 border-dashed border-gray-200 hover:border-(--palette-green)/50 rounded-xl p-6 text-center cursor-pointer transition-colors bg-white flex flex-col items-center justify-center h-44"
+                                                                    >
+                                                                        <input
+                                                                            type="file"
+                                                                            id={`sub-img-file-${index}`}
+                                                                            accept="image/*"
+                                                                            className="hidden"
+                                                                            onChange={(e) => handleSubFileChange(index, e)}
+                                                                        />
+                                                                        <ImageIcon className="text-slate-400 mb-2 h-7 w-7" />
+                                                                        <span className="text-[11px] font-bold text-slate-500">Pilih Gambar</span>
+                                                                        <span className="text-[9px] text-muted-foreground mt-0.5">PNG, JPG, JPEG (Maks. 2MB)</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
                                             )}
-                                        </div>
+                                        </AnimatePresence>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center bg-gray-50/50">
@@ -560,83 +618,131 @@ export default function Step2Material({
 
                     {codeExamples.length > 0 ? (
                         <div className="space-y-6">
-                            {codeExamples.map((ex, index) => (
-                                <div
-                                    key={index}
-                                    className="p-5 rounded-2xl border border-gray-150 bg-gray-50/20 space-y-4"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex h-7 w-auto px-3 items-center justify-center rounded-xl bg-(--palette-green)/10 text-xs font-black text-(--palette-green) border border-(--palette-green)/20">
-                                            Contoh {index + 1}
-                                        </div>
+                            {codeExamples.map((ex, index) => {
+                                const isExOpen = !!openCodeExamples[index];
+                                return (
+                                    <div
+                                        key={index}
+                                        className={cn(
+                                            "rounded-2xl border shadow-sm transition-all duration-300 overflow-hidden",
+                                            isExOpen
+                                                ? "border-slate-300 bg-slate-100/40 ring-2 ring-slate-100"
+                                                : "border-slate-200 bg-slate-50/60 hover:bg-slate-50 hover:border-slate-300"
+                                        )}
+                                    >
+                                        {/* Accordion Header */}
                                         <button
                                             type="button"
-                                            onClick={() => handleRemoveExample(index)}
-                                            className="rounded-xl p-2 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
-                                            title="Hapus contoh kode"
+                                            onClick={() => toggleCodeExample(index)}
+                                            className="flex w-full items-center justify-between p-5 text-left focus:outline-none transition-colors duration-200"
                                         >
-                                            <Trash2 className="h-4 w-4" />
-                                        </button>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold text-slate-700">Judul / Deskripsi Singkat Contoh</Label>
-                                        <Input
-                                            value={ex.title}
-                                            onChange={(e) => handleExampleChange(index, 'title', e.target.value)}
-                                            placeholder="Contoh: Contoh 1: Variabel & Tipe Data"
-                                            className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10"
-                                        />
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {/* Left Side: C Code Editor */}
-                                        <div className="space-y-2 flex flex-col">
-                                            <Label className="text-xs font-bold text-slate-700">Kode Program C</Label>
-                                            <div className="rounded-xl overflow-hidden border border-gray-250 min-h-[200px]">
-                                                <Editor
-                                                    height="200px"
-                                                    language="c"
-                                                    theme="vs-dark"
-                                                    value={ex.code}
-                                                    onChange={(value) => handleExampleChange(index, 'code', value || '')}
-                                                    options={{
-                                                        minimap: { enabled: false },
-                                                        fontSize: 13,
-                                                        lineNumbers: 'on',
-                                                        scrollBeyondLastLine: false,
-                                                        wordWrap: 'on',
-                                                        padding: { top: 16, bottom: 16 },
+                                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                <div className="flex h-7 w-auto px-3 items-center justify-center rounded-xl bg-(--palette-green)/10 text-xs font-black text-(--palette-green) border border-(--palette-green)/20 shrink-0">
+                                                    Contoh {index + 1}
+                                                </div>
+                                                <span className={cn(
+                                                    "text-sm font-bold truncate pr-4",
+                                                    ex.title ? "text-foreground" : "text-muted-foreground italic font-medium"
+                                                )}>
+                                                    {ex.title || "Belum diberi judul..."}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-3 shrink-0">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleRemoveExample(index);
                                                     }}
-                                                />
+                                                    className="rounded-xl p-2 text-red-500 hover:bg-red-55 hover:text-red-600 transition-colors"
+                                                    title="Hapus contoh kode"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                                <motion.div
+                                                    animate={{ rotate: isExOpen ? 180 : 0 }}
+                                                    transition={{ duration: 0.2 }}
+                                                    className="text-muted-foreground/60 mr-1"
+                                                >
+                                                    <ChevronDown className="h-5 w-5" />
+                                                </motion.div>
                                             </div>
-                                        </div>
+                                        </button>
 
-                                        {/* Right Side: Output and Explanation */}
-                                        <div className="space-y-4 flex flex-col justify-between">
-                                            <div className="space-y-2">
-                                                <Label className="text-xs font-bold text-slate-700">Contoh Output Program</Label>
-                                                <textarea
-                                                    value={ex.output}
-                                                    onChange={(e) => handleExampleChange(index, 'output', e.target.value)}
-                                                    placeholder="Nama : Raka&#10;Umur : 16&#10;Aktif: True"
-                                                    className="w-full h-20 rounded-lg border border-gray-250 p-3 font-mono text-xs focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 resize-none bg-white"
-                                                />
-                                            </div>
+                                        {/* Accordion Content */}
+                                        <AnimatePresence initial={false}>
+                                            {isExOpen && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: "auto", opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                                                    className="overflow-visible"
+                                                >
+                                                    <div className="p-5 pt-0 border-t border-slate-200/50 mt-1 space-y-4">
+                                                        <div className="space-y-2 pt-4">
+                                                            <Label className="text-xs font-bold text-slate-700">Judul / Deskripsi Singkat Contoh</Label>
+                                                            <Input
+                                                                value={ex.title}
+                                                                onChange={(e) => handleExampleChange(index, 'title', e.target.value)}
+                                                                placeholder="Contoh: Contoh 1: Variabel & Tipe Data"
+                                                                className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 bg-white"
+                                                            />
+                                                        </div>
 
-                                            <div className="space-y-2 flex-1 flex flex-col">
-                                                <Label className="text-xs font-bold text-slate-700">Penjelasan Kode</Label>
-                                                <RichTextEditor
-                                                    id={`explanation-${index}`}
-                                                    value={ex.explanation}
-                                                    onChange={(val) => handleExampleChange(index, 'explanation', val)}
-                                                    placeholder="Jelaskan detail dari kode program di atas agar mudah dimengerti siswa..."
-                                                />
-                                            </div>
-                                        </div>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            {/* Left Side: C Code Editor */}
+                                                            <div className="space-y-2 flex flex-col">
+                                                                <Label className="text-xs font-bold text-slate-700">Kode Program C</Label>
+                                                                <div className="rounded-xl overflow-hidden border border-gray-250 min-h-[200px]">
+                                                                    <Editor
+                                                                        height="200px"
+                                                                        language="c"
+                                                                        theme="vs-dark"
+                                                                        value={ex.code}
+                                                                        onChange={(value) => handleExampleChange(index, 'code', value || '')}
+                                                                        options={{
+                                                                            minimap: { enabled: false },
+                                                                            fontSize: 13,
+                                                                            lineNumbers: 'on',
+                                                                            scrollBeyondLastLine: false,
+                                                                            wordWrap: 'on',
+                                                                            padding: { top: 16, bottom: 16 },
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Right Side: Output and Explanation */}
+                                                            <div className="space-y-4 flex flex-col justify-between">
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs font-bold text-slate-700">Contoh Output Program</Label>
+                                                                    <textarea
+                                                                        value={ex.output}
+                                                                        onChange={(e) => handleExampleChange(index, 'output', e.target.value)}
+                                                                        placeholder="Nama : Raka&#10;Umur : 16&#10;Aktif: True"
+                                                                        className="w-full h-20 rounded-lg border border-gray-250 p-3 font-mono text-xs focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 resize-none bg-white"
+                                                                    />
+                                                                </div>
+
+                                                                <div className="space-y-2 flex-1 flex flex-col">
+                                                                    <Label className="text-xs font-bold text-slate-700">Penjelasan Kode</Label>
+                                                                    <RichTextEditor
+                                                                        id={`explanation-${index}`}
+                                                                        value={ex.explanation}
+                                                                        onChange={(val) => handleExampleChange(index, 'explanation', val)}
+                                                                        placeholder="Jelaskan detail dari kode program di atas agar mudah dimengerti siswa..."
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center bg-gray-50/50">
