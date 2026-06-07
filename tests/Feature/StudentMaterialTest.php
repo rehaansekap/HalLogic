@@ -311,4 +311,59 @@ class StudentMaterialTest extends TestCase
             'content' => 'Ini adalah refleksi yang memiliki lebih dari lima belas karakter.',
         ]);
     }
+
+    public function test_student_dashboard_displays_completed_material_correctly(): void
+    {
+        $student = User::factory()->create(['role' => 'student']);
+        $teacher = User::factory()->create(['role' => 'teacher']);
+
+        $classroom = Classroom::create([
+            'name' => 'Kelas A',
+            'academic_year' => '2025/2026',
+            'teacher_id' => $teacher->id,
+        ]);
+
+        DB::table('classroom_user')->insert([
+            'classroom_id' => $classroom->id,
+            'user_id' => $student->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $material = Material::create([
+            'classroom_id' => $classroom->id,
+            'teacher_id' => $teacher->id,
+            'title' => 'Struktur Kontrol C',
+            'slug' => 'struktur-kontrol-c',
+            'description' => 'Mempelajari if-else dan switch-case.',
+            'difficulty_level' => 1,
+            'case_title' => 'Studi Kasus Percabangan',
+            'case_narrative' => 'Bagaimana membuat pencabangan?',
+        ]);
+
+        // Mark as completed by inserting final reflection
+        DB::table('reflections')->insert([
+            'user_id' => $student->id,
+            'material_id' => $material->id,
+            'type' => 'final',
+            'content' => 'Ini adalah refleksi akhir saya untuk materi ini.',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($student)->get(route('dashboard'));
+
+        $response->assertOk();
+
+        // Verify Inertia data passes status as completed and progress as 100
+        $response->assertInertia(fn ($page) => $page
+            ->component('student/dashboard/index')
+            ->has('materials', 1, fn ($page) => $page
+                ->where('id', $material->id)
+                ->where('status', 'completed')
+                ->where('progress', 100)
+                ->etc()
+            )
+        );
+    }
 }

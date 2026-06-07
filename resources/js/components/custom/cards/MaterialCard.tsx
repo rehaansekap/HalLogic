@@ -93,8 +93,8 @@ export default function MaterialCard({
         completed: {
             icon: <CheckCircle2 className="h-5 w-5" />,
             label: 'Selesai',
-            color: 'bg-[var(--palette-green)]/10',
-            textColor: 'text-[var(--palette-green)]',
+            color: 'bg-(--palette-green)',
+            textColor: 'text-white',
         },
     };
 
@@ -111,9 +111,11 @@ export default function MaterialCard({
         <motion.div
             className={cn(
                 "overflow-hidden rounded-xl border transition-all duration-200",
-                status !== 'locked' 
-                    ? "cursor-pointer border-[--palette-chartreuse]/20 bg-white hover:shadow-lg" 
-                    : "cursor-not-allowed border-gray-200 bg-gray-50/80 opacity-80"
+                status === 'completed'
+                    ? "cursor-pointer border-(--palette-green)/40 bg-(--palette-green)/8 hover:shadow-lg animate-fade-in"
+                    : status !== 'locked' 
+                        ? "cursor-pointer border-[--palette-chartreuse]/20 bg-white hover:shadow-lg" 
+                        : "cursor-not-allowed border-gray-200 bg-gray-50/80 opacity-80"
             )}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -124,7 +126,9 @@ export default function MaterialCard({
             }}
             whileHover={status !== 'locked' ? {
                 scale: 1.02,
-                boxShadow: '0 20px 25px -5px rgba(212, 241, 0, 0.1)',
+                boxShadow: status === 'completed'
+                    ? '0 20px 25px -5px rgba(16, 185, 129, 0.15)'
+                    : '0 20px 25px -5px rgba(212, 241, 0, 0.1)',
             } : {}}
             whileTap={status !== 'locked' ? { scale: 0.98 } : {}}
             onClick={status !== 'locked' ? onClick : undefined}

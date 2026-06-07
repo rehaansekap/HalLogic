@@ -50,6 +50,7 @@ class DashboardController extends Controller
                     'difficulty_level' => $material->difficulty_level,
                     'slug' => $material->slug,
                     'status' => $lockStatus['status'],
+                    'progress' => $lockStatus['progress'] ?? 0,
                     'locked' => $lockStatus['locked'],
                     'prerequisite' => $lockStatus['prerequisite'],
                     'started_at' => $material->started_at,
