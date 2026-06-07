@@ -107,7 +107,7 @@ class DatabaseSeeder extends Seeder
             'prerequisite_material_id' => null,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
-            'material_pdf' => 'materials/materi-1.pdf',
+            // 'material_pdf' => 'materials/materi-1.pdf',
             'summary' => 'Materi ini membahas konsep dasar logika percabangan, khususnya pernyataan If-Else. Siswa akan belajar bagaimana program mengambil keputusan berdasarkan kondisi tertentu, dengan studi kasus menentukan tarif parkir otomatis.',
             'learning_objectives' => [
                 'Memahami alur logika percabangan dalam pemrograman.',
@@ -157,7 +157,7 @@ class DatabaseSeeder extends Seeder
             'prerequisite_material_id' => $material1->id,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
-            'material_pdf' => 'materials/materi-2.pdf',
+            // 'material_pdf' => 'materials/materi-2.pdf',
             'summary' => 'Materi ini mengajarkan penggunaan struktur Switch-Case sebagai alternatif dari If-Else bertingkat. Siswa akan mempelajari bagaimana memproses banyak kondisi dengan lebih terstruktur melalui studi kasus perbaikan mesin minuman otomatis.',
             'learning_objectives' => [
                 'Memahami perbedaan fungsional antara If-Else dan Switch-Case.',
@@ -207,7 +207,7 @@ class DatabaseSeeder extends Seeder
             'prerequisite_material_id' => $material2->id,
             'teacher_id' => $guru1->id,
             'classroom_id' => $kelasRPL1->id,
-            'material_pdf' => 'materials/materi-3.pdf',
+            // 'material_pdf' => 'materials/materi-3.pdf',
             'summary' => 'Materi ini memfokuskan pada pemahaman perulangan (looping), khususnya menggunakan struktur For Loop. Siswa akan belajar cara mengeksekusi blok kode berulang kali secara efisien tanpa menulis ulang baris kode, dengan studi kasus sistem rekap absensi kelas.',
             'learning_objectives' => [
                 'Memsep perulangan dan kegunaannya dalam pemrograman.',

@@ -15,7 +15,7 @@ interface Material {
     description: string;
     difficulty_level: number;
     video_url?: string;
-    material_pdf?: string;
+    // material_pdf?: string;
     learning_objectives?: string[];
     summary?: string;
     pre_reflection_questions?: string[];
@@ -217,7 +217,7 @@ export default function MaterialPage({
                                     slug={material.slug}
                                     submission={submission}
                                     attendance={attendance}
-                                    materialPdf={material.material_pdf}
+                                    // materialPdf={material.material_pdf}
                                 />
                             </div>
                         </motion.div>

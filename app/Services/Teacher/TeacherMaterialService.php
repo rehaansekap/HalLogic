@@ -16,10 +16,10 @@ class TeacherMaterialService
     public function createMaterial(array $data, int $teacherId): Material
     {
 
-        $pdfPath = null;
-        if (isset($data['material_pdf']) && $data['material_pdf'] instanceof UploadedFile) {
-            $pdfPath = $data['material_pdf']->store('materials', 'public');
-        }
+        // $pdfPath = null;
+        // if (isset($data['material_pdf']) && $data['material_pdf'] instanceof UploadedFile) {
+        //     $pdfPath = $data['material_pdf']->store('materials', 'public');
+        // }
 
         $caseImagePath = null;
         if (isset($data['case_image']) && $data['case_image'] instanceof UploadedFile) {
@@ -41,7 +41,7 @@ class TeacherMaterialService
             // 'case_title' => $data['case_title'],
             // 'case_narrative' => $data['case_narrative'],
             // 'case_image_path' => $caseImagePath,
-            'material_pdf' => $pdfPath,
+            // 'material_pdf' => $pdfPath,
             'simulator_config' => $data['simulator_config'] ?? null,
             'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
@@ -63,23 +63,23 @@ class TeacherMaterialService
     public function updateMaterial(Material $material, array $data): Material
     {
 
-        $pdfPath = $material->material_pdf;
-
-        if (isset($data['remove_pdf']) && $data['remove_pdf']) {
-            if ($material->material_pdf) {
-                Storage::disk('public')->delete($material->material_pdf);
-            }
-            $pdfPath = null;
-        }
-
-        if (isset($data['material_pdf']) && $data['material_pdf'] instanceof UploadedFile) {
-
-            if ($material->material_pdf) {
-                Storage::disk('public')->delete($material->material_pdf);
-            }
-
-            $pdfPath = $data['material_pdf']->store('materials', 'public');
-        }
+        // $pdfPath = $material->material_pdf;
+        //
+        // if (isset($data['remove_pdf']) && $data['remove_pdf']) {
+        //     if ($material->material_pdf) {
+        //         Storage::disk('public')->delete($material->material_pdf);
+        //     }
+        //     $pdfPath = null;
+        // }
+        //
+        // if (isset($data['material_pdf']) && $data['material_pdf'] instanceof UploadedFile) {
+        //
+        //     if ($material->material_pdf) {
+        //         Storage::disk('public')->delete($material->material_pdf);
+        //     }
+        //
+        //     $pdfPath = $data['material_pdf']->store('materials', 'public');
+        // }
 
         $caseImagePath = $material->case_image_path;
 
@@ -114,7 +114,7 @@ class TeacherMaterialService
             // 'case_title' => $data['case_title'],
             // 'case_narrative' => $data['case_narrative'],
             // 'case_image_path' => $caseImagePath,
-            'material_pdf' => $pdfPath,
+            // 'material_pdf' => $pdfPath,
             'prerequisite_material_id' => $data['prerequisite_material_id'] ?? null,
             'started_at' => $data['started_at'] ?? null,
             'finished_at' => $data['finished_at'] ?? null,
@@ -134,9 +134,9 @@ class TeacherMaterialService
      */
     public function deleteMaterial(Material $material): bool
     {
-        if ($material->material_pdf) {
-            Storage::disk('public')->delete($material->material_pdf);
-        }
+        // if ($material->material_pdf) {
+        //     Storage::disk('public')->delete($material->material_pdf);
+        // }
 
         if ($material->case_image_path) {
             Storage::disk('public')->delete($material->case_image_path);

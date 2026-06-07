@@ -32,8 +32,8 @@ class UpdateMaterialRequest extends FormRequest
             'case_narrative' => ['nullable', 'string', 'max:1000'],
             'case_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'remove_case_image' => ['nullable', 'boolean'],
-            'material_pdf' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:51200'],
-            'remove_pdf' => ['nullable', 'boolean'],
+            // 'material_pdf' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:51200'],
+            // 'remove_pdf' => ['nullable', 'boolean'],
             'simulator_config' => ['nullable', 'json'],
             'prerequisite_material_id' => ['nullable', 'exists:materials,id'],
             'started_at' => ['nullable', 'date'],
@@ -79,9 +79,9 @@ class UpdateMaterialRequest extends FormRequest
             'sub_materials.*.video_url.regex' => 'URL video sub-materi harus dari YouTube atau Google Drive',
             'case_title.max' => 'Judul studi kasus maksimal 255 karakter',
             'case_narrative.max' => 'Narasi maksimal 1000 karakter',
-            'material_pdf.file' => 'File harus berupa dokumen',
-            'material_pdf.mimes' => 'File harus berformat PDF, DOC, atau DOCX',
-            'material_pdf.max' => 'Ukuran file materi maksimal 50MB',
+            // 'material_pdf.file' => 'File harus berupa dokumen',
+            // 'material_pdf.mimes' => 'File harus berformat PDF, DOC, atau DOCX',
+            // 'material_pdf.max' => 'Ukuran file materi maksimal 50MB',
             'prerequisite_material_id.exists' => 'Material prasyarat tidak valid',
             'started_at.date' => 'Format tanggal mulai tidak valid',
             'finished_at.date' => 'Format tanggal selesai tidak valid',
@@ -101,9 +101,9 @@ class UpdateMaterialRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if (is_string($this->material_pdf)) {
-            $this->request->remove('material_pdf');
-        }
+        // if (is_string($this->material_pdf)) {
+        //     $this->request->remove('material_pdf');
+        // }
 
         if (is_string($this->case_image)) {
             $this->request->remove('case_image');

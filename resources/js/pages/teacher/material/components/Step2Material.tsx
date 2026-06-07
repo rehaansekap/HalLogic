@@ -268,7 +268,7 @@ export default function Step2Material({
 
     const hasMateriErrors = useMemo(() => !!errors.sub_materials, [errors]);
     const hasContohErrors = useMemo(() => !!errors.code_examples, [errors]);
-    const hasMediaErrors = useMemo(() => !!errors.material_pdf, [errors]);
+    const hasMediaErrors = false; // useMemo(() => !!errors.material_pdf, [errors]);
 
     useEffect(() => {
         if (hasMateriErrors || hasContohErrors || hasMediaErrors) {
@@ -654,7 +654,7 @@ export default function Step2Material({
                 </div>
             </AccordionSection>
 
-            {/* Section 3: LKPD & Media */}
+            {/* Section 3: LKPD & Media (Commented Out)
             <AccordionSection
                 id="media"
                 title="LKPD & Media Pembelajaran"
@@ -666,7 +666,6 @@ export default function Step2Material({
             >
                 <div className="space-y-8">
 
-                    {/* PDF (LKPD) Upload Block */}
                     <div className="space-y-4">
                         <Label className="flex items-center gap-2 text-sm font-bold text-foreground">
                             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -713,10 +712,10 @@ export default function Step2Material({
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="flex items-center justify-between rounded-2xl border border-(--palette-limelight)/30 bg-(--palette-limelight)/5 p-6 shadow-sm"
+                                        className="flex items-center justify-between rounded-2xl border border-slate-300 bg-slate-50 p-6 shadow-sm"
                                     >
                                         <div className="flex items-center gap-5">
-                                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-(--palette-green) shadow-md shadow-black/5 border border-(--palette-limelight)/20">
+                                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-slate-400 shadow-md border border-slate-200">
                                                 <FileText size={32} />
                                             </div>
                                             <div>
@@ -729,7 +728,7 @@ export default function Step2Material({
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <div className="flex items-center gap-2 bg-(--palette-green) text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-(--palette-green)/20">
+                                            <div className="flex items-center gap-2 bg-slate-500 text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg">
                                                 <Check size={14} className="stroke-3" />
                                                 <span>Tersimpan</span>
                                             </div>
@@ -738,7 +737,7 @@ export default function Step2Material({
                                                     setFieldValue('remove_pdf', true);
                                                     setFieldValue('material_pdf_existing', undefined);
                                                 }}
-                                                className="p-1.5 rounded-full text-red-400 hover:text-red-600 hover:bg-red-50 transition-all active:scale-90"
+                                                className="p-1.5 rounded-full text-red-400 hover:text-red-650 hover:bg-red-50 transition-all active:scale-90"
                                                 type="button"
                                                 title="Hapus file"
                                             >
@@ -802,6 +801,7 @@ export default function Step2Material({
                     </div>
                 </div>
             </AccordionSection>
+            */}
 
             {/* Tips/Info Footer */}
             <motion.div

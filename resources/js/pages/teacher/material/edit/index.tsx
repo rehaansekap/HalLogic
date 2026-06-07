@@ -29,7 +29,7 @@ interface EditMaterialProps {
         case_title: string;
         case_narrative: string;
         case_image_path: string | null;
-        material_pdf: string | null;
+        // material_pdf: string | null;
         prerequisite_material_id: number | null;
         started_at: string | null;
         finished_at: string | null;
@@ -67,7 +67,7 @@ export default function EditMaterial({
         prerequisite_material_id: material.prerequisite_material_id,
         started_at: material.started_at,
         finished_at: material.finished_at,
-        material_pdf_existing: material.material_pdf || undefined,
+        // material_pdf_existing: material.material_pdf || undefined,
         summary: material.summary || '',
         learning_objectives: material.learning_objectives || [''],
         pre_reflection_questions: material.pre_reflection_questions || [],

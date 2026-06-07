@@ -992,7 +992,7 @@ int main() {
                         transition={{ duration: 0.2 }}
                         className="space-y-6"
                     >
-                        {/* Section 1: Unduh Lembar Kerja */}
+                        {/* Section 1: Unduh Lembar Kerja (Commented Out)
                         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                             <div className="flex items-start gap-4">
                                 <div className="rounded-xl bg-amber-50 p-3.5 text-amber-500 border border-amber-100 shrink-0">
@@ -1033,6 +1033,7 @@ int main() {
                                 </div>
                             </div>
                         </div>
+                        */}
 
                         {/* Section 2: Upload Jawaban Kelompok */}
                         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

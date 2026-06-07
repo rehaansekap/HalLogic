@@ -14,9 +14,9 @@ export interface MaterialFormData {
     case_image: File | null;
     case_image_existing?: string;
     remove_case_image?: boolean;
-    material_pdf: File | null;
-    material_pdf_existing?: string; // For edit mode - existing file path
-    remove_pdf?: boolean; // Flag to indicate existing pdf should be removed
+    // material_pdf: File | null;
+    // material_pdf_existing?: string; // For edit mode - existing file path
+    // remove_pdf?: boolean; // Flag to indicate existing pdf should be removed
     summary: string;
     learning_objectives: string[];
     pre_reflection_questions: string[];
@@ -56,9 +56,9 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
         case_image: null,
         case_image_existing: initialData?.case_image_existing ?? undefined,
         remove_case_image: false,
-        material_pdf: initialData?.material_pdf ?? null,
-        material_pdf_existing: initialData?.material_pdf_existing ?? undefined,
-        remove_pdf: false,
+        // material_pdf: initialData?.material_pdf ?? null,
+        // material_pdf_existing: initialData?.material_pdf_existing ?? undefined,
+        // remove_pdf: false,
         summary: initialData?.summary ?? '',
         learning_objectives: (initialData?.learning_objectives && initialData.learning_objectives.length > 0)
             ? initialData.learning_objectives

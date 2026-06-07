@@ -27,7 +27,7 @@ class Material extends Model
         // 'case_title',
         // 'case_narrative',
         // 'case_image_path',
-        'material_pdf',
+        // 'material_pdf',
         'simulator_config',
         'summary',
         'learning_objectives',

@@ -39,7 +39,7 @@ interface MaterialSidebarProps {
         is_present: boolean;
         updated_at: string;
     } | null;
-    materialPdf?: string;
+    // materialPdf?: string;
 }
 
 export default function MaterialSidebar({
@@ -48,7 +48,7 @@ export default function MaterialSidebar({
     slug,
     submission,
     attendance,
-    materialPdf,
+    // materialPdf,
 }: MaterialSidebarProps) {
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);

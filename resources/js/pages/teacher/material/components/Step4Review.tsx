@@ -315,7 +315,7 @@ export default function Step4Review({
                                 )}
                             </div>
 
-                            {/* LKPD & Media Review */}
+                            {/* LKPD & Media Review (Commented Out)
                             <div className="space-y-4 border-t border-gray-100 pt-6">
                                 <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
                                     <Play className="h-4 w-4 text-(--palette-green)" />
@@ -330,7 +330,7 @@ export default function Step4Review({
                                         </div>
                                     </div>
 
-                                    {/* Commented out Case Study Review Columns
+                                    // Commented out Case Study Review Columns:
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Gambar Kasus</span>
                                         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
@@ -346,9 +346,9 @@ export default function Step4Review({
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Narasi Kasus</span>
                                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{formData.case_narrative || 'Tidak disertakan'}</p>
                                     </div>
-                                    */}
                                 </div>
                             </div>
+                            */}
                         </div>
                     </ReviewSection>
 
