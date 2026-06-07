@@ -24,6 +24,7 @@ interface Material {
         title: string;
         content: string;
         image_path?: string;
+        video_url?: string;
     }>;
     code_examples?: Array<{
         title: string;

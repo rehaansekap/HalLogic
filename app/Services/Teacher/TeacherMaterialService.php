@@ -494,6 +494,7 @@ class TeacherMaterialService
                 'title' => $sub['title'] ?? '',
                 'content' => $sub['content'] ?? '',
                 'image_path' => $imagePath,
+                'video_url' => $sub['video_url'] ?? null,
             ];
         }
 

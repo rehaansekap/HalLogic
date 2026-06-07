@@ -245,10 +245,21 @@ export default function Step4Review({
                                                                 Ilustrasi Gambar
                                                             </span>
                                                         )}
+                                                        {sub.video_url && (
+                                                            <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[9px] font-bold text-blue-600 border border-blue-100 uppercase">
+                                                                Video
+                                                            </span>
+                                                        )}
                                                     </div>
                                                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                                                         {sub.content ? sub.content.replace(/<[^>]*>?/gm, '') : 'Tidak ada konten.'}
                                                     </p>
+                                                    {sub.video_url && (
+                                                        <p className="text-[10px] text-blue-600 mt-1 font-semibold truncate flex items-center gap-1">
+                                                            <Play className="h-3 w-3 shrink-0" />
+                                                            <span>Video: {sub.video_url}</span>
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
@@ -319,13 +330,7 @@ export default function Step4Review({
                                             <span className="truncate max-w-40">{formData.material_pdf?.name || formData.material_pdf_existing || 'Belum diunggah'}</span>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Video (YouTube / Google Drive)</span>
-                                        <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">
-                                            <Link className="h-4 w-4 text-blue-600" />
-                                            <span className="truncate max-w-40">{formData.video_url || 'Tidak disertakan'}</span>
-                                        </div>
-                                    </div>
+
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Gambar Kasus</span>
                                         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mt-1">

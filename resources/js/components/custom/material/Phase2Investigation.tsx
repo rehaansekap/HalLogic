@@ -21,6 +21,7 @@ import {
     Monitor,
     PartyPopper,
     Award,
+    Image as ImageIcon,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
@@ -47,6 +48,7 @@ interface Phase2InvestigationProps {
             title: string;
             content: string;
             image_path?: string;
+            video_url?: string;
         }>;
         code_examples?: Array<{
             title: string;
@@ -103,6 +105,8 @@ export default function Phase2Investigation({
     // Accordion expansion states
     const [expandedSubIndices, setExpandedSubIndices] = useState<number[]>([0]);
     const [expandedExampleIndices, setExpandedExampleIndices] = useState<number[]>([0]);
+    const [expandedVideoIndices, setExpandedVideoIndices] = useState<number[]>([]);
+    const [expandedImageIndices, setExpandedImageIndices] = useState<number[]>([]);
 
     const toggleSubIndex = (index: number) => {
         setExpandedSubIndices(prev =>
@@ -112,6 +116,18 @@ export default function Phase2Investigation({
 
     const toggleExampleIndex = (index: number) => {
         setExpandedExampleIndices(prev =>
+            prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+        );
+    };
+
+    const toggleVideoIndex = (index: number) => {
+        setExpandedVideoIndices(prev =>
+            prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+        );
+    };
+
+    const toggleImageIndex = (index: number) => {
+        setExpandedImageIndices(prev =>
             prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
         );
     };
@@ -468,72 +484,7 @@ int main() {
                         transition={{ duration: 0.2 }}
                         className="space-y-4"
                     >
-                        {/* Video Pembelajaran Box */}
-                        {material.video_url && (
-                            <div className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6 shadow-sm mb-6">
-                                <div className="flex items-start gap-4 mb-4">
-                                    <div className="rounded-xl border border-(--palette-green)/10 bg-(--palette-green)/8 p-3 text-(--palette-green)">
-                                        <Play className="h-6 w-6 shrink-0" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight">
-                                            Video Pembelajaran
-                                        </h3>
-                                        <p className="mt-1 text-xs md:text-sm leading-relaxed text-muted-foreground">
-                                            Simak video berikut untuk memahami materi pada pertemuan ini.
-                                        </p>
-                                    </div>
-                                </div>
 
-                                {(() => {
-                                    const ytMatch = material.video_url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
-                                    let embedUrl = null;
-                                    if (ytMatch && ytMatch[2].length === 11) {
-                                        embedUrl = `https://www.youtube.com/embed/${ytMatch[2]}`;
-                                    } else {
-                                        const gdMatch = material.video_url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) || 
-                                                        material.video_url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
-                                        if (gdMatch) {
-                                            embedUrl = `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
-                                        }
-                                    }
-
-                                    return embedUrl ? (
-                                        <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm max-w-2xl mx-auto mb-4">
-                                            <div className="relative w-full pt-[56.25%]">
-                                                <iframe
-                                                    className="absolute inset-0 h-full w-full"
-                                                    src={embedUrl}
-                                                    title="Video Pembelajaran"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                    allowFullScreen
-                                                ></iframe>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="overflow-hidden rounded-xl bg-slate-900 aspect-video flex flex-col items-center justify-center text-white p-6 relative max-w-2xl mx-auto mb-4">
-                                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm mb-4 border border-white/20">
-                                                <Play className="h-8 w-8 text-white fill-white" />
-                                            </div>
-                                            <p className="font-bold text-base text-slate-100">Video tidak dapat diputar.</p>
-                                            <p className="text-slate-400 text-sm mt-1">Silakan gunakan tombol di bawah untuk membuka video.</p>
-                                        </div>
-                                    );
-                                })()}
-
-                                <div className="flex justify-start">
-                                    <a
-                                        href={material.video_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 rounded-xl bg-(--palette-green) hover:bg-green-600 text-white font-bold py-2.5 px-5 shadow-sm transition-all text-xs hover:scale-[1.02] active:scale-[0.98]"
-                                    >
-                                        <Play className="h-3.5 w-3.5 fill-current" />
-                                        Tonton Video
-                                    </a>
-                                </div>
-                            </div>
-                        )}
 
                         {material.sub_materials && material.sub_materials.length > 0 ? (
                             material.sub_materials.map((sub, index) => {
@@ -583,34 +534,156 @@ int main() {
                                                 transition={{ duration: 0.25 }}
                                                 className="overflow-hidden"
                                             >
-                                                <div className="mt-5 border-t border-slate-100 pt-5 flex flex-col md:flex-row gap-6 items-start">
+                                                <div className="mt-5 border-t border-slate-100 pt-5 space-y-6">
+
+                                                    {/* Konten Teks Sub-Materi */}
                                                     <div
-                                                        className="flex-1 text-slate-700 text-sm leading-relaxed max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1 [&_p]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2 [&_strong]:text-slate-900"
+                                                        className="text-slate-700 text-sm leading-relaxed max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1 [&_p]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2 [&_strong]:text-slate-900"
                                                         dangerouslySetInnerHTML={{ __html: sub.content }}
                                                     />
-                                                    {sub.image_path && (
-                                                        <div className="w-full md:w-80 shrink-0 border border-slate-100 p-3 rounded-2xl bg-slate-50 flex items-center justify-center">
-                                                            <img
-                                                                src={`/storage/${sub.image_path}`}
-                                                                alt={sub.title}
-                                                                className="rounded-xl max-h-56 object-contain cursor-pointer transition-transform hover:scale-105"
-                                                                onClick={() => {
-                                                                    MySwal.fire({
-                                                                        imageUrl: `/storage/${sub.image_path}`,
-                                                                        imageAlt: sub.title,
-                                                                        width: 'auto',
-                                                                        showConfirmButton: false,
-                                                                        showCloseButton: true,
-                                                                        background: 'transparent',
-                                                                        backdrop: `rgba(0,0,0,0.8)`,
-                                                                        customClass: {
-                                                                            image: 'max-h-[85vh] object-contain rounded-xl',
-                                                                            popup: 'p-0 bg-transparent',
-                                                                            closeButton: 'text-white hover:text-gray-300'
-                                                                        }
-                                                                    });
-                                                                }}
-                                                            />
+
+                                                    {/* Media Pendukung (Accordion Video & Gambar Terpisah) */}
+                                                    {(sub.video_url || sub.image_path) && (
+                                                        <div className="space-y-4 mt-5">
+                                                            {/* Accordion Video Pembelajaran */}
+                                                            {sub.video_url && (
+                                                                <div className="rounded-xl border border-blue-100 bg-blue-50/20 overflow-hidden shadow-xs transition-all duration-300">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => toggleVideoIndex(index)}
+                                                                        className="flex w-full items-center justify-between p-4 text-left focus:outline-none group/video cursor-pointer"
+                                                                    >
+                                                                        <div className="flex items-center gap-2.5">
+                                                                            <Play className="h-4 w-4 text-blue-600 fill-blue-600/10 shrink-0 group-hover/video:scale-110 transition-transform" />
+                                                                            <span className="text-xs font-black uppercase tracking-wider text-slate-700 group-hover/video:text-blue-600 transition-colors">Video Pembelajaran</span>
+                                                                        </div>
+                                                                        <motion.div
+                                                                            animate={{ rotate: expandedVideoIndices.includes(index) ? 180 : 0 }}
+                                                                            transition={{ duration: 0.2 }}
+                                                                            className="text-slate-400 group-hover/video:text-slate-600"
+                                                                        >
+                                                                            <ChevronDown size={16} />
+                                                                        </motion.div>
+                                                                    </button>
+
+                                                                    <AnimatePresence initial={false}>
+                                                                        {expandedVideoIndices.includes(index) && (
+                                                                            <motion.div
+                                                                                initial={{ height: 0, opacity: 0 }}
+                                                                                animate={{ height: "auto", opacity: 1 }}
+                                                                                exit={{ height: 0, opacity: 0 }}
+                                                                                transition={{ duration: 0.2 }}
+                                                                                className="overflow-hidden"
+                                                                            >
+                                                                                <div className="p-4 pt-0 border-t border-blue-100/40 space-y-4">
+                                                                                    {(() => {
+                                                                                        const ytMatch = sub.video_url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+                                                                                        let embedUrl = null;
+                                                                                        if (ytMatch && ytMatch[2].length === 11) {
+                                                                                            embedUrl = `https://www.youtube.com/embed/${ytMatch[2]}`;
+                                                                                        } else {
+                                                                                            const gdMatch = sub.video_url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+                                                                                                sub.video_url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+                                                                                            if (gdMatch) {
+                                                                                                embedUrl = `https://drive.google.com/file/d/${gdMatch[1]}/preview`;
+                                                                                            }
+                                                                                        }
+
+                                                                                        return (
+                                                                                            <div className="space-y-3 max-w-full mt-3">
+                                                                                                {embedUrl ? (
+                                                                                                    <div className="overflow-hidden rounded-lg border border-slate-200 shadow-xs">
+                                                                                                        <div className="relative w-full pt-[56.25%]">
+                                                                                                            <iframe
+                                                                                                                className="absolute inset-0 h-full w-full"
+                                                                                                                src={embedUrl}
+                                                                                                                title={sub.title}
+                                                                                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                                                                                allowFullScreen
+                                                                                                            ></iframe>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                ) : (
+                                                                                                    <div className="overflow-hidden rounded-lg bg-slate-900 aspect-video flex flex-col items-center justify-center text-white p-6">
+                                                                                                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm mb-3 border border-white/20">
+                                                                                                            <Play className="h-6 w-6 text-white fill-white" />
+                                                                                                        </div>
+                                                                                                        <p className="font-bold text-sm text-slate-100">Video tidak dapat diputar langsung.</p>
+                                                                                                        <p className="text-slate-400 text-xs mt-1">Silakan gunakan tombol di bawah untuk menonton.</p>
+                                                                                                    </div>
+                                                                                                )}
+                                                                                            </div>
+                                                                                        );
+                                                                                    })()}
+                                                                                </div>
+                                                                            </motion.div>
+                                                                        )}
+                                                                    </AnimatePresence>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Accordion Gambar Ilustrasi */}
+                                                            {sub.image_path && (
+                                                                <div className="rounded-xl border border-(--palette-green)/20 bg-(--palette-green)/5 overflow-hidden shadow-xs transition-all duration-300">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => toggleImageIndex(index)}
+                                                                        className="flex w-full items-center justify-between p-4 text-left focus:outline-none group/image cursor-pointer"
+                                                                    >
+                                                                        <div className="flex items-center gap-2.5">
+                                                                            <ImageIcon className="h-4 w-4 text-(--palette-green) shrink-0 group-hover/image:scale-110 transition-transform" />
+                                                                            <span className="text-xs font-black uppercase tracking-wider text-slate-700 group-hover/image:text-(--palette-green) transition-colors">Gambar Ilustrasi</span>
+                                                                        </div>
+                                                                        <motion.div
+                                                                            animate={{ rotate: expandedImageIndices.includes(index) ? 180 : 0 }}
+                                                                            transition={{ duration: 0.2 }}
+                                                                            className="text-slate-400 group-hover/image:text-slate-600"
+                                                                        >
+                                                                            <ChevronDown size={16} />
+                                                                        </motion.div>
+                                                                    </button>
+
+                                                                    <AnimatePresence initial={false}>
+                                                                        {expandedImageIndices.includes(index) && (
+                                                                            <motion.div
+                                                                                initial={{ height: 0, opacity: 0 }}
+                                                                                animate={{ height: "auto", opacity: 1 }}
+                                                                                exit={{ height: 0, opacity: 0 }}
+                                                                                transition={{ duration: 0.2 }}
+                                                                                className="overflow-hidden"
+                                                                            >
+                                                                                <div className="p-4 pt-0 border-t border-(--palette-green)/10 space-y-4">
+                                                                                    <div className="flex flex-col justify-start max-w-full mt-3">
+                                                                                        <div className="w-full border border-slate-150 p-2.5 rounded-lg bg-white flex items-center justify-center shadow-xs aspect-video overflow-hidden">
+                                                                                            <img
+                                                                                                src={`/storage/${sub.image_path}`}
+                                                                                                alt={sub.title}
+                                                                                                className="rounded-md object-contain h-full w-full cursor-pointer transition-transform hover:scale-[1.01]"
+                                                                                                onClick={() => {
+                                                                                                    MySwal.fire({
+                                                                                                        imageUrl: `/storage/${sub.image_path}`,
+                                                                                                        imageAlt: sub.title,
+                                                                                                        width: 'auto',
+                                                                                                        showConfirmButton: false,
+                                                                                                        showCloseButton: true,
+                                                                                                        background: 'transparent',
+                                                                                                        backdrop: `rgba(0,0,0,0.8)`,
+                                                                                                        customClass: {
+                                                                                                            image: 'max-h-[85vh] object-contain rounded-xl',
+                                                                                                            popup: 'p-0 bg-transparent',
+                                                                                                            closeButton: 'text-white hover:text-gray-300'
+                                                                                                        }
+                                                                                                    });
+                                                                                                }}
+                                                                                            />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </motion.div>
+                                                                        )}
+                                                                    </AnimatePresence>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
@@ -978,7 +1051,7 @@ int main() {
                                         )}
                                     </div>
                                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                        {isSubmitted
+                                        {isSubmitted
                                             ? "Jawaban tugas dikirim oleh ketua kelompok dan hanya dapat dikirim satu kali."
                                             : "Unggah jawaban tugas yang sudah dikerjakan bersama kelompok."}
                                     </p>

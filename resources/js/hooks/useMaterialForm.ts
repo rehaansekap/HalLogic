@@ -8,7 +8,7 @@ export interface MaterialFormData {
     prerequisite_material_id: number | null;
     started_at: string | null;
     finished_at: string | null;
-    video_url: string;
+    video_url?: string;
     case_title: string;
     case_narrative: string;
     case_image: File | null;
@@ -26,6 +26,7 @@ export interface MaterialFormData {
         content: string;
         image: File | null;
         image_path?: string;
+        video_url?: string;
     }>;
     code_examples: Array<{
         title: string;
@@ -158,6 +159,11 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                 const invalidSub = formData.sub_materials.some(sub => !sub.title?.trim() || !sub.content?.trim());
                 if (invalidSub) {
                     newErrors.sub_materials = ['Setiap sub-materi wajib memiliki judul dan konten materi'];
+                } else {
+                    const invalidVideoSub = formData.sub_materials.some(sub => sub.video_url && !isValidVideoUrl(sub.video_url));
+                    if (invalidVideoSub) {
+                        newErrors.sub_materials = ['URL video sub-materi harus dari YouTube atau Google Drive'];
+                    }
                 }
             }
 

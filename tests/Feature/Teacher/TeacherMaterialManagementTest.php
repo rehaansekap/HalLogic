@@ -41,7 +41,7 @@ class TeacherMaterialManagementTest extends TestCase
             'title' => 'New Material Title',
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
-            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'video_url' => null,
             'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'summary' => 'Ini adalah ringkasan materi dalam bahasa Indonesia.',
@@ -61,6 +61,7 @@ class TeacherMaterialManagementTest extends TestCase
                 [
                     'title' => 'Sub Materi Awal',
                     'content' => '<p>Konten sub materi awal</p>',
+                    'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 ],
             ],
             'code_examples' => [
@@ -102,6 +103,7 @@ class TeacherMaterialManagementTest extends TestCase
         ], $material->post_reflection_questions);
         $this->assertCount(1, $material->sub_materials);
         $this->assertEquals('Sub Materi Awal', $material->sub_materials[0]['title']);
+        $this->assertEquals('https://www.youtube.com/watch?v=dQw4w9WgXcQ', $material->sub_materials[0]['video_url']);
         $this->assertCount(1, $material->code_examples);
         $this->assertEquals('Contoh 1', $material->code_examples[0]['title']);
     }
@@ -116,7 +118,7 @@ class TeacherMaterialManagementTest extends TestCase
             'title' => 'Material with GDrive Video',
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
-            'video_url' => 'https://drive.google.com/file/d/1234567890abcdefghijklmnopqrstuvwxyz/view?usp=sharing',
+            'video_url' => null,
             'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'summary' => 'Ini adalah ringkasan materi dengan video Google Drive.',
@@ -127,6 +129,7 @@ class TeacherMaterialManagementTest extends TestCase
                 [
                     'title' => 'Sub Materi GDrive',
                     'content' => '<p>Konten sub materi</p>',
+                    'video_url' => 'https://drive.google.com/file/d/1234567890abcdefghijklmnopqrstuvwxyz/view?usp=sharing',
                 ],
             ],
             'started_at' => now()->format('Y-m-d'),
@@ -140,8 +143,10 @@ class TeacherMaterialManagementTest extends TestCase
 
         $this->assertDatabaseHas('materials', [
             'title' => 'Material with GDrive Video',
-            'video_url' => 'https://drive.google.com/file/d/1234567890abcdefghijklmnopqrstuvwxyz/view?usp=sharing',
         ]);
+
+        $material = Material::where('title', 'Material with GDrive Video')->first();
+        $this->assertEquals('https://drive.google.com/file/d/1234567890abcdefghijklmnopqrstuvwxyz/view?usp=sharing', $material->sub_materials[0]['video_url']);
     }
 
     public function test_teacher_cannot_create_material_without_summary(): void
@@ -154,7 +159,7 @@ class TeacherMaterialManagementTest extends TestCase
             'title' => 'New Material Title',
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
-            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'video_url' => null,
             'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'learning_objectives' => [
@@ -164,6 +169,7 @@ class TeacherMaterialManagementTest extends TestCase
                 [
                     'title' => 'Sub Materi Awal',
                     'content' => '<p>Konten sub materi awal</p>',
+                    'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 ],
             ],
         ];
@@ -184,7 +190,7 @@ class TeacherMaterialManagementTest extends TestCase
             'title' => 'New Material Title',
             'description' => 'A valid material description text here.',
             'difficulty_level' => 2,
-            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'video_url' => null,
             'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'summary' => 'This is a English summary.',
@@ -193,6 +199,7 @@ class TeacherMaterialManagementTest extends TestCase
                 [
                     'title' => 'Sub Materi Awal',
                     'content' => '<p>Konten sub materi awal</p>',
+                    'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 ],
             ],
         ];
@@ -215,7 +222,7 @@ class TeacherMaterialManagementTest extends TestCase
             'difficulty_level' => 1,
             'teacher_id' => $teacher->id,
             'classroom_id' => $classroom->id,
-            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'video_url' => null,
             'case_title' => 'Original case title',
             'case_narrative' => 'Original case narrative',
             'summary' => 'Original summary',
@@ -226,6 +233,7 @@ class TeacherMaterialManagementTest extends TestCase
                 [
                     'title' => 'Original Sub Title',
                     'content' => 'Original content',
+                    'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 ],
             ],
             'code_examples' => [
@@ -243,7 +251,7 @@ class TeacherMaterialManagementTest extends TestCase
             'title' => 'Updated Title',
             'description' => 'Updated description text here.',
             'difficulty_level' => 3,
-            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'video_url' => null,
             'case_title' => 'Updated case title.',
             'case_narrative' => 'Updated case narrative.',
             'summary' => 'Ringkasan materi yang diperbarui.',
@@ -261,6 +269,7 @@ class TeacherMaterialManagementTest extends TestCase
                 [
                     'title' => 'Updated Sub Title',
                     'content' => '<p>Updated content</p>',
+                    'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 ],
             ],
             'code_examples' => [
@@ -298,6 +307,7 @@ class TeacherMaterialManagementTest extends TestCase
         ], $updatedMaterial->post_reflection_questions);
         $this->assertCount(1, $updatedMaterial->sub_materials);
         $this->assertEquals('Updated Sub Title', $updatedMaterial->sub_materials[0]['title']);
+        $this->assertEquals('https://www.youtube.com/watch?v=dQw4w9WgXcQ', $updatedMaterial->sub_materials[0]['video_url']);
         $this->assertCount(1, $updatedMaterial->code_examples);
         $this->assertEquals('Updated Example Title', $updatedMaterial->code_examples[0]['title']);
     }
@@ -316,7 +326,7 @@ class TeacherMaterialManagementTest extends TestCase
             'title' => 'Case Image Title',
             'description' => 'A description.',
             'difficulty_level' => 2,
-            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'video_url' => null,
             'case_title' => 'A valid case title.',
             'case_narrative' => 'A valid case narrative description.',
             'case_image' => $caseImage,
@@ -326,6 +336,7 @@ class TeacherMaterialManagementTest extends TestCase
                 [
                     'title' => 'Sub Materi Awal',
                     'content' => '<p>Konten sub materi awal</p>',
+                    'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 ],
             ],
             'started_at' => now()->format('Y-m-d'),

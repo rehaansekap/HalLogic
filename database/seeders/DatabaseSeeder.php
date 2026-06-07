@@ -127,6 +127,7 @@ class DatabaseSeeder extends Seeder
                     'title' => 'Sub Materi 1: Konsep Dasar Percabangan',
                     'content' => '<p>Logika percabangan adalah struktur kontrol yang memungkinkan program untuk menjalankan blok kode yang berbeda berdasarkan hasil evaluasi kondisi (apakah bernilai true atau false). Struktur yang paling dasar adalah <code>if</code> dan <code>if-else</code>.</p>',
                     'image_path' => null,
+                    'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
                 ],
                 [
                     'title' => 'Sub Materi 2: Blok Kode Kondisional',
@@ -176,6 +177,7 @@ class DatabaseSeeder extends Seeder
                     'title' => 'Sub Materi 1: Pengenalan Switch-Case',
                     'content' => '<p>Struktur <code>switch</code> mengevaluasi suatu ekspresi dan mencocokkan nilainya dengan berbagai pilihan <code>case</code>. Jika cocok, blok kode case tersebut akan dieksekusi.</p>',
                     'image_path' => null,
+                    'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
                 ],
                 [
                     'title' => 'Sub Materi 2: Peran Break dan Default',
@@ -225,6 +227,7 @@ class DatabaseSeeder extends Seeder
                     'title' => 'Sub Materi 1: Struktur For Loop',
                     'content' => '<p>Perulangan <code>for</code> digunakan ketika kita sudah tahu pasti berapa kali perulangan harus dilakukan. Ia memiliki tiga komponen: inisialisasi counter, kondisi perulangan, dan pembaruan counter.</p>',
                     'image_path' => null,
+                    'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
                 ],
                 [
                     'title' => 'Sub Materi 2: Increment dan Decrement',
