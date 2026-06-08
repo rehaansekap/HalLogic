@@ -1,6 +1,5 @@
 import { usePoll, usePage } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
-import { toast } from 'sonner';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -36,15 +35,23 @@ export default function RealTimeMonitor() {
     // Monitor flash messages for toasts
     useEffect(() => {
         if (flash?.success) {
-            toast.success(flash.success);
+            MySwal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: flash.success,
+                confirmButtonText: 'Oke',
+                confirmButtonColor: 'var(--palette-green, #10b981)',
+            });
         }
 
         if (flash?.error) {
-            toast.error(flash.error);
-        }
-
-        if (flash?.info && !lastUserRef.current) {
-            // Info is handled by SweetAlert for logout, but can be used for others
+            MySwal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: flash.error,
+                confirmButtonText: 'Oke',
+                confirmButtonColor: '#dc2626',
+            });
         }
     }, [flash]);
 

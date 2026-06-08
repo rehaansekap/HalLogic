@@ -161,12 +161,13 @@ export default function Phase2Investigation({
         if (index === totalSubs - 1) {
             setActiveTab('contoh');
             MySwal.fire({
-                toast: true,
-                position: 'top-end',
                 icon: 'success',
-                title: 'Materi selesai dibaca! Membuka Contoh Kasus...',
-                showConfirmButton: false,
-                timer: 2500
+                title: 'Materi Selesai Dibaca',
+                text: 'Membuka Contoh Kasus...',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: 'var(--palette-green, #10b981)',
+                timer: 2500,
+                timerProgressBar: true
             });
         } else {
             // Collapse current sub-material and expand the next one
@@ -195,12 +196,13 @@ export default function Phase2Investigation({
         if (index === totalExamples - 1) {
             setActiveTab('editor');
             MySwal.fire({
-                toast: true,
-                position: 'top-end',
                 icon: 'success',
-                title: 'Contoh kasus selesai dipelajari! Membuka Compiler Online...',
-                showConfirmButton: false,
-                timer: 2500
+                title: 'Contoh Kasus Selesai Dipelajari',
+                text: 'Membuka Compiler Online...',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: 'var(--palette-green, #10b981)',
+                timer: 2500,
+                timerProgressBar: true
             });
         } else {
             // Collapse current example and expand the next one
@@ -342,24 +344,26 @@ int main() {
     const handleCopyCode = () => {
         navigator.clipboard.writeText(code);
         Swal.fire({
-            toast: true,
-            position: 'top-end',
             icon: 'success',
-            title: 'Kode disalin ke clipboard',
-            showConfirmButton: false,
-            timer: 1500
+            title: 'Berhasil',
+            text: 'Kode disalin ke clipboard',
+            confirmButtonText: 'Oke',
+            confirmButtonColor: 'var(--palette-green, #10b981)',
+            timer: 1500,
+            timerProgressBar: true
         });
     };
 
     const handleCopyExampleCode = (exampleCode: string) => {
         navigator.clipboard.writeText(exampleCode);
         Swal.fire({
-            toast: true,
-            position: 'top-end',
             icon: 'success',
-            title: 'Contoh kode disalin',
-            showConfirmButton: false,
-            timer: 1500
+            title: 'Berhasil',
+            text: 'Contoh kode disalin',
+            confirmButtonText: 'Oke',
+            confirmButtonColor: 'var(--palette-green, #10b981)',
+            timer: 1500,
+            timerProgressBar: true
         });
     };
 
@@ -367,12 +371,13 @@ int main() {
         setCode(exampleCode);
         setActiveTab('editor');
         Swal.fire({
-            toast: true,
-            position: 'top-end',
             icon: 'success',
-            title: 'Kode dimuat ke Editor',
-            showConfirmButton: false,
-            timer: 1500
+            title: 'Berhasil',
+            text: 'Kode dimuat ke Editor',
+            confirmButtonText: 'Oke',
+            confirmButtonColor: 'var(--palette-green, #10b981)',
+            timer: 1500,
+            timerProgressBar: true
         });
     };
 
@@ -533,12 +538,11 @@ int main() {
                             setActiveTab('contoh');
                         } else {
                             MySwal.fire({
-                                toast: true,
-                                position: 'top-end',
                                 icon: 'warning',
-                                title: 'Selesaikan semua sub-materi terlebih dahulu!',
-                                showConfirmButton: false,
-                                timer: 3000
+                                title: 'Akses Terkunci',
+                                text: 'Selesaikan semua sub-materi terlebih dahulu!',
+                                confirmButtonText: 'Oke',
+                                confirmButtonColor: '#dc2626'
                             });
                         }
                     }}
@@ -568,12 +572,11 @@ int main() {
                             setActiveTab('editor');
                         } else {
                             MySwal.fire({
-                                toast: true,
-                                position: 'top-end',
                                 icon: 'warning',
-                                title: 'Pelajari semua contoh kasus terlebih dahulu!',
-                                showConfirmButton: false,
-                                timer: 3000
+                                title: 'Akses Terkunci',
+                                text: 'Pelajari semua contoh kasus terlebih dahulu!',
+                                confirmButtonText: 'Oke',
+                                confirmButtonColor: '#dc2626'
                             });
                         }
                     }}
@@ -603,12 +606,11 @@ int main() {
                             setActiveTab('tugas');
                         } else {
                             MySwal.fire({
-                                toast: true,
-                                position: 'top-end',
                                 icon: 'warning',
-                                title: 'Jalankan program di Compiler Online minimal 1 kali!',
-                                showConfirmButton: false,
-                                timer: 3000
+                                title: 'Akses Terkunci',
+                                text: 'Jalankan program di Compiler Online minimal 1 kali!',
+                                confirmButtonText: 'Oke',
+                                confirmButtonColor: '#dc2626'
                             });
                         }
                     }}
