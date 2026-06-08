@@ -118,6 +118,34 @@ export default function Phase2Investigation({
         }
     });
 
+    const examplesStorageKey = `read-code-examples-${material.id}`;
+    const [readExampleIndices, setReadExampleIndices] = useState<number[]>(() => {
+        try {
+            const saved = localStorage.getItem(examplesStorageKey);
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
+    const compilerStorageKey = `has-run-compiler-${material.id}`;
+    const [hasRunCompiler, setHasRunCompiler] = useState<boolean>(() => {
+        try {
+            const saved = localStorage.getItem(compilerStorageKey);
+            return saved === 'true';
+        } catch {
+            return false;
+        }
+    });
+
+    const isMateriFinished = material.sub_materials && material.sub_materials.length > 0
+        ? readSubIndices.length === material.sub_materials.length
+        : true;
+
+    const isContohFinished = material.code_examples && material.code_examples.length > 0
+        ? readExampleIndices.length === material.code_examples.length
+        : true;
+
     const handleMarkAsRead = (index: number) => {
         if (!readSubIndices.includes(index)) {
             const nextRead = [...readSubIndices, index];
@@ -129,14 +157,61 @@ export default function Phase2Investigation({
             }
         }
 
-        // Collapse current sub-material and expand the next one
-        setExpandedSubIndices(prev => {
-            const collapsed = prev.filter(i => i !== index);
-            if (material.sub_materials && index < material.sub_materials.length - 1) {
-                return [...collapsed, index + 1];
+        const totalSubs = material.sub_materials?.length || 0;
+        if (index === totalSubs - 1) {
+            setActiveTab('contoh');
+            MySwal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Materi selesai dibaca! Membuka Contoh Kasus...',
+                showConfirmButton: false,
+                timer: 2500
+            });
+        } else {
+            // Collapse current sub-material and expand the next one
+            setExpandedSubIndices(prev => {
+                const collapsed = prev.filter(i => i !== index);
+                if (index < totalSubs - 1) {
+                    return [...collapsed, index + 1];
+                }
+                return collapsed;
+            });
+        }
+    };
+
+    const handleMarkAsExampleRead = (index: number) => {
+        if (!readExampleIndices.includes(index)) {
+            const nextRead = [...readExampleIndices, index];
+            setReadExampleIndices(nextRead);
+            try {
+                localStorage.setItem(examplesStorageKey, JSON.stringify(nextRead));
+            } catch (err) {
+                console.error(err);
             }
-            return collapsed;
-        });
+        }
+
+        const totalExamples = material.code_examples?.length || 0;
+        if (index === totalExamples - 1) {
+            setActiveTab('editor');
+            MySwal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Contoh kasus selesai dipelajari! Membuka Compiler Online...',
+                showConfirmButton: false,
+                timer: 2500
+            });
+        } else {
+            // Collapse current example and expand the next one
+            setExpandedExampleIndices(prev => {
+                const collapsed = prev.filter(i => i !== index);
+                if (index < totalExamples - 1) {
+                    return [...collapsed, index + 1];
+                }
+                return collapsed;
+            });
+        }
     };
 
     const toggleSubIndex = (index: number) => {
@@ -246,6 +321,15 @@ int main() {
             }
 
             setCodeOutput(outputResult.trim());
+
+            if (!hasRunCompiler) {
+                setHasRunCompiler(true);
+                try {
+                    localStorage.setItem(compilerStorageKey, 'true');
+                } catch (err) {
+                    console.error(err);
+                }
+            }
         } catch (error) {
             setCodeOutput(
                 `Error: ${error instanceof Error ? error.message : 'Gagal menjalankan kode'}`,
@@ -444,15 +528,30 @@ int main() {
                 </button>
                 <button
                     type="button"
-                    onClick={() => setActiveTab('contoh')}
+                    onClick={() => {
+                        if (isMateriFinished) {
+                            setActiveTab('contoh');
+                        } else {
+                            MySwal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'warning',
+                                title: 'Selesaikan semua sub-materi terlebih dahulu!',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }}
                     className={cn(
                         "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
                         activeTab === 'contoh'
                             ? "bg-white text-(--palette-green) shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                            : isMateriFinished
+                                ? "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                                : "text-slate-400 bg-slate-100/50 cursor-not-allowed"
                     )}
                 >
-                    <Code2 className="h-4 w-4" />
+                    {isMateriFinished ? <Code2 className="h-4 w-4" /> : <Lock className="h-4 w-4 text-slate-450" />}
                     <span>Contoh Kasus</span>
                     {activeTab === 'contoh' && (
                         <motion.div
@@ -464,15 +563,30 @@ int main() {
                 </button>
                 <button
                     type="button"
-                    onClick={() => setActiveTab('editor')}
+                    onClick={() => {
+                        if (isMateriFinished && isContohFinished) {
+                            setActiveTab('editor');
+                        } else {
+                            MySwal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'warning',
+                                title: 'Pelajari semua contoh kasus terlebih dahulu!',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }}
                     className={cn(
                         "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
                         activeTab === 'editor'
                             ? "bg-white text-(--palette-green) shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                            : (isMateriFinished && isContohFinished)
+                                ? "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                                : "text-slate-400 bg-slate-100/50 cursor-not-allowed"
                     )}
                 >
-                    <Monitor className="h-4 w-4" />
+                    {(isMateriFinished && isContohFinished) ? <Monitor className="h-4 w-4" /> : <Lock className="h-4 w-4 text-slate-450" />}
                     <span>Compiler Online</span>
                     {activeTab === 'editor' && (
                         <motion.div
@@ -484,15 +598,30 @@ int main() {
                 </button>
                 <button
                     type="button"
-                    onClick={() => setActiveTab('tugas')}
+                    onClick={() => {
+                        if (isMateriFinished && isContohFinished && hasRunCompiler) {
+                            setActiveTab('tugas');
+                        } else {
+                            MySwal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'warning',
+                                title: 'Jalankan program di Compiler Online minimal 1 kali!',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }}
                     className={cn(
                         "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
                         activeTab === 'tugas'
                             ? "bg-white text-(--palette-green) shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                            : (isMateriFinished && isContohFinished && hasRunCompiler)
+                                ? "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                                : "text-slate-400 bg-slate-100/50 cursor-not-allowed"
                     )}
                 >
-                    <ClipboardCheck className="h-4 w-4" />
+                    {(isMateriFinished && isContohFinished && hasRunCompiler) ? <ClipboardCheck className="h-4 w-4" /> : <Lock className="h-4 w-4 text-slate-450" />}
                     <span>Upload Kode</span>
                     {activeTab === 'tugas' && (
                         <motion.div
@@ -810,12 +939,42 @@ int main() {
                         {material.code_examples && material.code_examples.length > 0 ? (
                             material.code_examples.map((ex, index) => {
                                 const isOpen = expandedExampleIndices.includes(index);
+                                const isUnlocked = index === 0 || readExampleIndices.includes(index - 1);
+                                const isRead = readExampleIndices.includes(index);
+
+                                if (!isUnlocked) {
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="rounded-2xl border bg-slate-50/50 p-5 md:p-6 shadow-sm opacity-60 border-slate-200"
+                                        >
+                                            <div className="flex w-full items-center justify-between text-left cursor-not-allowed group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black bg-gray-200 text-slate-400 border border-slate-300 shrink-0">
+                                                        <Lock size={12} className="text-slate-400" />
+                                                    </div>
+                                                    <h3 className="font-bold text-slate-400 text-sm md:text-base tracking-tight select-none">
+                                                        {ex.title}
+                                                    </h3>
+                                                </div>
+                                                <div className="text-slate-400">
+                                                    <Lock size={16} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
                                 return (
                                     <div
                                         key={index}
                                         className={cn(
                                             "rounded-2xl border bg-white p-5 md:p-6 shadow-sm transition-all duration-300",
-                                            isOpen ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5" : "border-slate-200 hover:border-slate-300"
+                                            isOpen
+                                                ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5"
+                                                : isRead
+                                                    ? "border-emerald-200 bg-emerald-50/5 hover:border-emerald-300"
+                                                    : "border-slate-200 hover:border-slate-300"
                                         )}
                                     >
                                         <button
@@ -828,14 +987,21 @@ int main() {
                                         >
                                             <div className="flex items-center gap-4">
                                                 <div className={cn(
-                                                    "flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black transition-colors border",
-                                                    isOpen
-                                                        ? "bg-(--palette-green)/10 text-(--palette-green) border-(--palette-green)/20"
-                                                        : "bg-gray-50 text-slate-400 border-slate-200 group-hover:text-slate-600"
+                                                    "flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black transition-colors border shrink-0",
+                                                    isRead
+                                                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                                                        : isOpen
+                                                            ? "bg-(--palette-green)/10 text-(--palette-green) border-(--palette-green)/20"
+                                                            : "bg-gray-50 text-slate-400 border-slate-200 group-hover:text-slate-600"
                                                 )}>
-                                                    C{index + 1}
+                                                    {isRead ? <Check size={12} className="stroke-[3]" /> : `C${index + 1}`}
                                                 </div>
-                                                <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight group-hover:text-(--palette-green) transition-colors">
+                                                <h3 className={cn(
+                                                    "font-bold text-sm md:text-base tracking-tight transition-colors",
+                                                    isRead
+                                                        ? "text-emerald-800 group-hover:text-emerald-600"
+                                                        : "text-slate-800 group-hover:text-(--palette-green)"
+                                                )}>
                                                     {ex.title}
                                                 </h3>
                                             </div>
@@ -911,6 +1077,34 @@ int main() {
                                                                 {ex.output}
                                                             </pre>
                                                         </div>
+                                                    </div>
+
+                                                    {/* Button Tandai Sudah Dipelajari */}
+                                                    <div className="col-span-1 lg:col-span-2 flex items-center justify-end border-t border-slate-100 pt-4 mt-4">
+                                                        {isRead ? (
+                                                            <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-200">
+                                                                <Check size={14} className="stroke-[3]" />
+                                                                <span>Sudah Dipelajari</span>
+                                                            </div>
+                                                        ) : (
+                                                            <Button
+                                                                type="button"
+                                                                onClick={() => handleMarkAsExampleRead(index)}
+                                                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 h-auto rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                                            >
+                                                                {index < (material.code_examples?.length || 0) - 1 ? (
+                                                                    <>
+                                                                        <span>Selesai & Lanjut</span>
+                                                                        <Check size={14} className="stroke-[3]" />
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <span>Mulai Latihan Coding</span>
+                                                                        <Play size={14} className="stroke-[3]" />
+                                                                    </>
+                                                                )}
+                                                            </Button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </motion.div>
@@ -1021,6 +1215,17 @@ int main() {
                                     </>
                                 )}
                             </Button>
+
+                            {hasRunCompiler && (
+                                <Button
+                                    type="button"
+                                    onClick={() => setActiveTab('tugas')}
+                                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3.5 font-bold text-white transition-all hover:bg-emerald-700 h-12 shadow-lg shadow-emerald-200/50 hover:scale-[1.01] active:scale-[0.99]"
+                                >
+                                    <span>Lanjut ke Tugas</span>
+                                    <Check className="h-4 w-4" />
+                                </Button>
+                            )}
                         </div>
 
                         {/* Alert box */}
