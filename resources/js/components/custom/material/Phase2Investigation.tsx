@@ -108,6 +108,37 @@ export default function Phase2Investigation({
     const [expandedVideoIndices, setExpandedVideoIndices] = useState<number[]>([]);
     const [expandedImageIndices, setExpandedImageIndices] = useState<number[]>([]);
 
+    const storageKey = `read-sub-materials-${material.id}`;
+    const [readSubIndices, setReadSubIndices] = useState<number[]>(() => {
+        try {
+            const saved = localStorage.getItem(storageKey);
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
+    const handleMarkAsRead = (index: number) => {
+        if (!readSubIndices.includes(index)) {
+            const nextRead = [...readSubIndices, index];
+            setReadSubIndices(nextRead);
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(nextRead));
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Collapse current sub-material and expand the next one
+        setExpandedSubIndices(prev => {
+            const collapsed = prev.filter(i => i !== index);
+            if (material.sub_materials && index < material.sub_materials.length - 1) {
+                return [...collapsed, index + 1];
+            }
+            return collapsed;
+        });
+    };
+
     const toggleSubIndex = (index: number) => {
         setExpandedSubIndices(prev =>
             prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
@@ -489,12 +520,42 @@ int main() {
                         {material.sub_materials && material.sub_materials.length > 0 ? (
                             material.sub_materials.map((sub, index) => {
                                 const isOpen = expandedSubIndices.includes(index);
+                                const isUnlocked = index === 0 || readSubIndices.includes(index - 1);
+                                const isRead = readSubIndices.includes(index);
+
+                                if (!isUnlocked) {
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="rounded-2xl border bg-slate-50/50 p-5 md:p-6 shadow-sm opacity-60 border-slate-200"
+                                        >
+                                            <div className="flex w-full items-center justify-between text-left cursor-not-allowed group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black bg-gray-200 text-slate-400 border border-slate-300 shrink-0">
+                                                        <Lock size={12} className="text-slate-400" />
+                                                    </div>
+                                                    <h3 className="font-bold text-slate-400 text-sm md:text-base tracking-tight select-none">
+                                                        {sub.title}
+                                                    </h3>
+                                                </div>
+                                                <div className="text-slate-400">
+                                                    <Lock size={16} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
                                 return (
                                     <div
                                         key={index}
                                         className={cn(
                                             "rounded-2xl border bg-white p-5 md:p-6 shadow-sm transition-all duration-300",
-                                            isOpen ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5" : "border-slate-200 hover:border-slate-300"
+                                            isOpen
+                                                ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5"
+                                                : isRead
+                                                    ? "border-emerald-200 bg-emerald-50/5 hover:border-emerald-300"
+                                                    : "border-slate-200 hover:border-slate-300"
                                         )}
                                     >
                                         <button
@@ -507,14 +568,21 @@ int main() {
                                         >
                                             <div className="flex items-center gap-4">
                                                 <div className={cn(
-                                                    "flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black transition-colors border",
-                                                    isOpen
-                                                        ? "bg-(--palette-green)/10 text-(--palette-green) border-(--palette-green)/20"
-                                                        : "bg-gray-50 text-slate-400 border-slate-200 group-hover:text-slate-600"
+                                                    "flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black transition-colors border shrink-0",
+                                                    isRead
+                                                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                                                        : isOpen
+                                                            ? "bg-(--palette-green)/10 text-(--palette-green) border-(--palette-green)/20"
+                                                            : "bg-gray-50 text-slate-400 border-slate-200 group-hover:text-slate-600"
                                                 )}>
-                                                    {index + 1}
+                                                    {isRead ? <Check size={12} className="stroke-[3]" /> : index + 1}
                                                 </div>
-                                                <h3 className="font-bold text-slate-800 text-sm md:text-base tracking-tight group-hover:text-(--palette-green) transition-colors">
+                                                <h3 className={cn(
+                                                    "font-bold text-sm md:text-base tracking-tight transition-colors",
+                                                    isRead
+                                                        ? "text-emerald-800 group-hover:text-emerald-600"
+                                                        : "text-slate-800 group-hover:text-(--palette-green)"
+                                                )}>
                                                     {sub.title}
                                                 </h3>
                                             </div>
@@ -686,6 +754,34 @@ int main() {
                                                             )}
                                                         </div>
                                                     )}
+
+                                                    {/* Button Tandai Sudah Dibaca */}
+                                                    <div className="flex items-center justify-end border-t border-slate-100 pt-4 mt-6">
+                                                        {isRead ? (
+                                                            <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-200">
+                                                                <Check size={14} className="stroke-[3]" />
+                                                                <span>Sudah Dibaca</span>
+                                                            </div>
+                                                        ) : (
+                                                            <Button
+                                                                type="button"
+                                                                onClick={() => handleMarkAsRead(index)}
+                                                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 h-auto rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                                            >
+                                                                {index < (material.sub_materials?.length || 0) - 1 ? (
+                                                                    <>
+                                                                        <span>Selesai & Lanjut</span>
+                                                                        <Check size={14} className="stroke-[3]" />
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <span>Selesai Membaca</span>
+                                                                        <Check size={14} className="stroke-[3]" />
+                                                                    </>
+                                                                )}
+                                                            </Button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </motion.div>
                                         )}
