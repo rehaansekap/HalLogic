@@ -15,15 +15,15 @@ export default function MaterialProgress({
     const steps = [
         {
             title: 'Mulai Belajar',
-            subtitle: 'Pahami konsep dasar',
+            subtitle: 'Kenali tujuan dan aktivitas pembelajaran',
         },
         {
-            title: 'Cari Solusi',
-            subtitle: currentStep >= 2 ? 'Pelajari dan pahami materi' : 'Pecahkan masalah',
+            title: 'Eksplorasi Materi',
+            subtitle: currentStep >= 2 ? 'Pelajari konsep dan contoh materi' : 'Eksplorasi materi',
         },
         {
-            title: 'Cek Pemahaman',
-            subtitle: 'Uji pemahamanmu',
+            title: 'Refleksi Pembelajaran',
+            subtitle: 'Tinjau kembali pemahamanmu',
         },
     ];
 
