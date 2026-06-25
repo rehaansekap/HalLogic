@@ -1,12 +1,17 @@
-import { Head, usePoll } from '@inertiajs/react';
+import { Head, usePoll, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import { startExploration } from '@/actions/App/Http/Controllers/Student/MaterialController';
 import MaterialHeader from '@/components/custom/material/MaterialHeader';
 import MaterialProgress from '@/components/custom/material/MaterialProgress';
 import MaterialSidebar from '@/components/custom/material/MaterialSidebar';
 import Phase1Orientation from '@/components/custom/material/Phase1Orientation';
 import Phase2Investigation from '@/components/custom/material/Phase2Investigation';
 import Phase3Evaluation from '@/components/custom/material/Phase3Evaluation';
+
+const MySwal = withReactContent(Swal);
 
 interface Material {
     id: number;
@@ -79,17 +84,53 @@ export default function MaterialPage({
     submission,
     attendance,
 }: MaterialPageProps) {
-    const [activePhase, setActivePhase] = useState(currentStep > 0 ? currentStep : 1);
+    const [localUnlockedStep, setLocalUnlockedStep] = useState<number>(() => {
+        if (typeof window !== 'undefined') {
+            const unlocked = localStorage.getItem(`material-exploration-unlocked-${material.id}`);
+            return unlocked === 'true' ? 2 : 1;
+        }
+        return 1;
+    });
+
+    const effectiveCurrentStep = Math.max(currentStep, localUnlockedStep);
+
+    const [activePhase, setActivePhase] = useState(effectiveCurrentStep > 0 ? effectiveCurrentStep : 1);
     const [lastCurrentStep, setLastCurrentStep] = useState(currentStep);
 
     // Update activePhase if currentStep advances
     if (currentStep !== lastCurrentStep) {
         setLastCurrentStep(currentStep);
 
-        if (currentStep > activePhase) {
-            setActivePhase(currentStep);
+        const newEffective = Math.max(currentStep, localUnlockedStep);
+        if (newEffective > activePhase) {
+            setActivePhase(newEffective);
         }
     }
+
+    const { post, processing } = useForm();
+
+    const handleStartExploration = () => {
+        if (groupMembers.length > 0) {
+            post(startExploration.url({ slug: material.slug }), {
+                onSuccess: () => {
+                    localStorage.setItem(`material-exploration-unlocked-${material.id}`, 'true');
+                    setLocalUnlockedStep(2);
+                    setActivePhase(2);
+                }
+            });
+        } else {
+            localStorage.setItem(`material-exploration-unlocked-${material.id}`, 'true');
+            setLocalUnlockedStep(2);
+            setActivePhase(2);
+            MySwal.fire({
+                icon: 'success',
+                title: 'Aktivitas Dimulai',
+                text: 'Selamat belajar! Silakan eksplorasi materi.',
+                confirmButtonText: 'Oke',
+                confirmButtonColor: '#059669',
+            });
+        }
+    };
 
     // Setup polling untuk real-time updates (Inertia v3)
     usePoll(3000, {
@@ -130,7 +171,7 @@ export default function MaterialPage({
                 {/* Content */}
                 <div className="container mx-auto max-w-7xl px-4 pb-12 pt-2">
                     <MaterialProgress
-                        currentStep={currentStep}
+                        currentStep={effectiveCurrentStep}
                         activePhase={activePhase}
                         onPhaseChange={setActivePhase}
                     />
@@ -151,6 +192,8 @@ export default function MaterialPage({
                                     hasInitialReflection={!!initialReflection}
                                     initialReflectionText={initialReflection}
                                     groupExists={groupMembers.length > 0}
+                                    onStartExploration={handleStartExploration}
+                                    isExploring={processing}
                                 />
                             )}
 
@@ -158,7 +201,7 @@ export default function MaterialPage({
                             {activePhase === 2 && (
                                  <Phase2Investigation
                                      material={material}
-                                     currentStep={currentStep}
+                                     currentStep={effectiveCurrentStep}
                                      groupMembers={groupMembers}
                                      submission={submission}
                                  />
@@ -187,13 +230,13 @@ export default function MaterialPage({
                                 </button>
                                 <button
                                     onClick={() => {
-                                        if (activePhase < currentStep && activePhase < 3) {
+                                        if (activePhase < effectiveCurrentStep && activePhase < 3) {
                                             setActivePhase((prev) => prev + 1);
                                         }
                                     }}
-                                    disabled={activePhase >= currentStep || activePhase === 3}
+                                    disabled={activePhase >= effectiveCurrentStep || activePhase === 3}
                                     className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
-                                        activePhase >= currentStep || activePhase === 3
+                                        activePhase >= effectiveCurrentStep || activePhase === 3
                                             ? 'cursor-not-allowed bg-slate-100 text-slate-400'
                                             : 'bg-(--palette-limelight) text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
                                     }`}
@@ -213,7 +256,7 @@ export default function MaterialPage({
                             <div className="sticky top-6">
                                 <MaterialSidebar
                                     groupMembers={groupMembers}
-                                    currentStep={currentStep}
+                                    currentStep={effectiveCurrentStep}
                                     slug={material.slug}
                                     submission={submission}
                                     attendance={attendance}

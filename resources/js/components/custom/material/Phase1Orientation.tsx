@@ -1,24 +1,7 @@
 import { motion } from 'framer-motion';
-import { BookOpen, ClipboardList } from 'lucide-react';
+import { BookOpen, ClipboardList, Play, Loader2, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-/*
-import {
-    CheckCircleIcon,
-    ClockIcon,
-    LightBulbIcon,
-    MapPinIcon,
-    PencilIcon,
-} from '@heroicons/react/24/outline';
-import { CheckCircleIcon as CheckCircleSolid } from '@heroicons/react/24/solid';
-import { Form } from '@inertiajs/react';
-import { Heart, Lightbulb, Send, Play, Lock, MessageSquare, Image as ImageIcon } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-
-const MySwal = withReactContent(Swal);
-*/
 
 interface Phase1OrientationProps {
     material: {
@@ -37,6 +20,9 @@ interface Phase1OrientationProps {
     hasInitialReflection: boolean;
     initialReflectionText?: string | null;
     groupExists: boolean;
+    onStartExploration: () => void;
+    isExploring: boolean;
+    isExplorationUnlocked: boolean;
 }
 
 export default function Phase1Orientation({
@@ -44,6 +30,9 @@ export default function Phase1Orientation({
     hasInitialReflection,
     initialReflectionText = '',
     groupExists,
+    onStartExploration,
+    isExploring,
+    isExplorationUnlocked,
 }: Phase1OrientationProps) {
     /*
     const [activeTab, setActiveTab] = useState<'materi' | 'refleksi'>('materi');
@@ -194,6 +183,35 @@ export default function Phase1Orientation({
                             {material.summary}
                         </p>
                     </div>
+                )}
+            </div>
+
+            {/* Action button to start exploration */}
+            <div className="flex pt-4 justify-end border-t border-slate-100 mt-6">
+                {isExplorationUnlocked ? (
+                    <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-5 py-2.5 rounded-xl text-sm font-bold border border-emerald-200">
+                        <CheckCircle2 size={16} className="stroke-[3]" />
+                        <span>Materi Sudah Terbuka</span>
+                    </div>
+                ) : (
+                    <Button
+                        type="button"
+                        onClick={onStartExploration}
+                        disabled={isExploring}
+                        className="h-12 px-8 font-bold bg-(--palette-green) hover:bg-emerald-600 text-white rounded-xl shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
+                    >
+                        {isExploring ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <span>Membuka Materi...</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>Mulai Belajar</span>
+                                <Play className="h-4 w-4 fill-current" />
+                            </>
+                        )}
+                    </Button>
                 )}
             </div>
 

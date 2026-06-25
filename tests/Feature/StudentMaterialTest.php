@@ -367,7 +367,7 @@ class StudentMaterialTest extends TestCase
         );
     }
 
-    public function test_student_without_group_can_access_step_2_directly(): void
+    public function test_student_without_group_starts_at_step_1(): void
     {
         $student = User::factory()->create(['role' => 'student']);
         $teacher = User::factory()->create(['role' => 'teacher']);
@@ -392,9 +392,35 @@ class StudentMaterialTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('student/material/index')
-            ->where('currentStep', 2)
-            ->where('unlockedStep', 2)
+            ->where('currentStep', 1)
+            ->where('unlockedStep', 1)
             ->where('groupMembers', [])
         );
+    }
+
+    public function test_student_can_start_exploration_and_advance(): void
+    {
+        $student = User::factory()->create(['role' => 'student']);
+        $teacher = User::factory()->create(['role' => 'teacher']);
+
+        $classroom = Classroom::create([
+            'name' => 'Kelas A',
+            'academic_year' => '2025/2026',
+            'teacher_id' => $teacher->id,
+        ]);
+
+        $material = Material::create([
+            'classroom_id' => $classroom->id,
+            'title' => 'Struktur Kontrol C',
+            'slug' => 'struktur-kontrol-c',
+            'description' => 'Mempelajari if-else dan switch-case.',
+            'difficulty_level' => 1,
+        ]);
+
+        $response = $this->actingAs($student)
+            ->post(route('material.start-exploration', $material->slug));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
     }
 }

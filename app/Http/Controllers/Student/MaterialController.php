@@ -17,6 +17,7 @@ use App\Services\Material\ProgressService;
 use App\Services\Material\ReflectionService;
 use App\Services\Material\RewardService;
 use App\Services\Material\SubmissionService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -54,19 +55,18 @@ class MaterialController extends Controller
         if ($groupMember) {
             $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
 
-            // Auto-advance since initial reflection is removed/commented out
-            if (! $progress || (int) $progress->current_step === 1) {
-                $this->progressService->updateGroupProgress($groupMember->group_id, $material->id, 2);
-                $currentStep = 2;
+            if (! $progress) {
+                $this->progressService->updateGroupProgress($groupMember->group_id, $material->id, 1);
+                $currentStep = 1;
                 $groupStatus = 'in_progress';
             } else {
-                $currentStep = $progress ? (int) $progress->current_step : 2;
+                $currentStep = $progress ? (int) $progress->current_step : 1;
                 $groupStatus = $progress?->status ?? 'locked';
             }
 
             $myGroupMembers = $this->groupService->getGroupMembers($groupMember->group_id);
         } else {
-            $currentStep = 2;
+            $currentStep = 1;
             $myGroupMembers = collect();
             $groupStatus = null;
         }
@@ -92,6 +92,19 @@ class MaterialController extends Controller
                 ->where('user_id', $user->id)
                 ->first(),
         ]);
+    }
+
+    public function startExploration(Request $request, $slug)
+    {
+        $material = Material::where('slug', $slug)->firstOrFail();
+        $user = Auth::user();
+        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
+
+        if ($groupMember) {
+            $this->progressService->updateGroupProgress($groupMember->group_id, $material->id, 2);
+        }
+
+        return redirect()->back()->with('success', 'Selamat belajar! Tahap 2 terbuka.');
     }
 
     /*
