@@ -30,12 +30,12 @@ interface Material {
         content: string;
         image_path?: string;
         video_url?: string;
-    }>;
-    code_examples?: Array<{
-        title: string;
-        code: string;
-        output: string;
-        explanation: string;
+        code_examples?: Array<{
+            title: string;
+            code: string;
+            output: string;
+            explanation: string;
+        }>;
     }>;
     case_title?: string | null;
     case_narrative?: string;
@@ -54,6 +54,7 @@ interface MaterialPageProps {
     material: Material;
     currentStep: number;
     groupMembers: GroupMember[];
+    readSubMaterials?: number[];
     initialReflection?: string;
     finalReflection?: string;
     groupStatus: 'locked' | 'active' | 'completed' | null;
@@ -78,6 +79,7 @@ export default function MaterialPage({
     material,
     currentStep,
     groupMembers,
+    readSubMaterials = [],
     initialReflection,
     finalReflection,
     groupStatus,
@@ -92,7 +94,7 @@ export default function MaterialPage({
         return 1;
     });
 
-    const effectiveCurrentStep = Math.max(currentStep, localUnlockedStep);
+    const effectiveCurrentStep = groupMembers.length > 0 ? currentStep : Math.max(currentStep, localUnlockedStep);
 
     const [activePhase, setActivePhase] = useState(effectiveCurrentStep > 0 ? effectiveCurrentStep : 1);
     const [lastCurrentStep, setLastCurrentStep] = useState(currentStep);
@@ -101,7 +103,7 @@ export default function MaterialPage({
     if (currentStep !== lastCurrentStep) {
         setLastCurrentStep(currentStep);
 
-        const newEffective = Math.max(currentStep, localUnlockedStep);
+        const newEffective = groupMembers.length > 0 ? currentStep : Math.max(currentStep, localUnlockedStep);
         if (newEffective > activePhase) {
             setActivePhase(newEffective);
         }
@@ -199,12 +201,13 @@ export default function MaterialPage({
 
                             {/* Phase 2 */}
                             {activePhase === 2 && (
-                                 <Phase2Investigation
-                                     material={material}
-                                     currentStep={effectiveCurrentStep}
-                                     groupMembers={groupMembers}
-                                     submission={submission}
-                                 />
+                                  <Phase2Investigation
+                                      material={material}
+                                      currentStep={effectiveCurrentStep}
+                                      groupMembers={groupMembers}
+                                      submission={submission}
+                                      readSubMaterials={readSubMaterials}
+                                  />
                             )}
 
                             {/* Phase 3 - Evaluation */}

@@ -62,14 +62,14 @@ class TeacherMaterialManagementTest extends TestCase
                     'title' => 'Sub Materi Awal',
                     'content' => '<p>Konten sub materi awal</p>',
                     'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                ],
-            ],
-            'code_examples' => [
-                [
-                    'title' => 'Contoh 1',
-                    'code' => 'int main() {}',
-                    'output' => 'Hello',
-                    'explanation' => 'Penjelasan contoh',
+                    'code_examples' => [
+                        [
+                            'title' => 'Contoh 1',
+                            'code' => 'int main() {}',
+                            'output' => 'Hello',
+                            'explanation' => 'Penjelasan contoh',
+                        ],
+                    ],
                 ],
             ],
             'started_at' => now()->format('Y-m-d'),
@@ -104,8 +104,8 @@ class TeacherMaterialManagementTest extends TestCase
         $this->assertCount(1, $material->sub_materials);
         $this->assertEquals('Sub Materi Awal', $material->sub_materials[0]['title']);
         $this->assertEquals('https://www.youtube.com/watch?v=dQw4w9WgXcQ', $material->sub_materials[0]['video_url']);
-        $this->assertCount(1, $material->code_examples);
-        $this->assertEquals('Contoh 1', $material->code_examples[0]['title']);
+        $this->assertCount(1, $material->sub_materials[0]['code_examples']);
+        $this->assertEquals('Contoh 1', $material->sub_materials[0]['code_examples'][0]['title']);
     }
 
     public function test_teacher_can_create_material_with_google_drive_video_url(): void
@@ -234,14 +234,14 @@ class TeacherMaterialManagementTest extends TestCase
                     'title' => 'Original Sub Title',
                     'content' => 'Original content',
                     'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                ],
-            ],
-            'code_examples' => [
-                [
-                    'title' => 'Original Example Title',
-                    'code' => 'Original Code',
-                    'output' => 'Original Output',
-                    'explanation' => 'Original Explanation',
+                    'code_examples' => [
+                        [
+                            'title' => 'Original Example Title',
+                            'code' => 'Original Code',
+                            'output' => 'Original Output',
+                            'explanation' => 'Original Explanation',
+                        ],
+                    ],
                 ],
             ],
         ]);
@@ -270,14 +270,14 @@ class TeacherMaterialManagementTest extends TestCase
                     'title' => 'Updated Sub Title',
                     'content' => '<p>Updated content</p>',
                     'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                ],
-            ],
-            'code_examples' => [
-                [
-                    'title' => 'Updated Example Title',
-                    'code' => 'Updated Code',
-                    'output' => 'Updated Output',
-                    'explanation' => 'Updated Explanation',
+                    'code_examples' => [
+                        [
+                            'title' => 'Updated Example Title',
+                            'code' => 'Updated Code',
+                            'output' => 'Updated Output',
+                            'explanation' => 'Updated Explanation',
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -308,8 +308,8 @@ class TeacherMaterialManagementTest extends TestCase
         $this->assertCount(1, $updatedMaterial->sub_materials);
         $this->assertEquals('Updated Sub Title', $updatedMaterial->sub_materials[0]['title']);
         $this->assertEquals('https://www.youtube.com/watch?v=dQw4w9WgXcQ', $updatedMaterial->sub_materials[0]['video_url']);
-        $this->assertCount(1, $updatedMaterial->code_examples);
-        $this->assertEquals('Updated Example Title', $updatedMaterial->code_examples[0]['title']);
+        $this->assertCount(1, $updatedMaterial->sub_materials[0]['code_examples']);
+        $this->assertEquals('Updated Example Title', $updatedMaterial->sub_materials[0]['code_examples'][0]['title']);
     }
 
     // public function test_teacher_can_create_update_and_delete_material_with_case_image(): void

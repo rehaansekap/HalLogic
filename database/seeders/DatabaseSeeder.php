@@ -3,10 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Classroom;
-use App\Models\Grade;
 use App\Models\Group;
 use App\Models\Material;
-use App\Models\Submission;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -92,7 +90,7 @@ class DatabaseSeeder extends Seeder
                 'classroom_id' => $targetClass->id,
             ]);
 
-            // $students[] = $student;
+            $students[] = $student;
         }
 
         $material1 = Material::create([
@@ -128,19 +126,20 @@ class DatabaseSeeder extends Seeder
                     'content' => '<p>Logika percabangan adalah struktur kontrol yang memungkinkan program untuk menjalankan blok kode yang berbeda berdasarkan hasil evaluasi kondisi (apakah bernilai true atau false). Struktur yang paling dasar adalah <code>if</code> dan <code>if-else</code>.</p>',
                     'image_path' => null,
                     'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
+                    'code_examples' => [
+                        [
+                            'title' => 'Contoh Struktur If-Else Sederhana',
+                            'code' => "let tarif = 0;\nlet jam = 3;\nif (jam <= 1) {\n    tarif = 5000;\n} else {\n    tarif = 5000 + (jam - 1) * 3000;\n}\nconsole.log(tarif);",
+                            'output' => '11000',
+                            'explanation' => 'Kode di atas mengevaluasi variabel jam. Karena jam bernilai 3 (lebih dari 1), maka blok else akan dijalankan sehingga tarif menjadi 5000 + 2 * 3000 = 11000.',
+                        ],
+                    ],
                 ],
                 [
                     'title' => 'Sub Materi 2: Blok Kode Kondisional',
                     'content' => '<p>Dalam struktur <code>if-else</code>, jika kondisi di dalam <code>if</code> tidak terpenuhi (false), maka program akan beralih mengeksekusi blok kode yang ada di dalam <code>else</code>. Ini sangat berguna untuk menangani dua kemungkinan pilihan.</p>',
                     'image_path' => null,
-                ],
-            ],
-            'code_examples' => [
-                [
-                    'title' => 'Contoh Struktur If-Else Sederhana',
-                    'code' => "let tarif = 0;\nlet jam = 3;\nif (jam <= 1) {\n    tarif = 5000;\n} else {\n    tarif = 5000 + (jam - 1) * 3000;\n}\nconsole.log(tarif);",
-                    'output' => '11000',
-                    'explanation' => 'Kode di atas mengevaluasi variabel jam. Karena jam bernilai 3 (lebih dari 1), maka blok else akan dijalankan sehingga tarif menjadi 5000 + 2 * 3000 = 11000.',
+                    'code_examples' => [],
                 ],
             ],
         ]);
@@ -178,19 +177,20 @@ class DatabaseSeeder extends Seeder
                     'content' => '<p>Struktur <code>switch</code> mengevaluasi suatu ekspresi dan mencocokkan nilainya dengan berbagai pilihan <code>case</code>. Jika cocok, blok kode case tersebut akan dieksekusi.</p>',
                     'image_path' => null,
                     'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
+                    'code_examples' => [
+                        [
+                            'title' => 'Contoh Switch-Case',
+                            'code' => "let tombol = 'B';\nlet minuman = '';\nswitch(tombol) {\n    case 'A':\n        minuman = 'Teh';\n        break;\n    case 'B':\n        minuman = 'Kopi';\n        break;\n    default:\n        minuman = 'Air Putih';\n}\nconsole.log(minuman);",
+                            'output' => 'Kopi',
+                            'explanation' => 'Karena nilai dari tombol adalah B, program mencocokkannya dengan case B dan mengisi minuman dengan Kopi, lalu keluar dari switch karena ada break.',
+                        ],
+                    ],
                 ],
                 [
                     'title' => 'Sub Materi 2: Peran Break dan Default',
                     'content' => '<p>Pernyataan <code>break</code> digunakan untuk keluar dari struktur switch setelah case yang cocok selesai dieksekusi. Tanpa break, program akan terus mengeksekusi case di bawahnya. <code>default</code> bertindak seperti else, yaitu berjalan jika tidak ada case yang cocok.</p>',
                     'image_path' => null,
-                ],
-            ],
-            'code_examples' => [
-                [
-                    'title' => 'Contoh Switch-Case',
-                    'code' => "let tombol = 'B';\nlet minuman = '';\nswitch(tombol) {\n    case 'A':\n        minuman = 'Teh';\n        break;\n    case 'B':\n        minuman = 'Kopi';\n        break;\n    default:\n        minuman = 'Air Putih';\n}\nconsole.log(minuman);",
-                    'output' => 'Kopi',
-                    'explanation' => 'Karena nilai dari tombol adalah B, program mencocokkannya dengan case B dan mengisi minuman dengan Kopi, lalu keluar dari switch karena ada break.',
+                    'code_examples' => [],
                 ],
             ],
         ]);
@@ -228,24 +228,24 @@ class DatabaseSeeder extends Seeder
                     'content' => '<p>Perulangan <code>for</code> digunakan ketika kita sudah tahu pasti berapa kali perulangan harus dilakukan. Ia memiliki tiga komponen: inisialisasi counter, kondisi perulangan, dan pembaruan counter.</p>',
                     'image_path' => null,
                     'video_url' => 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
+                    'code_examples' => [
+                        [
+                            'title' => 'Contoh Perulangan Sederhana',
+                            'code' => "let totalPanggilan = 0;\nfor (let i = 1; i <= 30; i++) {\n    totalPanggilan++;\n}\nconsole.log(totalPanggilan);",
+                            'output' => '30',
+                            'explanation' => 'Loop berjalan dari i = 1 hingga i = 30. Di setiap iterasi, variabel totalPanggilan bertambah 1. Sehingga nilai akhirnya adalah 30.',
+                        ],
+                    ],
                 ],
                 [
                     'title' => 'Sub Materi 2: Increment dan Decrement',
                     'content' => '<p>Dalam perulangan, nilai counter dapat bertambah (increment, misalnya i++) atau berkurang (decrement, misalnya i--) setiap kali satu putaran perulangan selesai dilakukan.</p>',
                     'image_path' => null,
-                ],
-            ],
-            'code_examples' => [
-                [
-                    'title' => 'Contoh Perulangan Sederhana',
-                    'code' => "let totalPanggilan = 0;\nfor (let i = 1; i <= 30; i++) {\n    totalPanggilan++;\n}\nconsole.log(totalPanggilan);",
-                    'output' => '30',
-                    'explanation' => 'Loop berjalan dari i = 1 hingga i = 30. Di setiap iterasi, variabel totalPanggilan bertambah 1. Sehingga nilai akhirnya adalah 30.',
+                    'code_examples' => [],
                 ],
             ],
         ]);
 
-        /*
         $rpl1Students = array_slice($students, 0, 20);
         $chunksRPL1 = array_chunk($rpl1Students, 4);
 
@@ -270,30 +270,10 @@ class DatabaseSeeder extends Seeder
             DB::table('group_progress')->insert([
                 'group_id' => $group->id,
                 'material_id' => $material1->id,
-                'current_step' => 3,
-                'status' => 'completed',
-            ]);
-
-            $sub = Submission::create([
-                'group_id' => $group->id,
-                'material_id' => $material1->id,
-                'files' => ['uploads/dummy-flowchart.pdf'],
-                'is_final' => true,
-                'submitted_at' => now(),
-            ]);
-
-            Grade::create([
-                'submission_id' => $sub->id,
-                'teacher_id' => $guru1->id,
-                'score' => rand(5, 100),
-                'teacher_notes' => 'Kerja bagus, tapi perhatikan indentasi kode ya!',
-            ]);
-
-            DB::table('group_progress')->insert([
-                'group_id' => $group->id,
-                'material_id' => $material2->id,
-                'current_step' => 2,
+                'current_step' => 1,
                 'status' => 'in_progress',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
@@ -318,26 +298,14 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
 
-            $status = $idx == 0 ? 'completed' : 'in_progress';
-            $step = $idx == 0 ? 3 : rand(1, 3);
-
             DB::table('group_progress')->insert([
                 'group_id' => $group->id,
                 'material_id' => $material1->id,
-                'current_step' => $step,
-                'status' => $status,
+                'current_step' => 1,
+                'status' => 'in_progress',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
-
-            if ($status == 'completed') {
-                Submission::create([
-                    'group_id' => $group->id,
-                    'material_id' => $material1->id,
-                    'files' => ['uploads/tugas-tkj.jpg'],
-                    'is_final' => true,
-                    'submitted_at' => now(),
-                ]);
-            }
         }
-        */
     }
 }

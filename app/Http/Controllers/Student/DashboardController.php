@@ -51,6 +51,8 @@ class DashboardController extends Controller
                     'slug' => $material->slug,
                     'status' => $lockStatus['status'],
                     'progress' => $lockStatus['progress'] ?? 0,
+                    'current_step' => $lockStatus['current_step'] ?? null,
+                    'sub_materials_count' => $lockStatus['sub_materials_count'] ?? 0,
                     'locked' => $lockStatus['locked'],
                     'prerequisite' => $lockStatus['prerequisite'],
                     'started_at' => $material->started_at,

@@ -29,6 +29,8 @@ Route::middleware(['auth', 'verified', 'student'])->group(function () {
     Route::get('/material/{slug}', [MaterialController::class, 'show'])->name('material.show');
     // Route::post('/material/{slug}/reflection', [MaterialController::class, 'submitReflection'])->name('material.reflection');
     Route::post('/material/{slug}/start-exploration', [MaterialController::class, 'startExploration'])->name('material.start-exploration');
+    Route::post('/material/{slug}/read-sub-material', [MaterialController::class, 'readSubMaterial'])->name('material.read-sub-material');
+    Route::post('/material/{slug}/complete-reading', [MaterialController::class, 'completeReading'])->name('material.complete-reading');
     Route::post('/material/{slug}/save-phase-3', [MaterialController::class, 'savePhase3'])->name('material.save-phase-3');
     Route::post('/material/{slug}/finish', [MaterialController::class, 'submitFinalReflection'])->name('material.finish');
     Route::post('/material/{slug}/run-code', [MaterialController::class, 'runCode'])->middleware(['auth', 'verified', 'student'])->name('material.run-code');

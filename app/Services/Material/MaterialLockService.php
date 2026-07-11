@@ -26,6 +26,7 @@ class MaterialLockService
     public function getMaterialStatus(Material $material, User $user): array
     {
         $isLocked = $this->isMaterialLocked($material, $user);
+        $subMaterialsCount = is_array($material->sub_materials) ? count($material->sub_materials) : 0;
 
         if (! $isLocked) {
             $hasFinal = DB::table('reflections')
@@ -39,6 +40,8 @@ class MaterialLockService
                     'locked' => false,
                     'status' => 'completed',
                     'progress' => 100,
+                    'current_step' => 3,
+                    'sub_materials_count' => $subMaterialsCount,
                     'prerequisite' => null,
                 ];
             }
@@ -61,22 +64,30 @@ class MaterialLockService
                             'locked' => false,
                             'status' => 'completed',
                             'progress' => 100,
+                            'current_step' => (int) $progressRecord->current_step,
+                            'sub_materials_count' => $subMaterialsCount,
                             'prerequisite' => null,
                         ];
                     }
 
                     $step = (int) $progressRecord->current_step;
-                    $progressPercent = 25;
+                    $progressPercent = 0;
                     if ($step === 2) {
+                        $progressPercent = 25;
+                    } elseif ($step === 3) {
                         $progressPercent = 50;
-                    } elseif ($step >= 3) {
+                    } elseif ($step === 4) {
                         $progressPercent = 75;
+                    } elseif ($step >= 5) {
+                        $progressPercent = 90;
                     }
 
                     return [
                         'locked' => false,
                         'status' => 'in_progress',
                         'progress' => $progressPercent,
+                        'current_step' => $step,
+                        'sub_materials_count' => $subMaterialsCount,
                         'prerequisite' => null,
                     ];
                 }
@@ -92,7 +103,9 @@ class MaterialLockService
                 return [
                     'locked' => false,
                     'status' => 'in_progress',
-                    'progress' => 25,
+                    'progress' => 0,
+                    'current_step' => 1,
+                    'sub_materials_count' => $subMaterialsCount,
                     'prerequisite' => null,
                 ];
             }
@@ -101,6 +114,8 @@ class MaterialLockService
                 'locked' => false,
                 'status' => 'unlocked',
                 'progress' => 0,
+                'current_step' => 1,
+                'sub_materials_count' => $subMaterialsCount,
                 'prerequisite' => null,
             ];
         }
@@ -111,6 +126,8 @@ class MaterialLockService
             'locked' => true,
             'status' => 'locked',
             'progress' => 0,
+            'current_step' => 0,
+            'sub_materials_count' => $subMaterialsCount,
             'prerequisite' => $prerequisite ? [
                 'id' => $prerequisite->id,
                 'title' => $prerequisite->title,

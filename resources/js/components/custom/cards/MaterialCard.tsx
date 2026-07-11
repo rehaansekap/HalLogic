@@ -179,7 +179,7 @@ export default function MaterialCard({
                 </div>
 
                 {/* Progress Bar - only show if in_progress or completed */}
-                {(status === 'in_progress' || status === 'completed') && (
+                {(status === 'in_progress' || status === 'completed' || status === 'unlocked') && (
                     <motion.div
                         className="space-y-1"
                         initial={{ opacity: 0 }}

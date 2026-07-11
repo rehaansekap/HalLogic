@@ -193,7 +193,7 @@ class StudentMaterialTest extends TestCase
         $this->assertDatabaseHas('group_progress', [
             'group_id' => $groupId,
             'material_id' => $material->id,
-            'current_step' => 3,
+            'current_step' => 5,
         ]);
     }
 
@@ -236,7 +236,7 @@ class StudentMaterialTest extends TestCase
         DB::table('group_progress')->insert([
             'group_id' => $groupId,
             'material_id' => $material->id,
-            'current_step' => 3,
+            'current_step' => 5,
             'status' => 'in_progress',
             'created_at' => now(),
             'updated_at' => now(),
@@ -290,7 +290,7 @@ class StudentMaterialTest extends TestCase
         DB::table('group_progress')->insert([
             'group_id' => $groupId,
             'material_id' => $material->id,
-            'current_step' => 3,
+            'current_step' => 5,
             'status' => 'in_progress',
             'created_at' => now(),
             'updated_at' => now(),

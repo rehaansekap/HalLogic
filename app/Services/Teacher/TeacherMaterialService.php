@@ -51,7 +51,7 @@ class TeacherMaterialService
             // 'pre_reflection_questions' => $data['pre_reflection_questions'] ?? null,
             'post_reflection_questions' => $data['post_reflection_questions'] ?? null,
             'sub_materials' => $subMaterials,
-            'code_examples' => $data['code_examples'] ?? null,
+            'code_examples' => null,
         ]);
 
         return $material;
@@ -123,7 +123,7 @@ class TeacherMaterialService
             // 'pre_reflection_questions' => $data['pre_reflection_questions'] ?? null,
             'post_reflection_questions' => $data['post_reflection_questions'] ?? null,
             'sub_materials' => $subMaterials,
-            'code_examples' => $data['code_examples'] ?? null,
+            'code_examples' => null,
         ]);
 
         return $material->fresh();
@@ -495,6 +495,7 @@ class TeacherMaterialService
                 'content' => $sub['content'] ?? '',
                 'image_path' => $imagePath,
                 'video_url' => $sub['video_url'] ?? null,
+                'code_examples' => $sub['code_examples'] ?? [],
             ];
         }
 

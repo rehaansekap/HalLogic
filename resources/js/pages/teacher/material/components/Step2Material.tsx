@@ -252,12 +252,10 @@ export default function Step2Material({
 }: Step2MaterialProps) {
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
         materi: true,
-        contoh: false,
         media: false,
     });
     const [dragActive, setDragActive] = useState(false);
     const [openSubMaterials, setOpenSubMaterials] = useState<Record<number, boolean>>({ 0: true });
-    const [openCodeExamples, setOpenCodeExamples] = useState<Record<number, boolean>>({ 0: true });
 
     const toggleSection = (id: string) => {
         setOpenSections((prev) => ({
@@ -269,26 +267,24 @@ export default function Step2Material({
     const getError = (field: string) => errors[field]?.[0];
 
     const hasMateriErrors = useMemo(() => !!errors.sub_materials, [errors]);
-    const hasContohErrors = useMemo(() => !!errors.code_examples, [errors]);
-    const hasMediaErrors = false; // useMemo(() => !!errors.material_pdf, [errors]);
+    const hasMediaErrors = false;
 
     useEffect(() => {
-        if (hasMateriErrors || hasContohErrors || hasMediaErrors) {
+        if (hasMateriErrors || hasMediaErrors) {
             setOpenSections((prev) => {
                 const next = { ...prev };
                 if (hasMateriErrors) next.materi = true;
-                if (hasContohErrors) next.contoh = true;
                 if (hasMediaErrors) next.media = true;
                 return next;
             });
         }
-    }, [errors, hasMateriErrors, hasContohErrors, hasMediaErrors]);
+    }, [errors, hasMateriErrors, hasMediaErrors]);
 
     // Sub-materials Handlers
     const subMaterials = formData.sub_materials || [];
 
     const handleAddSub = () => {
-        setFieldValue('sub_materials', [...subMaterials, { title: '', content: '', image: null, video_url: '' }]);
+        setFieldValue('sub_materials', [...subMaterials, { title: '', content: '', image: null, video_url: '', code_examples: [] }]);
         setOpenSubMaterials(prev => ({ ...prev, [subMaterials.length]: true }));
     };
 
@@ -328,31 +324,41 @@ export default function Step2Material({
         setFieldValue('sub_materials', updated);
     };
 
-    // Code Examples Handlers
-    const codeExamples = formData.code_examples || [];
+    // Sub-material Code Examples Handlers
+    const [openSubExamples, setOpenSubExamples] = useState<Record<string, boolean>>({});
 
-    const handleAddExample = () => {
-        setFieldValue('code_examples', [...codeExamples, { title: '', code: '', output: '', explanation: '' }]);
-        setOpenCodeExamples(prev => ({ ...prev, [codeExamples.length]: true }));
+    const handleAddExample = (subIndex: number) => {
+        const sub = subMaterials[subIndex];
+        const currentExamples = sub.code_examples || [];
+        const updatedExamples = [...currentExamples, { title: '', code: '', output: '', explanation: '' }];
+        handleSubChange(subIndex, 'code_examples', updatedExamples);
+        
+        const exampleKey = `${subIndex}-${currentExamples.length}`;
+        setOpenSubExamples(prev => ({ ...prev, [exampleKey]: true }));
     };
 
-    const toggleCodeExample = (index: number) => {
-        setOpenCodeExamples(prev => ({ ...prev, [index]: !prev[index] }));
+    const toggleSubExample = (subIndex: number, exampleIndex: number) => {
+        const exampleKey = `${subIndex}-${exampleIndex}`;
+        setOpenSubExamples(prev => ({ ...prev, [exampleKey]: !prev[exampleKey] }));
     };
 
-    const handleRemoveExample = (index: number) => {
-        const updated = codeExamples.filter((_, i) => i !== index);
-        setFieldValue('code_examples', updated);
+    const handleRemoveExample = (subIndex: number, exampleIndex: number) => {
+        const sub = subMaterials[subIndex];
+        const currentExamples = sub.code_examples || [];
+        const updatedExamples = currentExamples.filter((_, i) => i !== exampleIndex);
+        handleSubChange(subIndex, 'code_examples', updatedExamples);
     };
 
-    const handleExampleChange = (index: number, field: string, value: string) => {
-        const updated = codeExamples.map((ex, i) => {
-            if (i === index) {
+    const handleExampleChange = (subIndex: number, exampleIndex: number, field: string, value: string) => {
+        const sub = subMaterials[subIndex];
+        const currentExamples = sub.code_examples || [];
+        const updatedExamples = currentExamples.map((ex, i) => {
+            if (i === exampleIndex) {
                 return { ...ex, [field]: value };
             }
             return ex;
         });
-        setFieldValue('code_examples', updated);
+        handleSubChange(subIndex, 'code_examples', updatedExamples);
     };
 
     // PDF Handlers
@@ -565,6 +571,152 @@ export default function Step2Material({
                                                                 )}
                                                             </div>
                                                         </div>
+
+                                                        {/* Nested Contoh Kasus / Code Examples Management */}
+                                                        <div className="space-y-4 border-t border-slate-200/50 pt-4">
+                                                            <div className="flex items-center justify-between">
+                                                                <Label className="text-xs font-bold text-foreground">
+                                                                    Daftar Contoh Kasus untuk Sub-Materi Ini
+                                                                </Label>
+                                                                 <button
+                                                                    type="button"
+                                                                    onClick={() => handleAddExample(index)}
+                                                                    className="flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50/50 px-3.5 py-2 text-xs font-bold text-blue-600 transition-colors hover:bg-blue-100/50 shadow-sm cursor-pointer"
+                                                                >
+                                                                    <Plus className="h-4 w-4" />
+                                                                    Tambah Contoh Kasus
+                                                                </button>
+                                                            </div>
+                                                            
+                                                            {sub.code_examples && sub.code_examples.length > 0 ? (
+                                                                <div className="space-y-4">
+                                                                    {sub.code_examples.map((ex, exIndex) => {
+                                                                        const exampleKey = `${index}-${exIndex}`;
+                                                                        const isExOpen = !!openSubExamples[exampleKey];
+                                                                        return (
+                                                                            <div key={exIndex} className={cn(
+                                                                                "rounded-2xl border shadow-sm transition-all duration-300 overflow-hidden bg-white",
+                                                                                isExOpen ? "border-blue-300 ring-2 ring-blue-100/50" : "border-slate-200 bg-slate-50/60 hover:bg-slate-50 hover:border-slate-350"
+                                                                            )}>
+                                                                                {/* Accordion Header */}
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => toggleSubExample(index, exIndex)}
+                                                                                    className="flex w-full items-center justify-between p-5 text-left focus:outline-none transition-colors duration-200 cursor-pointer"
+                                                                                >
+                                                                                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                                                        <div className="flex px-3 py-1.5 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-200 text-xs font-black uppercase tracking-wider shrink-0">
+                                                                                            Contoh {exIndex + 1}
+                                                                                        </div>
+                                                                                        <span className={cn(
+                                                                                            "text-sm font-bold truncate pr-4",
+                                                                                            ex.title ? "text-slate-800" : "text-muted-foreground italic font-medium"
+                                                                                        )}>
+                                                                                            {ex.title || "Belum diberi judul..."}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div className="flex items-center gap-3 shrink-0">
+                                                                                        <button
+                                                                                            type="button"
+                                                                                            onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                handleRemoveExample(index, exIndex);
+                                                                                            }}
+                                                                                            className="rounded-xl p-2 text-red-500 hover:bg-red-55 hover:text-red-600 transition-colors cursor-pointer"
+                                                                                            title="Hapus contoh kasus"
+                                                                                        >
+                                                                                            <Trash2 className="h-4 w-4" />
+                                                                                        </button>
+                                                                                        <motion.div
+                                                                                            animate={{ rotate: isExOpen ? 180 : 0 }}
+                                                                                            transition={{ duration: 0.2 }}
+                                                                                            className="text-muted-foreground/60 mr-1"
+                                                                                        >
+                                                                                            <ChevronDown className="h-5 w-5" />
+                                                                                        </motion.div>
+                                                                                    </div>
+                                                                                </button>
+
+                                                                                {/* Accordion Content */}
+                                                                                <AnimatePresence initial={false}>
+                                                                                    {isExOpen && (
+                                                                                        <motion.div
+                                                                                            initial={{ height: 0, opacity: 0 }}
+                                                                                            animate={{ height: "auto", opacity: 1 }}
+                                                                                            exit={{ height: 0, opacity: 0 }}
+                                                                                            transition={{ duration: 0.2 }}
+                                                                                            className="overflow-visible"
+                                                                                        >
+                                                                                            <div className="p-4 pt-0 border-t border-slate-150/70 space-y-3 bg-white">
+                                                                                                <div className="space-y-1.5 pt-3">
+                                                                                                    <Label className="text-[10px] font-bold text-slate-700">Judul / Deskripsi Singkat Contoh</Label>
+                                                                                                    <Input
+                                                                                                        value={ex.title}
+                                                                                                        onChange={(e) => handleExampleChange(index, exIndex, 'title', e.target.value)}
+                                                                                                        placeholder="Contoh: Contoh 1: Variabel & Tipe Data"
+                                                                                                        className="h-9 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 bg-white text-xs"
+                                                                                                    />
+                                                                                                </div>
+                                                                                                
+                                                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                                                                                    {/* C Code Editor */}
+                                                                                                    <div className="space-y-1.5 flex flex-col">
+                                                                                                        <Label className="text-[10px] font-bold text-slate-700">Kode Program C</Label>
+                                                                                                        <div className="rounded-lg overflow-hidden border border-gray-250 min-h-[160px]">
+                                                                                                            <Editor
+                                                                                                                height="160px"
+                                                                                                                language="c"
+                                                                                                                theme="vs-dark"
+                                                                                                                value={ex.code}
+                                                                                                                onChange={(value) => handleExampleChange(index, exIndex, 'code', value || '')}
+                                                                                                                options={{
+                                                                                                                    minimap: { enabled: false },
+                                                                                                                    fontSize: 12,
+                                                                                                                    lineNumbers: 'on',
+                                                                                                                    scrollBeyondLastLine: false,
+                                                                                                                    wordWrap: 'on',
+                                                                                                                    padding: { top: 12, bottom: 12 },
+                                                                                                                }}
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    
+                                                                                                    {/* Output and Explanation */}
+                                                                                                    <div className="space-y-3 flex flex-col justify-between">
+                                                                                                        <div className="space-y-1.5">
+                                                                                                            <Label className="text-[10px] font-bold text-slate-700">Contoh Output Program</Label>
+                                                                                                            <textarea
+                                                                                                                value={ex.output}
+                                                                                                                onChange={(e) => handleExampleChange(index, exIndex, 'output', e.target.value)}
+                                                                                                                placeholder="Nama : Raka&#10;Umur : 16"
+                                                                                                                className="w-full h-16 rounded-lg border border-gray-250 p-2.5 font-mono text-xs focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 resize-none bg-white"
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                        <div className="space-y-1.5 flex-1 flex flex-col">
+                                                                                                            <Label className="text-[10px] font-bold text-slate-700">Penjelasan Kode</Label>
+                                                                                                            <RichTextEditor
+                                                                                                                id={`explanation-${index}-${exIndex}`}
+                                                                                                                value={ex.explanation}
+                                                                                                                onChange={(val) => handleExampleChange(index, exIndex, 'explanation', val)}
+                                                                                                                placeholder="Jelaskan detail kode program di atas..."
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </motion.div>
+                                                                                    )}
+                                                                                </AnimatePresence>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            ) : (
+                                                                <div className="rounded-xl border border-dashed border-gray-200 p-4 text-center bg-gray-50/20">
+                                                                    <p className="text-[11px] font-bold text-muted-foreground/60">Belum ada contoh kasus untuk sub-materi ini</p>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </motion.div>
                                             )}
@@ -584,177 +736,6 @@ export default function Step2Material({
                     {getError('sub_materials') && (
                         <p className="text-xs font-semibold text-red-500 bg-red-50/50 p-3 rounded-lg border border-red-100 flex items-center gap-2">
                             <span>⚠️</span> {getError('sub_materials')}
-                        </p>
-                    )}
-                </div>
-            </AccordionSection>
-
-
-
-            {/* Section 2: Contoh Kode Program */}
-            <AccordionSection
-                id="contoh"
-                title="Contoh Kode Program"
-                description="Tambahkan beberapa contoh kode program yang berkaitan dengan materi agar dapat dipelajari oleh siswa."
-                icon={Code2}
-                isOpen={openSections.contoh}
-                onToggle={() => toggleSection('contoh')}
-                hasError={hasContohErrors}
-            >
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                        <Label className="text-sm font-bold text-foreground">
-                            Daftar Contoh Program C
-                        </Label>
-                        <button
-                            type="button"
-                            onClick={handleAddExample}
-                            className="flex items-center gap-1.5 rounded-xl border border-(--palette-green)/20 bg-(--palette-green)/5 px-3.5 py-2 text-xs font-bold text-(--palette-green) transition-colors hover:bg-(--palette-green)/10 shadow-sm"
-                        >
-                            <Plus className="h-4 w-4" />
-                            Tambah Contoh Kode
-                        </button>
-                    </div>
-
-                    {codeExamples.length > 0 ? (
-                        <div className="space-y-6">
-                            {codeExamples.map((ex, index) => {
-                                const isExOpen = !!openCodeExamples[index];
-                                return (
-                                    <div
-                                        key={index}
-                                        className={cn(
-                                            "rounded-2xl border shadow-sm transition-all duration-300 overflow-hidden",
-                                            isExOpen
-                                                ? "border-slate-300 bg-slate-100/40 ring-2 ring-slate-100"
-                                                : "border-slate-200 bg-slate-50/60 hover:bg-slate-50 hover:border-slate-300"
-                                        )}
-                                    >
-                                        {/* Accordion Header */}
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleCodeExample(index)}
-                                            className="flex w-full items-center justify-between p-5 text-left focus:outline-none transition-colors duration-200"
-                                        >
-                                            <div className="flex items-center gap-3 min-w-0 flex-1">
-                                                <div className="flex h-7 w-auto px-3 items-center justify-center rounded-xl bg-(--palette-green)/10 text-xs font-black text-(--palette-green) border border-(--palette-green)/20 shrink-0">
-                                                    Contoh {index + 1}
-                                                </div>
-                                                <span className={cn(
-                                                    "text-sm font-bold truncate pr-4",
-                                                    ex.title ? "text-foreground" : "text-muted-foreground italic font-medium"
-                                                )}>
-                                                    {ex.title || "Belum diberi judul..."}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-3 shrink-0">
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleRemoveExample(index);
-                                                    }}
-                                                    className="rounded-xl p-2 text-red-500 hover:bg-red-55 hover:text-red-600 transition-colors"
-                                                    title="Hapus contoh kode"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </button>
-                                                <motion.div
-                                                    animate={{ rotate: isExOpen ? 180 : 0 }}
-                                                    transition={{ duration: 0.2 }}
-                                                    className="text-muted-foreground/60 mr-1"
-                                                >
-                                                    <ChevronDown className="h-5 w-5" />
-                                                </motion.div>
-                                            </div>
-                                        </button>
-
-                                        {/* Accordion Content */}
-                                        <AnimatePresence initial={false}>
-                                            {isExOpen && (
-                                                <motion.div
-                                                    initial={{ height: 0, opacity: 0 }}
-                                                    animate={{ height: "auto", opacity: 1 }}
-                                                    exit={{ height: 0, opacity: 0 }}
-                                                    transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
-                                                    className="overflow-visible"
-                                                >
-                                                    <div className="p-5 pt-0 border-t border-slate-200/50 mt-1 space-y-4">
-                                                        <div className="space-y-2 pt-4">
-                                                            <Label className="text-xs font-bold text-slate-700">Judul / Deskripsi Singkat Contoh</Label>
-                                                            <Input
-                                                                value={ex.title}
-                                                                onChange={(e) => handleExampleChange(index, 'title', e.target.value)}
-                                                                placeholder="Contoh: Contoh 1: Variabel & Tipe Data"
-                                                                className="h-11 rounded-lg border-gray-250 transition-all focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 bg-white"
-                                                            />
-                                                        </div>
-
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            {/* Left Side: C Code Editor */}
-                                                            <div className="space-y-2 flex flex-col">
-                                                                <Label className="text-xs font-bold text-slate-700">Kode Program C</Label>
-                                                                <div className="rounded-xl overflow-hidden border border-gray-250 min-h-[200px]">
-                                                                    <Editor
-                                                                        height="200px"
-                                                                        language="c"
-                                                                        theme="vs-dark"
-                                                                        value={ex.code}
-                                                                        onChange={(value) => handleExampleChange(index, 'code', value || '')}
-                                                                        options={{
-                                                                            minimap: { enabled: false },
-                                                                            fontSize: 13,
-                                                                            lineNumbers: 'on',
-                                                                            scrollBeyondLastLine: false,
-                                                                            wordWrap: 'on',
-                                                                            padding: { top: 16, bottom: 16 },
-                                                                        }}
-                                                                    />
-                                                                </div>
-                                                            </div>
-
-                                                            {/* Right Side: Output and Explanation */}
-                                                            <div className="space-y-4 flex flex-col justify-between">
-                                                                <div className="space-y-2">
-                                                                    <Label className="text-xs font-bold text-slate-700">Contoh Output Program</Label>
-                                                                    <textarea
-                                                                        value={ex.output}
-                                                                        onChange={(e) => handleExampleChange(index, 'output', e.target.value)}
-                                                                        placeholder="Nama : Raka&#10;Umur : 16&#10;Aktif: True"
-                                                                        className="w-full h-20 rounded-lg border border-gray-250 p-3 font-mono text-xs focus:border-(--palette-green) focus:ring-2 focus:ring-(--palette-green)/10 resize-none bg-white"
-                                                                    />
-                                                                </div>
-
-                                                                <div className="space-y-2 flex-1 flex flex-col">
-                                                                    <Label className="text-xs font-bold text-slate-700">Penjelasan Kode</Label>
-                                                                    <RichTextEditor
-                                                                        id={`explanation-${index}`}
-                                                                        value={ex.explanation}
-                                                                        onChange={(val) => handleExampleChange(index, 'explanation', val)}
-                                                                        placeholder="Jelaskan detail dari kode program di atas agar mudah dimengerti siswa..."
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <div className="rounded-2xl border-2 border-dashed border-gray-200 p-8 text-center bg-gray-50/50">
-                            <Code2 className="mx-auto h-8 w-8 text-muted-foreground/30 mb-3" />
-                            <p className="text-sm font-bold text-muted-foreground/50">Belum ada contoh program yang dibuat</p>
-                            <p className="text-xs text-muted-foreground/40 mt-1">Kamu bisa menambahkan contoh-contoh program C sebagai materi referensi tambahan siswa.</p>
-                        </div>
-                    )}
-
-                    {getError('code_examples') && (
-                        <p className="text-xs font-semibold text-red-500 bg-red-50/50 p-3 rounded-lg border border-red-100 flex items-center gap-2">
-                            <span>⚠️</span> {getError('code_examples')}
                         </p>
                     )}
                 </div>

@@ -24,7 +24,7 @@ import {
     Image as ImageIcon,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage, router } from '@inertiajs/react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -49,12 +49,12 @@ interface Phase2InvestigationProps {
             content: string;
             image_path?: string;
             video_url?: string;
-        }>;
-        code_examples?: Array<{
-            title: string;
-            code: string;
-            output: string;
-            explanation: string;
+            code_examples?: Array<{
+                title: string;
+                code: string;
+                output: string;
+                explanation: string;
+            }>;
         }>;
     };
     currentStep: number;
@@ -76,6 +76,7 @@ interface Phase2InvestigationProps {
             updated_at?: string;
         } | null;
     } | null;
+    readSubMaterials?: number[];
 }
 
 const containerVariants = {
@@ -99,17 +100,42 @@ export default function Phase2Investigation({
     currentStep,
     groupMembers,
     submission,
+    readSubMaterials = [],
 }: Phase2InvestigationProps) {
-    const [activeTab, setActiveTab] = useState<'materi' | 'contoh' | 'editor' | 'tugas'>('materi');
+    const [activeTab, setActiveTab] = useState<'materi' | 'editor' | 'tugas'>(() => {
+        if (groupMembers.length > 0) {
+            if (currentStep === 3) {
+                return 'editor';
+            }
+            if (currentStep >= 4) {
+                return 'tugas';
+            }
+        }
+        return 'materi';
+    });
+
+    useEffect(() => {
+        if (groupMembers.length > 0) {
+            if (currentStep === 3) {
+                setActiveTab('editor');
+            }
+            if (currentStep >= 4) {
+                setActiveTab('tugas');
+            }
+        }
+    }, [currentStep, groupMembers.length]);
 
     // Accordion expansion states
     const [expandedSubIndices, setExpandedSubIndices] = useState<number[]>([0]);
-    const [expandedExampleIndices, setExpandedExampleIndices] = useState<number[]>([0]);
+    const [expandedExampleIndices, setExpandedExampleIndices] = useState<string[]>([]);
     const [expandedVideoIndices, setExpandedVideoIndices] = useState<number[]>([]);
     const [expandedImageIndices, setExpandedImageIndices] = useState<number[]>([]);
 
     const storageKey = `read-sub-materials-${material.id}`;
     const [readSubIndices, setReadSubIndices] = useState<number[]>(() => {
+        if (groupMembers.length > 0) {
+            return readSubMaterials;
+        }
         try {
             const saved = localStorage.getItem(storageKey);
             return saved ? JSON.parse(saved) : [];
@@ -117,6 +143,12 @@ export default function Phase2Investigation({
             return [];
         }
     });
+
+    useEffect(() => {
+        if (groupMembers.length > 0) {
+            setReadSubIndices(readSubMaterials);
+        }
+    }, [readSubMaterials, groupMembers.length]);
 
     const examplesStorageKey = `read-code-examples-${material.id}`;
     const [readExampleIndices, setReadExampleIndices] = useState<number[]>(() => {
@@ -129,7 +161,7 @@ export default function Phase2Investigation({
     });
 
     const compilerStorageKey = `has-run-compiler-${material.id}`;
-    const [hasRunCompiler, setHasRunCompiler] = useState<boolean>(() => {
+    const [localHasRunCompiler, setLocalHasRunCompiler] = useState<boolean>(() => {
         try {
             const saved = localStorage.getItem(compilerStorageKey);
             return saved === 'true';
@@ -138,38 +170,70 @@ export default function Phase2Investigation({
         }
     });
 
-    const isMateriFinished = material.sub_materials && material.sub_materials.length > 0
-        ? readSubIndices.length === material.sub_materials.length
-        : true;
+    const isMateriFinished = groupMembers.length > 0
+        ? currentStep >= 3
+        : (material.sub_materials && material.sub_materials.length > 0
+            ? readSubIndices.length === material.sub_materials.length
+            : true);
 
-    const isContohFinished = material.code_examples && material.code_examples.length > 0
-        ? readExampleIndices.length === material.code_examples.length
-        : true;
+    const hasRunCompiler = groupMembers.length > 0 ? currentStep >= 4 : localHasRunCompiler;
+
+    const isContohFinished = true;
 
     const handleMarkAsRead = (index: number) => {
-        if (!readSubIndices.includes(index)) {
-            const nextRead = [...readSubIndices, index];
-            setReadSubIndices(nextRead);
-            try {
-                localStorage.setItem(storageKey, JSON.stringify(nextRead));
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
         const totalSubs = material.sub_materials?.length || 0;
+
         if (index === totalSubs - 1) {
-            setActiveTab('contoh');
-            MySwal.fire({
-                icon: 'success',
-                title: 'Materi Selesai Dibaca',
-                text: 'Membuka Contoh Kasus...',
-                confirmButtonText: 'Oke',
-                confirmButtonColor: 'var(--palette-green, #10b981)',
-                timer: 2500,
-                timerProgressBar: true
-            });
+            if (groupMembers.length > 0) {
+                router.post(`/material/${material.slug}/complete-reading`, {}, {
+                    onSuccess: () => {
+                        MySwal.fire({
+                            icon: 'success',
+                            title: 'Materi Selesai Dibaca',
+                            text: 'Membuka Compiler Online...',
+                            confirmButtonText: 'Oke',
+                            confirmButtonColor: 'var(--palette-green, #10b981)',
+                            timer: 2500,
+                            timerProgressBar: true
+                        });
+                    }
+                });
+            } else {
+                if (!readSubIndices.includes(index)) {
+                    const nextRead = [...readSubIndices, index];
+                    setReadSubIndices(nextRead);
+                    try {
+                        localStorage.setItem(storageKey, JSON.stringify(nextRead));
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+                setActiveTab('editor');
+                MySwal.fire({
+                    icon: 'success',
+                    title: 'Materi Selesai Dibaca',
+                    text: 'Membuka Compiler Online...',
+                    confirmButtonText: 'Oke',
+                    confirmButtonColor: 'var(--palette-green, #10b981)',
+                    timer: 2500,
+                    timerProgressBar: true
+                });
+            }
         } else {
+            if (!readSubIndices.includes(index)) {
+                if (groupMembers.length > 0) {
+                    router.post(`/material/${material.slug}/read-sub-material`, { index });
+                } else {
+                    const nextRead = [...readSubIndices, index];
+                    setReadSubIndices(nextRead);
+                    try {
+                        localStorage.setItem(storageKey, JSON.stringify(nextRead));
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+            }
+
             // Collapse current sub-material and expand the next one
             setExpandedSubIndices(prev => {
                 const collapsed = prev.filter(i => i !== index);
@@ -222,7 +286,7 @@ export default function Phase2Investigation({
         );
     };
 
-    const toggleExampleIndex = (index: number) => {
+    const toggleExampleIndex = (index: string) => {
         setExpandedExampleIndices(prev =>
             prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
         );
@@ -535,7 +599,7 @@ int main() {
                     type="button"
                     onClick={() => {
                         if (isMateriFinished) {
-                            setActiveTab('contoh');
+                            setActiveTab('editor');
                         } else {
                             MySwal.fire({
                                 icon: 'warning',
@@ -547,49 +611,15 @@ int main() {
                         }
                     }}
                     className={cn(
-                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
-                        activeTab === 'contoh'
+                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200 cursor-pointer",
+                        activeTab === 'editor'
                             ? "bg-white text-(--palette-green) shadow-sm"
                             : isMateriFinished
                                 ? "text-muted-foreground hover:text-foreground hover:bg-white/50"
                                 : "text-slate-400 bg-slate-100/50 cursor-not-allowed"
                     )}
                 >
-                    {isMateriFinished ? <Code2 className="h-4 w-4" /> : <Lock className="h-4 w-4 text-slate-450" />}
-                    <span>Contoh Kasus</span>
-                    {activeTab === 'contoh' && (
-                        <motion.div
-                            className="absolute inset-0 rounded-lg border-2 border-(--palette-green)/30 pointer-events-none"
-                            layoutId="activePhase2Tab"
-                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        />
-                    )}
-                </button>
-                <button
-                    type="button"
-                    onClick={() => {
-                        if (isMateriFinished && isContohFinished) {
-                            setActiveTab('editor');
-                        } else {
-                            MySwal.fire({
-                                icon: 'warning',
-                                title: 'Akses Terkunci',
-                                text: 'Pelajari semua contoh kasus terlebih dahulu!',
-                                confirmButtonText: 'Oke',
-                                confirmButtonColor: '#dc2626'
-                            });
-                        }
-                    }}
-                    className={cn(
-                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
-                        activeTab === 'editor'
-                            ? "bg-white text-(--palette-green) shadow-sm"
-                            : (isMateriFinished && isContohFinished)
-                                ? "text-muted-foreground hover:text-foreground hover:bg-white/50"
-                                : "text-slate-400 bg-slate-100/50 cursor-not-allowed"
-                    )}
-                >
-                    {(isMateriFinished && isContohFinished) ? <Monitor className="h-4 w-4" /> : <Lock className="h-4 w-4 text-slate-450" />}
+                    {isMateriFinished ? <Monitor className="h-4 w-4" /> : <Lock className="h-4 w-4 text-slate-450" />}
                     <span>Compiler Online</span>
                     {activeTab === 'editor' && (
                         <motion.div
@@ -602,28 +632,28 @@ int main() {
                 <button
                     type="button"
                     onClick={() => {
-                        if (isMateriFinished && isContohFinished && hasRunCompiler) {
+                        if (isMateriFinished && hasRunCompiler) {
                             setActiveTab('tugas');
                         } else {
                             MySwal.fire({
                                 icon: 'warning',
                                 title: 'Akses Terkunci',
-                                text: 'Jalankan program di Compiler Online minimal 1 kali!',
+                                text: !isMateriFinished ? 'Selesaikan semua sub-materi terlebih dahulu!' : 'Jalankan program di Compiler Online minimal 1 kali!',
                                 confirmButtonText: 'Oke',
                                 confirmButtonColor: '#dc2626'
                             });
                         }
                     }}
                     className={cn(
-                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200",
+                        "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200 cursor-pointer",
                         activeTab === 'tugas'
                             ? "bg-white text-(--palette-green) shadow-sm"
-                            : (isMateriFinished && isContohFinished && hasRunCompiler)
+                            : (isMateriFinished && hasRunCompiler)
                                 ? "text-muted-foreground hover:text-foreground hover:bg-white/50"
                                 : "text-slate-400 bg-slate-100/50 cursor-not-allowed"
                     )}
                 >
-                    {(isMateriFinished && isContohFinished && hasRunCompiler) ? <ClipboardCheck className="h-4 w-4" /> : <Lock className="h-4 w-4 text-slate-450" />}
+                    {(isMateriFinished && hasRunCompiler) ? <ClipboardCheck className="h-4 w-4" /> : <Lock className="h-4 w-4 text-slate-450" />}
                     <span>Upload Kode</span>
                     {activeTab === 'tugas' && (
                         <motion.div
@@ -883,6 +913,121 @@ int main() {
                                                                     </AnimatePresence>
                                                                 </div>
                                                             )}
+
+                                                            {/* Accordion Contoh Kasus */}
+                                                            {sub.code_examples && sub.code_examples.length > 0 && (
+                                                                <div className="space-y-4 mt-6">
+                                                                    <div className="text-xs font-black uppercase tracking-wider text-slate-400">Contoh Kasus</div>
+                                                                    {sub.code_examples.map((ex, exIdx) => {
+                                                                        const uniqueId = `${index}-${exIdx}`;
+                                                                        const isExOpen = expandedExampleIndices.includes(uniqueId);
+                                                                        return (
+                                                                            <div key={exIdx} className={cn(
+                                                                                "rounded-xl border shadow-xs transition-all duration-300 overflow-hidden",
+                                                                                isExOpen
+                                                                                    ? "border-blue-200 bg-blue-50/10 ring-1 ring-blue-100"
+                                                                                    : "border-slate-200 bg-white hover:border-slate-350"
+                                                                            )}>
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => {
+                                                                                        toggleExampleIndex(uniqueId);
+                                                                                    }}
+                                                                                    className="flex w-full items-center justify-between p-4 text-left focus:outline-none group/ex cursor-pointer transition-colors"
+                                                                                >
+                                                                                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                                                                                        <div className={cn(
+                                                                                            "flex h-5 px-2 items-center justify-center rounded-lg text-[10px] font-black transition-colors border shrink-0 uppercase tracking-wider",
+                                                                                            isExOpen
+                                                                                                ? "bg-blue-100 text-blue-700 border-blue-200"
+                                                                                                : "bg-gray-50 text-slate-400 border-slate-200 group-hover/ex:text-slate-650"
+                                                                                        )}>
+                                                                                            C{exIdx + 1}
+                                                                                        </div>
+                                                                                        <span className={cn(
+                                                                                            "text-xs font-black uppercase tracking-wider transition-colors truncate pr-3",
+                                                                                            isExOpen
+                                                                                                ? "text-blue-650"
+                                                                                                : "text-slate-700 group-hover/ex:text-blue-600"
+                                                                                        )}>
+                                                                                            {ex.title || `Contoh ${exIdx + 1}`}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <motion.div
+                                                                                        animate={{ rotate: isExOpen ? 180 : 0 }}
+                                                                                        transition={{ duration: 0.2 }}
+                                                                                        className="text-slate-400 group-hover/ex:text-slate-600"
+                                                                                    >
+                                                                                        <ChevronDown size={16} />
+                                                                                    </motion.div>
+                                                                                </button>
+                                                                                
+                                                                                {isExOpen && (
+                                                                                    <div className="p-4 border-t border-slate-100 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-white">
+                                                                                        {/* Code block */}
+                                                                                        <div className="flex flex-col rounded-lg overflow-hidden border border-slate-800 bg-slate-950 shadow-inner">
+                                                                                            <div className="flex items-center justify-between bg-slate-900 px-3 py-1.5 border-b border-slate-800">
+                                                                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">program.c</span>
+                                                                                                <div className="flex gap-2">
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        onClick={() => handleCopyExampleCode(ex.code)}
+                                                                                                        className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                                                                                                        title="Salin kode"
+                                                                                                    >
+                                                                                                        <Copy size={12} />
+                                                                                                    </button>
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        onClick={() => handleApplyExampleToEditor(ex.code)}
+                                                                                                        className="flex items-center gap-1 text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-(--palette-green)/20 text-(--palette-green) hover:bg-(--palette-green)/30 transition-colors border border-(--palette-green)/30 cursor-pointer"
+                                                                                                        title="Gunakan di Compiler"
+                                                                                                    >
+                                                                                                        <Play size={8} />
+                                                                                                        Coba
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <Editor
+                                                                                                height="200px"
+                                                                                                language="c"
+                                                                                                theme="vs-dark"
+                                                                                                value={ex.code}
+                                                                                                options={{
+                                                                                                    readOnly: true,
+                                                                                                    minimap: { enabled: false },
+                                                                                                    fontSize: 12,
+                                                                                                    lineNumbers: 'on',
+                                                                                                    scrollBeyondLastLine: false,
+                                                                                                    wordWrap: 'on',
+                                                                                                    padding: { top: 8, bottom: 8 },
+                                                                                                }}
+                                                                                            />
+                                                                                        </div>
+                                                                                        
+                                                                                        {/* Output and Explanation */}
+                                                                                        <div className="space-y-3 flex flex-col justify-between">
+                                                                                            <div className="rounded-lg border border-slate-150 p-3.5 bg-slate-50 shadow-sm flex-1">
+                                                                                                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Penjelasan Kode</h4>
+                                                                                                <div
+                                                                                                    className="text-xs text-slate-700 leading-relaxed max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:mb-1 [&_p]:mb-1 [&_strong]:text-slate-900"
+                                                                                                    dangerouslySetInnerHTML={{ __html: ex.explanation }}
+                                                                                                />
+                                                                                            </div>
+                                                                                            <div className="rounded-lg border border-slate-800 bg-slate-950 p-3.5">
+                                                                                                <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Output Program</h4>
+                                                                                                <pre className="font-mono text-xs text-slate-200 whitespace-pre-wrap">
+                                                                                                    {ex.output}
+                                                                                                </pre>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     )}
 
@@ -929,200 +1074,7 @@ int main() {
                     </motion.div>
                 )}
 
-                {activeTab === 'contoh' && (
-                    <motion.div
-                        key="contoh"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="space-y-4"
-                    >
-                        {material.code_examples && material.code_examples.length > 0 ? (
-                            material.code_examples.map((ex, index) => {
-                                const isOpen = expandedExampleIndices.includes(index);
-                                const isUnlocked = index === 0 || readExampleIndices.includes(index - 1);
-                                const isRead = readExampleIndices.includes(index);
 
-                                if (!isUnlocked) {
-                                    return (
-                                        <div
-                                            key={index}
-                                            className="rounded-2xl border bg-slate-50/50 p-5 md:p-6 shadow-sm opacity-60 border-slate-200"
-                                        >
-                                            <div className="flex w-full items-center justify-between text-left cursor-not-allowed group">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black bg-gray-200 text-slate-400 border border-slate-300 shrink-0">
-                                                        <Lock size={12} className="text-slate-400" />
-                                                    </div>
-                                                    <h3 className="font-bold text-slate-400 text-sm md:text-base tracking-tight select-none">
-                                                        {ex.title}
-                                                    </h3>
-                                                </div>
-                                                <div className="text-slate-400">
-                                                    <Lock size={16} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                }
-
-                                return (
-                                    <div
-                                        key={index}
-                                        className={cn(
-                                            "rounded-2xl border bg-white p-5 md:p-6 shadow-sm transition-all duration-300",
-                                            isOpen
-                                                ? "border-(--palette-green)/30 ring-2 ring-(--palette-green)/5"
-                                                : isRead
-                                                    ? "border-emerald-200 bg-emerald-50/5 hover:border-emerald-300"
-                                                    : "border-slate-200 hover:border-slate-300"
-                                        )}
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                toggleExampleIndex(index);
-                                            }}
-                                            className="flex w-full items-center justify-between text-left focus:outline-none group"
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className={cn(
-                                                    "flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black transition-colors border shrink-0",
-                                                    isRead
-                                                        ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                                                        : isOpen
-                                                            ? "bg-(--palette-green)/10 text-(--palette-green) border-(--palette-green)/20"
-                                                            : "bg-gray-50 text-slate-400 border-slate-200 group-hover:text-slate-600"
-                                                )}>
-                                                    {isRead ? <Check size={12} className="stroke-[3]" /> : `C${index + 1}`}
-                                                </div>
-                                                <h3 className={cn(
-                                                    "font-bold text-sm md:text-base tracking-tight transition-colors",
-                                                    isRead
-                                                        ? "text-emerald-800 group-hover:text-emerald-600"
-                                                        : "text-slate-800 group-hover:text-(--palette-green)"
-                                                )}>
-                                                    {ex.title}
-                                                </h3>
-                                            </div>
-                                            <motion.div
-                                                animate={{ rotate: isOpen ? 180 : 0 }}
-                                                transition={{ duration: 0.2 }}
-                                                className="text-slate-400 group-hover:text-slate-600"
-                                            >
-                                                <ChevronDown size={18} />
-                                            </motion.div>
-                                        </button>
-
-                                        {isOpen && (
-                                            <motion.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                transition={{ duration: 0.25 }}
-                                                className="overflow-hidden"
-                                            >
-                                                <div className="mt-5 border-t border-slate-100 pt-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                                    {/* Code Block Container */}
-                                                    <div className="flex flex-col rounded-xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner">
-                                                        <div className="flex items-center justify-between bg-slate-900 px-4 py-2 border-b border-slate-800">
-                                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">program.c</span>
-                                                            <div className="flex gap-2">
-                                                                <button
-                                                                    onClick={() => handleCopyExampleCode(ex.code)}
-                                                                    className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-                                                                    title="Salin kode"
-                                                                >
-                                                                    <Copy size={13} />
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => handleApplyExampleToEditor(ex.code)}
-                                                                    className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-(--palette-green)/20 text-(--palette-green) hover:bg-(--palette-green)/30 transition-colors border border-(--palette-green)/30"
-                                                                    title="Gunakan di Compiler"
-                                                                >
-                                                                    <Play size={9} />
-                                                                    Coba
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <Editor
-                                                            height="300px"
-                                                            language="c"
-                                                            theme="vs-dark"
-                                                            value={ex.code}
-                                                            options={{
-                                                                readOnly: true,
-                                                                minimap: { enabled: false },
-                                                                fontSize: 12,
-                                                                lineNumbers: 'on',
-                                                                scrollBeyondLastLine: false,
-                                                                wordWrap: 'on',
-                                                                padding: { top: 16, bottom: 16 },
-                                                            }}
-                                                        />
-                                                    </div>
-
-                                                    {/* Right Panel: Output & Explanation */}
-                                                    <div className="space-y-4 flex flex-col">
-                                                        <div className="rounded-xl border border-slate-150 p-4 bg-slate-50 shadow-sm flex-1">
-                                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Penjelasan Kode</h4>
-                                                            <div
-                                                                className="text-sm text-slate-700 leading-relaxed max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:mb-1 [&_p]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2 [&_strong]:text-slate-900"
-                                                                dangerouslySetInnerHTML={{ __html: ex.explanation }}
-                                                            />
-                                                        </div>
-
-                                                        <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 flex-1">
-                                                            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Output Program</h4>
-                                                            <pre className="font-mono text-xs text-slate-200 whitespace-pre-wrap">
-                                                                {ex.output}
-                                                            </pre>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Button Tandai Sudah Dipelajari */}
-                                                    <div className="col-span-1 lg:col-span-2 flex items-center justify-end border-t border-slate-100 pt-4 mt-4">
-                                                        {isRead ? (
-                                                            <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-200">
-                                                                <Check size={14} className="stroke-[3]" />
-                                                                <span>Sudah Dipelajari</span>
-                                                            </div>
-                                                        ) : (
-                                                            <Button
-                                                                type="button"
-                                                                onClick={() => handleMarkAsExampleRead(index)}
-                                                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 h-auto rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                                            >
-                                                                {index < (material.code_examples?.length || 0) - 1 ? (
-                                                                    <>
-                                                                        <span>Selesai & Lanjut</span>
-                                                                        <Check size={14} className="stroke-[3]" />
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <span>Mulai Latihan Coding</span>
-                                                                        <Play size={14} className="stroke-[3]" />
-                                                                    </>
-                                                                )}
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </div>
-                                );
-                            })
-                        ) : (
-                            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
-                                <Code2 className="mx-auto h-8 w-8 text-muted-foreground/30 mb-3" />
-                                <p className="text-sm font-bold text-muted-foreground">Tidak ada contoh kode program</p>
-                                <p className="text-xs text-muted-foreground/70 mt-1">Guru belum mengkonfigurasi contoh program.</p>
-                            </div>
-                        )}
-                    </motion.div>
-                )}
 
                 {activeTab === 'editor' && (
                     <motion.div

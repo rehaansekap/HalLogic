@@ -234,34 +234,67 @@ export default function Step4Review({
                                 {formData.sub_materials && formData.sub_materials.length > 0 ? (
                                     <div className="space-y-3 bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10">
                                         {formData.sub_materials.map((sub, idx) => (
-                                            <div key={idx} className="flex gap-3 text-sm border-b border-gray-100 last:border-0 pb-3 last:pb-0">
-                                                <span className="text-(--palette-green) font-bold shrink-0">{idx + 1}.</span>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2 flex-wrap">
-                                                        <p className="font-bold text-slate-800">{sub.title}</p>
-                                                        {(sub.image || sub.image_path) && (
-                                                            <span className="inline-flex items-center gap-1 rounded bg-(--palette-green)/10 px-1.5 py-0.5 text-[9px] font-bold text-(--palette-green) uppercase">
-                                                                Ilustrasi Gambar
-                                                            </span>
-                                                        )}
-                                                        {sub.video_url && (
-                                                            <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[9px] font-bold text-blue-600 border border-blue-100 uppercase">
-                                                                Video
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                                        {sub.content ? sub.content.replace(/<[^>]*>?/gm, '') : 'Tidak ada konten.'}
-                                                    </p>
-                                                    {sub.video_url && (
-                                                        <p className="text-[10px] text-blue-600 mt-1 font-semibold truncate flex items-center gap-1">
-                                                            <Play className="h-3 w-3 shrink-0" />
-                                                            <span>Video: {sub.video_url}</span>
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
+                                             <div key={idx} className="flex gap-3 text-sm border-b border-gray-100 last:border-0 pb-3 last:pb-0 flex-col sm:flex-row">
+                                                 <span className="text-(--palette-green) font-bold shrink-0">{idx + 1}.</span>
+                                                 <div className="flex-1 min-w-0">
+                                                     <div className="flex items-center gap-2 flex-wrap">
+                                                         <p className="font-bold text-slate-800">{sub.title}</p>
+                                                         {(sub.image || sub.image_path) && (
+                                                             <span className="inline-flex items-center gap-1 rounded bg-(--palette-green)/10 px-1.5 py-0.5 text-[9px] font-bold text-(--palette-green) uppercase">
+                                                                 Ilustrasi Gambar
+                                                             </span>
+                                                         )}
+                                                         {sub.video_url && (
+                                                             <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[9px] font-bold text-blue-600 border border-blue-100 uppercase">
+                                                                 Video
+                                                             </span>
+                                                         )}
+                                                     </div>
+                                                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                                         {sub.content ? sub.content.replace(/<[^>]*>?/gm, '') : 'Tidak ada konten.'}
+                                                     </p>
+                                                     {sub.video_url && (
+                                                         <p className="text-[10px] text-blue-600 mt-1 font-semibold truncate flex items-center gap-1">
+                                                             <Play className="h-3 w-3 shrink-0" />
+                                                             <span>Video: {sub.video_url}</span>
+                                                         </p>
+                                                     )}
+                                                     
+                                                     {sub.code_examples && sub.code_examples.length > 0 && (
+                                                         <div className="mt-3 pl-4 border-l-2 border-(--palette-green)/20 space-y-2">
+                                                             <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Contoh Kasus ({sub.code_examples.length})</p>
+                                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                                 {sub.code_examples.map((ex, exIdx) => (
+                                                                     <div key={exIdx} className="bg-white p-2.5 rounded-lg border border-slate-200 text-xs space-y-1.5 shadow-2xs">
+                                                                         <p className="font-bold text-slate-750">{ex.title || `Contoh ${exIdx + 1}`}</p>
+                                                                         <div className="rounded overflow-hidden border border-slate-150 min-h-[64px]">
+                                                                             <Editor
+                                                                                 height="64px"
+                                                                                 language="c"
+                                                                                 theme="vs-dark"
+                                                                                 value={ex.code}
+                                                                                 options={{
+                                                                                     readOnly: true,
+                                                                                     minimap: { enabled: false },
+                                                                                     fontSize: 9,
+                                                                                     lineNumbers: 'off',
+                                                                                     scrollBeyondLastLine: false,
+                                                                                     wordWrap: 'on',
+                                                                                     padding: { top: 4, bottom: 4 },
+                                                                                 }}
+                                                                             />
+                                                                         </div>
+                                                                         <div className="text-[10px] text-muted-foreground truncate">
+                                                                             <strong>Output:</strong> <code className="bg-slate-100 px-1 rounded font-mono text-[9px]">{ex.output}</code>
+                                                                         </div>
+                                                                     </div>
+                                                                 ))}
+                                                             </div>
+                                                         </div>
+                                                     )}
+                                                 </div>
+                                             </div>
+                                         ))}
                                     </div>
                                 ) : (
                                     <p className="text-sm font-semibold text-muted-foreground/45 italic pl-6">
@@ -270,50 +303,7 @@ export default function Step4Review({
                                 )}
                             </div>
 
-                            {/* Code Examples Review */}
-                            <div className="space-y-4">
-                                <h4 className="font-bold text-sm text-foreground flex items-center gap-2">
-                                    <Code2 className="h-4 w-4 text-(--palette-green)" />
-                                    <span>Contoh Kode Program ({formData.code_examples?.length || 0})</span>
-                                </h4>
-                                {formData.code_examples && formData.code_examples.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {formData.code_examples.map((ex, idx) => (
-                                            <div key={idx} className="bg-gray-50/50 p-4 rounded-xl border border-(--palette-limelight)/10 space-y-2">
-                                                <p className="font-bold text-xs text-slate-800 uppercase tracking-wider">{ex.title || `Contoh ${idx + 1}`}</p>
-                                                <div className="rounded overflow-hidden border border-(--palette-limelight)/10 min-h-[96px]">
-                                                    <Editor
-                                                        height="96px"
-                                                        language="c"
-                                                        theme="vs-dark"
-                                                        value={ex.code}
-                                                        options={{
-                                                            readOnly: true,
-                                                            minimap: { enabled: false },
-                                                            fontSize: 10,
-                                                            lineNumbers: 'on',
-                                                            scrollBeyondLastLine: false,
-                                                            wordWrap: 'on',
-                                                            padding: { top: 8, bottom: 8 },
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="text-xs text-muted-foreground">
-                                                    <strong>Output:</strong> <code className="bg-slate-100 px-1 rounded font-mono text-[10px]">{ex.output}</code>
-                                                </div>
-                                                <div 
-                                                    className="text-xs text-slate-600 line-clamp-2 max-w-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-4 [&_ol]:pl-4"
-                                                    dangerouslySetInnerHTML={{ __html: ex.explanation }} 
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="text-sm font-semibold text-muted-foreground/45 italic pl-6">
-                                        Tidak ada contoh kode program yang ditambahkan
-                                    </p>
-                                )}
-                            </div>
+
 
                             {/* LKPD & Media Review (Commented Out)
                             <div className="space-y-4 border-t border-gray-100 pt-6">

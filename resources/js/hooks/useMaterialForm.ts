@@ -27,6 +27,12 @@ export interface MaterialFormData {
         image: File | null;
         image_path?: string;
         video_url?: string;
+        code_examples?: Array<{
+            title: string;
+            code: string;
+            output: string;
+            explanation: string;
+        }>;
     }>;
     code_examples: Array<{
         title: string;
@@ -65,7 +71,10 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
             : [''],
         pre_reflection_questions: initialData?.pre_reflection_questions ?? [],
         post_reflection_questions: initialData?.post_reflection_questions ?? [],
-        sub_materials: initialData?.sub_materials ?? [],
+        sub_materials: initialData?.sub_materials?.map(sub => ({
+            ...sub,
+            code_examples: sub.code_examples ?? []
+        })) ?? [],
         code_examples: initialData?.code_examples ?? [],
     });
 
@@ -163,17 +172,23 @@ export function useMaterialForm(initialData?: Partial<MaterialFormData>) {
                     const invalidVideoSub = formData.sub_materials.some(sub => sub.video_url && !isValidVideoUrl(sub.video_url));
                     if (invalidVideoSub) {
                         newErrors.sub_materials = ['URL video sub-materi harus dari YouTube atau Google Drive'];
+                    } else {
+                        // Check nested code examples validation
+                        let hasInvalidExample = false;
+                        formData.sub_materials.forEach(sub => {
+                            if (sub.code_examples && sub.code_examples.length > 0) {
+                                const invalidEx = sub.code_examples.some(
+                                    ex => !ex.title?.trim() || !ex.code?.trim() || !ex.output?.trim() || !ex.explanation?.trim()
+                                );
+                                if (invalidEx) {
+                                    hasInvalidExample = true;
+                                }
+                            }
+                        });
+                        if (hasInvalidExample) {
+                            newErrors.sub_materials = ['Setiap contoh kasus wajib memiliki judul, kode program, output, dan penjelasan'];
+                        }
                     }
-                }
-            }
-
-            // Code examples validation
-            if (formData.code_examples && formData.code_examples.length > 0) {
-                const invalidExample = formData.code_examples.some(
-                    ex => !ex.title?.trim() || !ex.code?.trim() || !ex.output?.trim() || !ex.explanation?.trim()
-                );
-                if (invalidExample) {
-                    newErrors.code_examples = ['Setiap contoh kode wajib memiliki judul, kode program, output, dan penjelasan'];
                 }
             }
 

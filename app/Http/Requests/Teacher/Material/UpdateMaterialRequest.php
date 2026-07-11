@@ -51,11 +51,12 @@ class UpdateMaterialRequest extends FormRequest
             'sub_materials.*.image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'sub_materials.*.image_path' => ['nullable', 'string'],
             'sub_materials.*.video_url' => ['nullable', 'url', 'regex:/youtube\.com|youtu\.be|drive\.google\.com/'],
+            'sub_materials.*.code_examples' => ['nullable', 'array'],
+            'sub_materials.*.code_examples.*.title' => ['required', 'string', 'max:255'],
+            'sub_materials.*.code_examples.*.code' => ['required', 'string'],
+            'sub_materials.*.code_examples.*.output' => ['required', 'string'],
+            'sub_materials.*.code_examples.*.explanation' => ['required', 'string'],
             'code_examples' => ['nullable', 'array'],
-            'code_examples.*.title' => ['required', 'string', 'max:255'],
-            'code_examples.*.code' => ['required', 'string'],
-            'code_examples.*.output' => ['required', 'string'],
-            'code_examples.*.explanation' => ['required', 'string'],
         ];
     }
 

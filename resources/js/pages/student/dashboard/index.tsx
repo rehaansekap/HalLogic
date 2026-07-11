@@ -20,6 +20,8 @@ interface Material {
     teacher_name: string;
     status: 'locked' | 'unlocked' | 'in_progress' | 'completed';
     progress?: number;
+    current_step?: number;
+    sub_materials_count?: number;
     prerequisite?: string;
 }
 
@@ -52,6 +54,8 @@ export default function StudentDashboard({
     >(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading] = useState(false);
+
+
 
     // Filter and sort materials
     const filteredMaterials = useMemo(() => {
