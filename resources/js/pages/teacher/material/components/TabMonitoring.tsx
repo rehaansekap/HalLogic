@@ -231,14 +231,21 @@ export default function TabMonitoring({
                     {groupsMonitoring.map((group, idx) => {
                         const statusInfo =
                             statusConfig[group.status] ?? statusConfig.locked;
-                        const progressPercent =
-                            group.status === 'completed'
-                                ? 100
-                                : Math.round(
-                                      ((group.current_step - 1) /
-                                          stepLabels.length) *
-                                          100,
-                                  );
+                        let progressPercent = 0;
+                        if (group.status === 'completed') {
+                            progressPercent = 100;
+                        } else {
+                            const step = Number(group.current_step);
+                            if (step === 2) {
+                                progressPercent = 25;
+                            } else if (step === 3) {
+                                progressPercent = 50;
+                            } else if (step === 4) {
+                                progressPercent = 75;
+                            } else if (step >= 5) {
+                                progressPercent = 90;
+                            }
+                        }
 
                         return (
                             <motion.div

@@ -64,12 +64,17 @@ class DashboardController extends Controller
                 ];
             });
 
+        $totalMaterials = $materials->count();
+        $completedMaterials = $materials->where('status', 'completed')->count();
+
         return Inertia::render('student/dashboard/index', [
             'materials' => $materials,
             'teachers' => $teachers,
             'userXp' => $user->xp,
             'userLevel' => $user->level,
             'user' => ['name' => $user->name],
+            'completedMaterialsCount' => $completedMaterials,
+            'totalMaterialsCount' => $totalMaterials,
         ]);
     }
 }

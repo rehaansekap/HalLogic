@@ -97,7 +97,7 @@ class TeacherGroupManagementService
                 DB::table('group_progress')->insert([
                     'group_id' => $groupId,
                     'material_id' => $materialId,
-                    'current_step' => 2,
+                    'current_step' => 1,
                     'status' => 'in_progress',
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -136,15 +136,15 @@ class TeacherGroupManagementService
                 DB::table('group_members')->insert($inserts);
             }
 
-            // $this->syncGroupProgressWithReflections($materialId, $groupId, array_column($groupData['members'], 'user_id'));
+            $this->syncGroupProgressWithReflections($materialId, $groupId, array_column($groupData['members'], 'user_id'));
         }
 
         return $createdMapping;
     }
 
     /**
-     * Sync group progress based on member reflections (commented out)
-     *
+     * Sync group progress based on member reflections
+     */
     private function syncGroupProgressWithReflections(int $materialId, int $groupId, array $userIds): void
     {
         if (empty($userIds)) {
@@ -165,7 +165,6 @@ class TeacherGroupManagementService
                 ->update(['current_step' => 2, 'updated_at' => now()]);
         }
     }
-     */
 
     /**
      * Generate unique group code

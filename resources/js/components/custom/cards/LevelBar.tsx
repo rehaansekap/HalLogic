@@ -7,6 +7,8 @@ interface LevelBarProps {
     level: number;
     totalXp?: number;
     delay?: number;
+    completedMaterialsCount: number;
+    totalMaterialsCount: number;
 }
 
 export default function LevelBar({
@@ -15,9 +17,12 @@ export default function LevelBar({
     level,
     totalXp,
     delay = 0,
+    completedMaterialsCount,
+    totalMaterialsCount,
 }: LevelBarProps) {
-    const progressPercent = (currentXp / nextLevelXp) * 100;
-    const xpNeeded = nextLevelXp - currentXp;
+    const progressPercent = totalMaterialsCount > 0
+        ? (completedMaterialsCount / totalMaterialsCount) * 100
+        : 0;
 
     return (
         <motion.div
@@ -65,7 +70,7 @@ export default function LevelBar({
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-muted-foreground">
-                            Progress ke Level {level + 1}
+                            Progress Pembelajaran
                         </span>
                         <span className="text-xs font-bold text-(--palette-chartreuse)">
                             {progressPercent.toFixed(0)}%
@@ -86,10 +91,15 @@ export default function LevelBar({
                     </div>
 
                     <p className="text-xs text-muted-foreground">
-                        <span className="font-semibold text-(--palette-green)">
-                            {xpNeeded.toLocaleString()}
+                        Sudah menyelesaikan{' '}
+                        <span className="font-bold text-(--palette-green)">
+                            {completedMaterialsCount}
                         </span>{' '}
-                        XP lagi untuk naik level
+                        dari{' '}
+                        <span className="font-bold text-(--palette-green)">
+                            {totalMaterialsCount}
+                        </span>{' '}
+                        materi
                     </p>
                 </div>
 

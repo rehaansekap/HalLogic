@@ -103,6 +103,11 @@ export default function Phase2Investigation({
     readSubMaterials = [],
 }: Phase2InvestigationProps) {
     const [activeTab, setActiveTab] = useState<'materi' | 'editor' | 'tugas'>(() => {
+        const totalSubs = material.sub_materials?.length || 0;
+        const isPersonalMateriFinished = readSubMaterials.length === totalSubs;
+        if (!isPersonalMateriFinished) {
+            return 'materi';
+        }
         if (groupMembers.length > 0) {
             if (currentStep === 3) {
                 return 'editor';
@@ -113,17 +118,6 @@ export default function Phase2Investigation({
         }
         return 'materi';
     });
-
-    useEffect(() => {
-        if (groupMembers.length > 0) {
-            if (currentStep === 3) {
-                setActiveTab('editor');
-            }
-            if (currentStep >= 4) {
-                setActiveTab('tugas');
-            }
-        }
-    }, [currentStep, groupMembers.length]);
 
     // Accordion expansion states
     const [expandedSubIndices, setExpandedSubIndices] = useState<number[]>([0]);
@@ -150,6 +144,23 @@ export default function Phase2Investigation({
         }
     }, [readSubMaterials, groupMembers.length]);
 
+    useEffect(() => {
+        const totalSubs = material.sub_materials?.length || 0;
+        const isPersonalMateriFinished = readSubIndices.length === totalSubs;
+        if (!isPersonalMateriFinished) {
+            setActiveTab('materi');
+            return;
+        }
+        if (groupMembers.length > 0) {
+            if (currentStep === 3) {
+                setActiveTab('editor');
+            }
+            if (currentStep >= 4) {
+                setActiveTab('tugas');
+            }
+        }
+    }, [currentStep, groupMembers.length, readSubIndices.length, material.sub_materials?.length]);
+
     const examplesStorageKey = `read-code-examples-${material.id}`;
     const [readExampleIndices, setReadExampleIndices] = useState<number[]>(() => {
         try {
@@ -170,11 +181,9 @@ export default function Phase2Investigation({
         }
     });
 
-    const isMateriFinished = groupMembers.length > 0
-        ? currentStep >= 3
-        : (material.sub_materials && material.sub_materials.length > 0
-            ? readSubIndices.length === material.sub_materials.length
-            : true);
+    const isMateriFinished = material.sub_materials && material.sub_materials.length > 0
+        ? readSubIndices.length === material.sub_materials.length
+        : true;
 
     const hasRunCompiler = groupMembers.length > 0 ? currentStep >= 4 : localHasRunCompiler;
 
@@ -182,6 +191,12 @@ export default function Phase2Investigation({
 
     const handleMarkAsRead = (index: number) => {
         const totalSubs = material.sub_materials?.length || 0;
+
+        // Update local state immediately for lag-free visual update
+        if (!readSubIndices.includes(index)) {
+            const nextRead = [...readSubIndices, index];
+            setReadSubIndices(nextRead);
+        }
 
         if (index === totalSubs - 1) {
             if (groupMembers.length > 0) {
@@ -201,7 +216,6 @@ export default function Phase2Investigation({
             } else {
                 if (!readSubIndices.includes(index)) {
                     const nextRead = [...readSubIndices, index];
-                    setReadSubIndices(nextRead);
                     try {
                         localStorage.setItem(storageKey, JSON.stringify(nextRead));
                     } catch (err) {
@@ -220,12 +234,11 @@ export default function Phase2Investigation({
                 });
             }
         } else {
-            if (!readSubIndices.includes(index)) {
-                if (groupMembers.length > 0) {
-                    router.post(`/material/${material.slug}/read-sub-material`, { index });
-                } else {
+            if (groupMembers.length > 0) {
+                router.post(`/material/${material.slug}/read-sub-material`, { index });
+            } else {
+                if (!readSubIndices.includes(index)) {
                     const nextRead = [...readSubIndices, index];
-                    setReadSubIndices(nextRead);
                     try {
                         localStorage.setItem(storageKey, JSON.stringify(nextRead));
                     } catch (err) {

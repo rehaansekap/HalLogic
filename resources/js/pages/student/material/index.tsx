@@ -58,6 +58,7 @@ interface MaterialPageProps {
     initialReflection?: string;
     finalReflection?: string;
     groupStatus: 'locked' | 'active' | 'completed' | null;
+    hasStarted: boolean;
     submission?: {
         files: string[] | null;
         submitted_at: string | null;
@@ -83,55 +84,66 @@ export default function MaterialPage({
     initialReflection,
     finalReflection,
     groupStatus,
+    hasStarted,
     submission,
     attendance,
 }: MaterialPageProps) {
-    const [localUnlockedStep, setLocalUnlockedStep] = useState<number>(() => {
-        if (typeof window !== 'undefined') {
-            const unlocked = localStorage.getItem(`material-exploration-unlocked-${material.id}`);
-            return unlocked === 'true' ? 2 : 1;
+    const totalSubMaterials = material.sub_materials?.length || 0;
+    const isPersonalMateriFinished = readSubMaterials.length === totalSubMaterials;
+
+    const calculateEffectiveStep = (stepVal: number): number => {
+        if (!hasStarted) {
+            return 1;
         }
-        return 1;
-    });
+        const baseStep = groupMembers.length > 0 ? stepVal : 5;
+        const actualBaseStep = groupStatus === 'completed' ? 6 : baseStep;
 
-    const effectiveCurrentStep = groupMembers.length > 0 ? currentStep : Math.max(currentStep, localUnlockedStep);
+        if (!isPersonalMateriFinished && actualBaseStep > 2) {
+            return 2;
+        }
+        return actualBaseStep;
+    };
 
-    const [activePhase, setActivePhase] = useState(effectiveCurrentStep > 0 ? effectiveCurrentStep : 1);
+    const effectiveCurrentStep = calculateEffectiveStep(currentStep);
+
+    const getPhaseForStep = (step: number): number => {
+        if (step <= 1) return 1;
+        if (step >= 2 && step <= 4) return 2;
+        return 3;
+    };
+
+    const [activePhase, setActivePhase] = useState(() => getPhaseForStep(effectiveCurrentStep));
     const [lastCurrentStep, setLastCurrentStep] = useState(currentStep);
+    const [lastHasStarted, setLastHasStarted] = useState(hasStarted);
 
-    // Update activePhase if currentStep advances
-    if (currentStep !== lastCurrentStep) {
+    // Update activePhase if currentStep advances or hasStarted changes
+    if (currentStep !== lastCurrentStep || hasStarted !== lastHasStarted) {
         setLastCurrentStep(currentStep);
+        setLastHasStarted(hasStarted);
 
-        const newEffective = groupMembers.length > 0 ? currentStep : Math.max(currentStep, localUnlockedStep);
-        if (newEffective > activePhase) {
-            setActivePhase(newEffective);
+        const newEffective = calculateEffectiveStep(currentStep);
+        const targetPhase = getPhaseForStep(newEffective);
+        if (targetPhase > activePhase) {
+            setActivePhase(targetPhase);
         }
     }
 
     const { post, processing } = useForm();
 
     const handleStartExploration = () => {
-        if (groupMembers.length > 0) {
-            post(startExploration.url({ slug: material.slug }), {
-                onSuccess: () => {
-                    localStorage.setItem(`material-exploration-unlocked-${material.id}`, 'true');
-                    setLocalUnlockedStep(2);
-                    setActivePhase(2);
+        post(startExploration.url({ slug: material.slug }), {
+            onSuccess: () => {
+                if (groupMembers.length === 0) {
+                    MySwal.fire({
+                        icon: 'success',
+                        title: 'Aktivitas Dimulai',
+                        text: 'Selamat belajar! Silakan eksplorasi materi.',
+                        confirmButtonText: 'Oke',
+                        confirmButtonColor: '#059669',
+                    });
                 }
-            });
-        } else {
-            localStorage.setItem(`material-exploration-unlocked-${material.id}`, 'true');
-            setLocalUnlockedStep(2);
-            setActivePhase(2);
-            MySwal.fire({
-                icon: 'success',
-                title: 'Aktivitas Dimulai',
-                text: 'Selamat belajar! Silakan eksplorasi materi.',
-                confirmButtonText: 'Oke',
-                confirmButtonColor: '#059669',
-            });
-        }
+            }
+        });
     };
 
     // Setup polling untuk real-time updates (Inertia v3)
@@ -231,21 +243,29 @@ export default function MaterialPage({
                                 >
                                     Sebelumnya
                                 </button>
-                                <button
-                                    onClick={() => {
-                                        if (activePhase < effectiveCurrentStep && activePhase < 3) {
-                                            setActivePhase((prev) => prev + 1);
-                                        }
-                                    }}
-                                    disabled={activePhase >= effectiveCurrentStep || activePhase === 3}
-                                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
-                                        activePhase >= effectiveCurrentStep || activePhase === 3
-                                            ? 'cursor-not-allowed bg-slate-100 text-slate-400'
-                                            : 'bg-(--palette-limelight) text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
-                                    }`}
-                                >
-                                    Selanjutnya
-                                </button>
+                                 <button
+                                     onClick={() => {
+                                         if (activePhase === 1 && effectiveCurrentStep >= 2) {
+                                             setActivePhase(2);
+                                         } else if (activePhase === 2 && effectiveCurrentStep >= 5) {
+                                             setActivePhase(3);
+                                         }
+                                     }}
+                                     disabled={
+                                         (activePhase === 1 && effectiveCurrentStep < 2) ||
+                                         (activePhase === 2 && effectiveCurrentStep < 5) ||
+                                         activePhase === 3
+                                     }
+                                     className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 ${
+                                         (activePhase === 1 && effectiveCurrentStep < 2) ||
+                                         (activePhase === 2 && effectiveCurrentStep < 5) ||
+                                         activePhase === 3
+                                             ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                                             : 'bg-(--palette-limelight) text-white hover:scale-[1.02] hover:shadow-md active:scale-[0.98]'
+                                     }`}
+                                 >
+                                     Selanjutnya
+                                 </button>
                             </div>
                         </motion.div>
 

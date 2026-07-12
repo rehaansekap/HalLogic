@@ -33,14 +33,9 @@ class GroupService
     {
         return DB::table('group_members')
             ->join('groups', 'group_members.group_id', '=', 'groups.id')
-            ->join('group_progress', function ($join) use ($materialId) {
-                $join->on('groups.id', '=', 'group_progress.group_id')
-                    ->where('group_progress.material_id', '=', $materialId);
-            })
-            ->join('materials', 'group_progress.material_id', '=', 'materials.id')
+            ->join('materials', 'groups.classroom_id', '=', 'materials.classroom_id')
             ->where('group_members.user_id', $userId)
             ->where('materials.id', $materialId)
-            ->whereColumn('groups.classroom_id', 'materials.classroom_id') // extra guard
             ->select('group_members.*')
             ->first();
     }

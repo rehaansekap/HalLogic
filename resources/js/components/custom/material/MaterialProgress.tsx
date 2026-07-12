@@ -38,10 +38,25 @@ export default function MaterialProgress({
                 <div className="flex min-w-max gap-3 px-1 md:grid md:w-full md:min-w-0 md:grid-cols-3">
                     {steps.map((step, idx) => {
                         const stepNumber = idx + 1;
-                        const isUnlocked = stepNumber <= currentStep;
-                        const isCompleted = stepNumber < currentStep;
-                        const isCurrentStep = stepNumber === currentStep;
-                        const isActive = stepNumber === activePhase;
+                        let isUnlocked = false;
+                        let isCompleted = false;
+                        let isCurrentStep = false;
+
+                        if (stepNumber === 1) {
+                            isUnlocked = currentStep >= 1;
+                            isCompleted = currentStep >= 2;
+                            isCurrentStep = currentStep === 1;
+                        } else if (stepNumber === 2) {
+                            isUnlocked = currentStep >= 2;
+                            isCompleted = currentStep >= 5;
+                            isCurrentStep = currentStep >= 2 && currentStep <= 4;
+                        } else if (stepNumber === 3) {
+                            isUnlocked = currentStep >= 5;
+                            isCompleted = currentStep > 5;
+                            isCurrentStep = currentStep === 5;
+                        }
+
+                        const isActive = stepNumber === activePhase && !isCompleted;
 
                         let stateClasses = '';
                         let IconComponent = Lock;

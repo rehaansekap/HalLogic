@@ -59,14 +59,9 @@ class MaterialController extends Controller
                 $this->progressService->updateGroupProgress($groupMember->group_id, $material->id, 1);
                 $currentStep = 1;
                 $groupStatus = 'in_progress';
-                $readSubMaterials = [];
             } else {
                 $currentStep = $progress ? (int) $progress->current_step : 1;
                 $groupStatus = $progress?->status ?? 'locked';
-                $readSubMaterials = json_decode($progress->read_sub_materials ?? '[]', true) ?? [];
-                if (! is_array($readSubMaterials)) {
-                    $readSubMaterials = [];
-                }
             }
 
             $myGroupMembers = $this->groupService->getGroupMembers($groupMember->group_id);
@@ -74,10 +69,21 @@ class MaterialController extends Controller
             $currentStep = 1;
             $myGroupMembers = collect();
             $groupStatus = null;
-            $readSubMaterials = [];
         }
 
+        $readSubMaterials = DB::table('sub_material_reads')
+            ->where('user_id', $user->id)
+            ->where('material_id', $material->id)
+            ->pluck('sub_material_index')
+            ->toArray();
+
         $finalReflection = $this->reflectionService->getUserReflection($user->id, $material->id, 'final');
+
+        $hasStarted = DB::table('reflections')
+            ->where('user_id', $user->id)
+            ->where('material_id', $material->id)
+            ->where('type', 'initial')
+            ->exists();
 
         return Inertia::render('student/material/index', [
             'material' => $material,
@@ -88,6 +94,7 @@ class MaterialController extends Controller
             'initialReflection' => $initialReflection,
             'finalReflection' => $finalReflection,
             'groupStatus' => $groupStatus,
+            'hasStarted' => $hasStarted,
             'submission' => $groupMember
                 ? Submission::where('group_id', $groupMember->group_id)
                     ->where('material_id', $material->id)
@@ -105,6 +112,20 @@ class MaterialController extends Controller
     {
         $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
+
+        DB::table('reflections')->updateOrInsert(
+            [
+                'user_id' => $user->id,
+                'material_id' => $material->id,
+                'type' => 'initial',
+            ],
+            [
+                'content' => 'started',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
         $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
 
         if ($groupMember) {
@@ -244,18 +265,31 @@ class MaterialController extends Controller
     {
         $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
+
+        // Mark all sub-materials as read for this user
+        $subMaterialsCount = is_array($material->sub_materials) ? count($material->sub_materials) : 0;
+        for ($i = 0; $i < $subMaterialsCount; $i++) {
+            DB::table('sub_material_reads')->updateOrInsert(
+                [
+                    'user_id' => $user->id,
+                    'material_id' => $material->id,
+                    'sub_material_index' => $i,
+                ],
+                [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
+
         $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
 
         if ($groupMember) {
             $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
-            if ($progress) {
-                $subMaterialsCount = is_array($material->sub_materials) ? count($material->sub_materials) : 0;
-                $allIndices = range(0, max(0, $subMaterialsCount - 1));
-
+            if ($progress && $progress->current_step < 3) {
                 DB::table('group_progress')
                     ->where('id', $progress->id)
                     ->update([
-                        'read_sub_materials' => json_encode($allIndices),
                         'current_step' => 3,
                         'updated_at' => now(),
                     ]);
@@ -269,27 +303,19 @@ class MaterialController extends Controller
     {
         $material = Material::where('slug', $slug)->firstOrFail();
         $user = Auth::user();
-        $groupMember = $this->groupService->getUserGroupMemberForMaterial($user->id, $material->id);
+        $index = (int) $request->input('index');
 
-        if ($groupMember) {
-            $index = (int) $request->input('index');
-            $progress = $this->progressService->getGroupProgress($groupMember->group_id, $material->id);
-
-            if ($progress) {
-                $readSubMaterials = json_decode($progress->read_sub_materials ?? '[]', true) ?? [];
-                if (! in_array($index, $readSubMaterials)) {
-                    $readSubMaterials[] = $index;
-                    sort($readSubMaterials);
-
-                    DB::table('group_progress')
-                        ->where('id', $progress->id)
-                        ->update([
-                            'read_sub_materials' => json_encode($readSubMaterials),
-                            'updated_at' => now(),
-                        ]);
-                }
-            }
-        }
+        DB::table('sub_material_reads')->updateOrInsert(
+            [
+                'user_id' => $user->id,
+                'material_id' => $material->id,
+                'sub_material_index' => $index,
+            ],
+            [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
 
         return redirect()->back();
     }

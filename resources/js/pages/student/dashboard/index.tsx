@@ -38,6 +38,8 @@ interface StudentDashboardProps {
     user: {
         name: string;
     };
+    completedMaterialsCount: number;
+    totalMaterialsCount: number;
 }
 
 const MATERIALS_PER_PAGE = 6;
@@ -48,6 +50,8 @@ export default function StudentDashboard({
     userXp = 0,
     userLevel = 1,
     user,
+    completedMaterialsCount = 0,
+    totalMaterialsCount = 0,
 }: StudentDashboardProps) {
     const [selectedTeacher, setSelectedTeacher] = useState<
         string | number | null
@@ -142,6 +146,8 @@ export default function StudentDashboard({
                         nextLevelXp={nextLevelXp}
                         totalXp={userXp}
                         delay={0.3}
+                        completedMaterialsCount={completedMaterialsCount}
+                        totalMaterialsCount={totalMaterialsCount}
                     />
                 </motion.div>
 

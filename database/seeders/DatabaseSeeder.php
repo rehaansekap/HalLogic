@@ -256,8 +256,32 @@ class DatabaseSeeder extends Seeder
                 'group_code' => 'RPL1-G'.($idx + 1),
             ]);
 
-            foreach ($groupMembers as $key => $member) {
+            $currentStep = 1;
+            $status = 'in_progress';
+            $readIndicesArray = [];
 
+            $stepPattern = $idx % 6;
+            if ($stepPattern === 0) {
+                $currentStep = 1;
+            } elseif ($stepPattern === 1) {
+                $currentStep = 2;
+                $readIndicesArray = [0];
+            } elseif ($stepPattern === 2) {
+                $currentStep = 3;
+                $readIndicesArray = [0, 1];
+            } elseif ($stepPattern === 3) {
+                $currentStep = 4;
+                $readIndicesArray = [0, 1];
+            } elseif ($stepPattern === 4) {
+                $currentStep = 5;
+                $readIndicesArray = [0, 1];
+            } elseif ($stepPattern === 5) {
+                $currentStep = 5;
+                $status = 'completed';
+                $readIndicesArray = [0, 1];
+            }
+
+            foreach ($groupMembers as $key => $member) {
                 DB::table('group_members')->insert([
                     'group_id' => $group->id,
                     'user_id' => $member->id,
@@ -265,13 +289,35 @@ class DatabaseSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                if ($currentStep >= 2) {
+                    DB::table('reflections')->insert([
+                        'user_id' => $member->id,
+                        'material_id' => $material1->id,
+                        'type' => 'initial',
+                        'content' => 'started',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
+                foreach ($readIndicesArray as $readIndex) {
+                    DB::table('sub_material_reads')->insert([
+                        'user_id' => $member->id,
+                        'material_id' => $material1->id,
+                        'sub_material_index' => $readIndex,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
             }
 
             DB::table('group_progress')->insert([
                 'group_id' => $group->id,
                 'material_id' => $material1->id,
-                'current_step' => 1,
-                'status' => 'in_progress',
+                'current_step' => $currentStep,
+                'status' => $status,
+                'read_sub_materials' => empty($readIndicesArray) ? null : json_encode($readIndicesArray),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -287,8 +333,32 @@ class DatabaseSeeder extends Seeder
                 'group_code' => 'TKJ-G'.($idx + 1),
             ]);
 
-            foreach ($groupMembers as $key => $member) {
+            $currentStep = 1;
+            $status = 'in_progress';
+            $readIndicesArray = [];
 
+            $stepPattern = $idx % 6;
+            if ($stepPattern === 0) {
+                $currentStep = 1;
+            } elseif ($stepPattern === 1) {
+                $currentStep = 2;
+                $readIndicesArray = [0];
+            } elseif ($stepPattern === 2) {
+                $currentStep = 3;
+                $readIndicesArray = [0, 1];
+            } elseif ($stepPattern === 3) {
+                $currentStep = 4;
+                $readIndicesArray = [0, 1];
+            } elseif ($stepPattern === 4) {
+                $currentStep = 5;
+                $readIndicesArray = [0, 1];
+            } elseif ($stepPattern === 5) {
+                $currentStep = 5;
+                $status = 'completed';
+                $readIndicesArray = [0, 1];
+            }
+
+            foreach ($groupMembers as $key => $member) {
                 DB::table('group_members')->insert([
                     'group_id' => $group->id,
                     'user_id' => $member->id,
@@ -296,13 +366,35 @@ class DatabaseSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+
+                if ($currentStep >= 2) {
+                    DB::table('reflections')->insert([
+                        'user_id' => $member->id,
+                        'material_id' => $material1->id,
+                        'type' => 'initial',
+                        'content' => 'started',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
+                foreach ($readIndicesArray as $readIndex) {
+                    DB::table('sub_material_reads')->insert([
+                        'user_id' => $member->id,
+                        'material_id' => $material1->id,
+                        'sub_material_index' => $readIndex,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
             }
 
             DB::table('group_progress')->insert([
                 'group_id' => $group->id,
                 'material_id' => $material1->id,
-                'current_step' => 1,
-                'status' => 'in_progress',
+                'current_step' => $currentStep,
+                'status' => $status,
+                'read_sub_materials' => empty($readIndicesArray) ? null : json_encode($readIndicesArray),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
