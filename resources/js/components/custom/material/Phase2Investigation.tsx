@@ -784,8 +784,8 @@ int main() {
                                                         dangerouslySetInnerHTML={{ __html: sub.content }}
                                                     />
 
-                                                    {/* Media Pendukung (Accordion Video & Gambar Terpisah) */}
-                                                    {(sub.video_url || sub.image_path) && (
+                                                    {/* Media Pendukung (Accordion Video, Gambar, dan Contoh Kasus) */}
+                                                    {(sub.video_url || sub.image_path || (sub.code_examples && sub.code_examples.length > 0)) && (
                                                         <div className="space-y-4 mt-5">
                                                             {/* Accordion Video Pembelajaran */}
                                                             {sub.video_url && (
@@ -978,7 +978,7 @@ int main() {
                                                                                 {isExOpen && (
                                                                                     <div className="p-4 border-t border-slate-100 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-white">
                                                                                         {/* Code block */}
-                                                                                        <div className="flex flex-col rounded-lg overflow-hidden border border-slate-800 bg-slate-950 shadow-inner">
+                                                                                        <div className="flex flex-col rounded-lg overflow-hidden border border-slate-800 bg-slate-950 shadow-inner self-start w-full">
                                                                                             <div className="flex items-center justify-between bg-slate-900 px-3 py-1.5 border-b border-slate-800">
                                                                                                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">program.c</span>
                                                                                                 <div className="flex gap-2">
