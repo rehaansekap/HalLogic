@@ -33,9 +33,9 @@ class GroupService
     {
         return DB::table('group_members')
             ->join('groups', 'group_members.group_id', '=', 'groups.id')
-            ->join('materials', 'groups.classroom_id', '=', 'materials.classroom_id')
+            ->join('group_progress', 'groups.id', '=', 'group_progress.group_id')
             ->where('group_members.user_id', $userId)
-            ->where('materials.id', $materialId)
+            ->where('group_progress.material_id', $materialId)
             ->select('group_members.*')
             ->first();
     }

@@ -48,8 +48,10 @@ class MaterialLockService
 
             $groupMember = DB::table('group_members')
                 ->join('groups', 'group_members.group_id', '=', 'groups.id')
+                ->join('group_progress', 'groups.id', '=', 'group_progress.group_id')
                 ->where('group_members.user_id', $user->id)
-                ->where('groups.classroom_id', $material->classroom_id)
+                ->where('group_progress.material_id', $material->id)
+                ->select('group_members.*')
                 ->first();
 
             if ($groupMember) {

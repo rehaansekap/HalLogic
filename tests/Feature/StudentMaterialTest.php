@@ -4,9 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Classroom;
 use App\Models\Grade;
+use App\Models\Group;
 use App\Models\Material;
 use App\Models\Submission;
 use App\Models\User;
+use App\Services\Material\GroupService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -422,5 +424,79 @@ class StudentMaterialTest extends TestCase
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
+    }
+
+    public function test_student_group_resolved_correctly_when_in_multiple_groups_for_different_materials(): void
+    {
+        $student = User::factory()->create(['role' => 'student']);
+        $teacher = User::factory()->create(['role' => 'teacher']);
+
+        $classroom = Classroom::create([
+            'name' => 'Kelas A',
+            'academic_year' => '2025/2026',
+            'teacher_id' => $teacher->id,
+        ]);
+
+        $material1 = Material::create([
+            'classroom_id' => $classroom->id,
+            'title' => 'Materi 1',
+            'slug' => 'materi-1',
+            'description' => 'Desc 1',
+            'difficulty_level' => 1,
+        ]);
+
+        $material2 = Material::create([
+            'classroom_id' => $classroom->id,
+            'title' => 'Materi 2',
+            'slug' => 'materi-2',
+            'description' => 'Desc 2',
+            'difficulty_level' => 1,
+        ]);
+
+        // Group 1
+        $group1 = Group::create([
+            'name' => 'Group A',
+            'classroom_id' => $classroom->id,
+            'group_code' => 'CODE-A',
+        ]);
+        DB::table('group_members')->insert([
+            'group_id' => $group1->id,
+            'user_id' => $student->id,
+            'is_leader' => true,
+        ]);
+        DB::table('group_progress')->insert([
+            'group_id' => $group1->id,
+            'material_id' => $material1->id,
+            'current_step' => 1,
+            'status' => 'in_progress',
+        ]);
+
+        // Group 2
+        $group2 = Group::create([
+            'name' => 'Group B',
+            'classroom_id' => $classroom->id,
+            'group_code' => 'CODE-B',
+        ]);
+        DB::table('group_members')->insert([
+            'group_id' => $group2->id,
+            'user_id' => $student->id,
+            'is_leader' => true,
+        ]);
+        DB::table('group_progress')->insert([
+            'group_id' => $group2->id,
+            'material_id' => $material2->id,
+            'current_step' => 1,
+            'status' => 'in_progress',
+        ]);
+
+        $groupService = app(GroupService::class);
+
+        $resolvedForMaterial1 = $groupService->getUserGroupMemberForMaterial($student->id, $material1->id);
+        $this->assertNotNull($resolvedForMaterial1);
+        $this->assertEquals($group1->id, $resolvedForMaterial1->group_id);
+
+        $resolvedForMaterial2 = $groupService->getUserGroupMemberForMaterial($student->id, $material2->id);
+        $this->assertNotNull($resolvedForMaterial2);
+        $this->assertEquals($group2->id, $resolvedForMaterial2->group_id);
     }
 }

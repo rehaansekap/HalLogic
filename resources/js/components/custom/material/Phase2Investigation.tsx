@@ -934,6 +934,8 @@ int main() {
                                                                     {sub.code_examples.map((ex, exIdx) => {
                                                                         const uniqueId = `${index}-${exIdx}`;
                                                                         const isExOpen = expandedExampleIndices.includes(uniqueId);
+                                                                        const lineCount = ex.code.split('\n').length;
+                                                                        const editorHeight = `${lineCount * 18 + 16}px`;
                                                                         return (
                                                                             <div key={exIdx} className={cn(
                                                                                 "rounded-xl border shadow-xs transition-all duration-300 overflow-hidden",
@@ -1002,7 +1004,7 @@ int main() {
                                                                                                 </div>
                                                                                             </div>
                                                                                             <Editor
-                                                                                                height="200px"
+                                                                                                height={editorHeight}
                                                                                                 language="c"
                                                                                                 theme="vs-dark"
                                                                                                 value={ex.code}
