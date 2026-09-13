@@ -77,10 +77,10 @@ class TeacherDashboardService
             ->join('groups', 'group_progress.group_id', '=', 'groups.id')
             ->where('group_progress.material_id', $materialId)
             ->where('groups.classroom_id', $classroomId)
-            ->selectRaw('
+            ->selectRaw("
                 COUNT(*) as total_groups,
-                SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed_groups
-            ')
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_groups
+            ")
             ->first();
 
         return [
