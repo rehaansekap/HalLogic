@@ -52,10 +52,12 @@ $app = Application::configure(basePath: dirname(__DIR__))
 $storagePath = env('APP_STORAGE', isset($_ENV['VERCEL']) || env('VERCEL') ? '/tmp/storage' : $app->storagePath());
 if ($storagePath !== $app->storagePath() || ! is_writable($app->storagePath())) {
     $app->useStoragePath($storagePath);
-    config([
-        'view.compiled' => $storagePath.'/framework/views',
-        'session.files' => $storagePath.'/framework/sessions',
-    ]);
+    $app->booting(function () use ($storagePath) {
+        config([
+            'view.compiled' => $storagePath.'/framework/views',
+            'session.files' => $storagePath.'/framework/sessions',
+        ]);
+    });
 }
 
 return $app;
