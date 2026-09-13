@@ -4,6 +4,13 @@
 
 ---
 
+## 🌐 Live Demo
+
+Experience the live application here:  
+👉 **[hallogic.vercel.app](https://hallogic.vercel.app/)**
+
+---
+
 ## ✨ Key Features
 
 - 👥 **Multi-Role System**: Full support for Admin, Teacher, and Student roles.
@@ -98,15 +105,15 @@ The application will be available at `http://localhost:8000`.
 
 ## 🔑 Default Accounts (Seeder)
 
-Use the following accounts to test the available features:
+You can login using either **Username** or **Email** with the following seeded accounts:
 
-| Role | Email | Password |
-| :--- | :--- | :--- |
-| **Admin** | `admin@sekolah.id` | `123123123` |
-| **Teacher** | `guru1@sekolah.id` | `123123123` |
-| **Student** | `siswa1@sekolah.id` | `123123123` |
-
-*(Available up to `siswa50@sekolah.id`)*
+| Role | Username | Email | Password |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin` | `admin@sekolah.id` | `123123123` |
+| **Teacher 1** | `guru1` | `guru1@sekolah.id` | `123123123` |
+| **Teacher 2** | `guru2` | `guru2@sekolah.id` | `123123123` |
+| **Student 1** | `siswa1` | `siswa1@sekolah.id` | `123123123` |
+| **Student 2 - 50** | `siswa2` ... `siswa50` | `siswa2@sekolah.id` ... `siswa50@sekolah.id` | `123123123` |
 
 ---
 
