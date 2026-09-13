@@ -28,8 +28,6 @@
         "APP_ROUTES_CACHE": "/tmp/bootstrap/cache/routes.php",
         "APP_SERVICES_CACHE": "/tmp/bootstrap/cache/services.php",
         "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
-        "CACHE_STORE": "array",
-        "SESSION_DRIVER": "cookie",
         "LOG_CHANNEL": "stderr"
     }
 }
