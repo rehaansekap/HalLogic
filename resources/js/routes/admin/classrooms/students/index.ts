@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:157
 * @route '/admin/classrooms/{classroom}/students'
 */
-export const manage = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const manage = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: manage.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ manage.definition = {
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:157
 * @route '/admin/classrooms/{classroom}/students'
 */
-manage.url = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+manage.url = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { classroom: args }
     }
@@ -52,7 +52,7 @@ manage.url = (args: { classroom: number | { id: number } } | [classroom: number 
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:157
 * @route '/admin/classrooms/{classroom}/students'
 */
-manage.get = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+manage.get = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: manage.url(args, options),
     method: 'get',
 })
@@ -62,7 +62,7 @@ manage.get = (args: { classroom: number | { id: number } } | [classroom: number 
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:157
 * @route '/admin/classrooms/{classroom}/students'
 */
-manage.head = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+manage.head = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: manage.url(args, options),
     method: 'head',
 })
@@ -72,7 +72,7 @@ manage.head = (args: { classroom: number | { id: number } } | [classroom: number
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:157
 * @route '/admin/classrooms/{classroom}/students'
 */
-const manageForm = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const manageForm = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: manage.url(args, options),
     method: 'get',
 })
@@ -82,7 +82,7 @@ const manageForm = (args: { classroom: number | { id: number } } | [classroom: n
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:157
 * @route '/admin/classrooms/{classroom}/students'
 */
-manageForm.get = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+manageForm.get = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: manage.url(args, options),
     method: 'get',
 })
@@ -92,7 +92,7 @@ manageForm.get = (args: { classroom: number | { id: number } } | [classroom: num
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:157
 * @route '/admin/classrooms/{classroom}/students'
 */
-manageForm.head = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+manageForm.head = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: manage.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -109,7 +109,7 @@ manage.form = manageForm
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:179
 * @route '/admin/classrooms/{classroom}/students'
 */
-export const update = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const update = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(args, options),
     method: 'post',
 })
@@ -124,7 +124,7 @@ update.definition = {
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:179
 * @route '/admin/classrooms/{classroom}/students'
 */
-update.url = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+update.url = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { classroom: args }
     }
@@ -157,7 +157,7 @@ update.url = (args: { classroom: number | { id: number } } | [classroom: number 
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:179
 * @route '/admin/classrooms/{classroom}/students'
 */
-update.post = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+update.post = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(args, options),
     method: 'post',
 })
@@ -167,7 +167,7 @@ update.post = (args: { classroom: number | { id: number } } | [classroom: number
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:179
 * @route '/admin/classrooms/{classroom}/students'
 */
-const updateForm = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, options),
     method: 'post',
 })
@@ -177,7 +177,7 @@ const updateForm = (args: { classroom: number | { id: number } } | [classroom: n
 * @see app/Http/Controllers/Admin/AdminClassroomController.php:179
 * @route '/admin/classrooms/{classroom}/students'
 */
-updateForm.post = (args: { classroom: number | { id: number } } | [classroom: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.post = (args: { classroom: string | number | { id: string | number } } | [classroom: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, options),
     method: 'post',
 })

@@ -2,30 +2,57 @@ name: Supabase Keep-Alive
 
 on:
   schedule:
-    # Berjalan otomatis setiap 3 hari sekali pada jam 00:00 UTC
+    # Berjalan otomatis setiap 3 hari sekali pada jam 00:00 UTC (mencegah auto-pause 7 hari)
     - cron: '0 0 */3 * *'
-  workflow_dispatch: # Memungkinkan trigger manual dari tab Actions di GitHub
+  workflow_dispatch: # Memungkinkan trigger manual dari tab Actions di GitHub kapan saja
 
 jobs:
   ping-supabase:
-    name: Ping Supabase Database
+    name: Keep-Alive Ping to Supabase
     runs-on: ubuntu-latest
     steps:
-      - name: Send Keep-Alive Request
+      - name: Send Keep-Alive Probes
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          echo "Sending keep-alive ping to Supabase..."
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "❌ Error: Secret SUPABASE_URL belum diatur di GitHub Repository Secrets!"
+            echo "👉 Masuk ke Settings -> Secrets and variables -> Actions -> Tambahkan SUPABASE_URL"
+            exit 1
+          fi
+
+          echo "🚀 Memulai keep-alive ping ke Supabase (${SUPABASE_URL})..."
           
-          # Request ke root PostgREST API (selalu 200 OK jika API Key valid)
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          REST_STATUS="000"
+          AUTH_STATUS="000"
+
+          # Probe 1: PostgREST API Database Introspection (Service Role Key)
+          if [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "1. Memeriksa Database Engine (PostgREST API)..."
+            REST_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X GET "${SUPABASE_URL}/rest/v1/" \
+              -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
+            echo "   PostgREST HTTP Status: $REST_STATUS"
+          fi
           
-          echo "Supabase Response HTTP Status: $HTTP_STATUS"
+          # Probe 2: Auth Service Health (Anon Key)
+          if [ -n "$SUPABASE_ANON_KEY" ]; then
+            echo "2. Memeriksa Auth Service (GoTrue Health)..."
+            AUTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X GET "${SUPABASE_URL}/auth/v1/health" \
+              -H "apikey: ${SUPABASE_ANON_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+            echo "   Auth Health HTTP Status: $AUTH_STATUS"
+          fi
           
-          if [ "$HTTP_STATUS" -eq 200 ]; then
-            echo "✅ Ping sukses (HTTP 200)! Database Supabase tetap aktif dan segar."
+          # Evaluasi hasil
+          if [ "$REST_STATUS" -eq 200 ] || [ "$AUTH_STATUS" -eq 200 ]; then
+            echo "✅ Ping sukses! Database & Layanan Supabase tetap aktif (Anti-Suspend berhasil)."
           else
-            echo "⚠️ Response status: $HTTP_STATUS. Cek kembali URL & ANON KEY Anda."
+            echo "❌ Gagal: Request keep-alive tidak berhasil (REST: $REST_STATUS, Auth: $AUTH_STATUS)."
+            echo "👉 Pastikan secret SUPABASE_SERVICE_ROLE_KEY atau SUPABASE_ANON_KEY sudah diisi dengan benar di GitHub Secrets."
             exit 1
           fi

@@ -1,0 +1,16 @@
+.git
+.github
+.agents
+.claude
+.gemini
+tests
+azure
+railway
+.env
+.env.*
+!.env.example
+node_modules
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
