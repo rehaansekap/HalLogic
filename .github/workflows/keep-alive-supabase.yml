@@ -4,7 +4,7 @@ on:
   schedule:
     # Berjalan otomatis setiap 3 hari sekali pada jam 00:00 UTC
     - cron: '0 0 */3 * *'
-  workflow_dispatch: # Memungkinkan Anda men-trigger manual dari tab Actions di GitHub
+  workflow_dispatch: # Memungkinkan trigger manual dari tab Actions di GitHub
 
 jobs:
   ping-supabase:
@@ -15,18 +15,17 @@ jobs:
         run: |
           echo "Sending keep-alive ping to Supabase..."
           
-          # Request kueri REST API ke Supabase (misal ambil 1 baris dari tabel users atau endpoint root)
+          # Request ke root PostgREST API (selalu 200 OK jika API Key valid)
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/users?select=id&limit=1" \
+            -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
           
           echo "Supabase Response HTTP Status: $HTTP_STATUS"
           
-          # Status 200 (OK) atau 206 (Partial) atau 404/401 tetap mencatat aktivitas di gateway Supabase
-          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 500 ]; then
-            echo "✅ Ping sukses! Database Supabase tetap aktif."
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "✅ Ping sukses (HTTP 200)! Database Supabase tetap aktif dan segar."
           else
-            echo "⚠️ Warning: Status $HTTP_STATUS. Cek kembali URL & ANON KEY Anda."
+            echo "⚠️ Response status: $HTTP_STATUS. Cek kembali URL & ANON KEY Anda."
             exit 1
           fi
